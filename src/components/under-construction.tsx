@@ -70,7 +70,7 @@ export function UnderConstruction({ pageName }: Props) {
         </div>
 
         {isHomePage ? (
-          <Link to="/">
+          <Link to="/backoffice">
             <Button
               variant="outline"
               className="gap-2 hover:bg-orange-50 dark:hover:bg-orange-900/20"
