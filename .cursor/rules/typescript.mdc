@@ -1,0 +1,314 @@
+---
+description: TypeScript coding standards and best practices
+globs: ['**/*.ts']
+alwaysApply: true
+---
+
+# TypeScript Development Guidelines
+
+## Basic Principles
+
+### Variables and Constants
+
+- Use `const` by default
+- Use `let` only when reassignment is needed
+- Never use `var`
+- Use meaningful and descriptive names
+
+```typescript
+// Good
+const MAX_RETRIES = 3;
+let currentAttempt = 0;
+
+// Bad
+var retry = 3;
+let x = 0;
+```
+
+### Boolean Variables
+
+- Use positive names for boolean variables
+- Prefix with question words (is, has, should, can)
+
+```typescript
+// Good
+const isActive = true;
+const hasPermission = checkPermission();
+const shouldRefresh = timestamp > expiryTime;
+
+// Bad
+const active = true;
+const permission = checkPermission();
+```
+
+## Type System Usage
+
+### Type Inference
+
+- Prefer TypeScript's type inference whenever possible
+- Use explicit types only when:
+  - Inference is not specific enough
+  - Documenting a public API
+  - Working with generic types
+  - Need to restrict a type to a specific subset
+
+```typescript
+// Good - Using type inference
+const user = {
+	id: '123',
+	name: 'John',
+	email: 'john@example.com'
+};
+
+const numbers = [1, 2, 3];
+
+const handleClick = (event: React.MouseEvent) => {
+	// Type inference works for the return type
+	const target = event.currentTarget;
+	return target;
+};
+
+// Good - Explicit types when necessary
+interface Config {
+	apiUrl: string;
+	timeout: number;
+}
+
+// Required for public APIs
+export function fetchData<T>(url: string): Promise<T> {
+	return fetch(url).then((res) => res.json());
+}
+
+// Required for restricting types
+type Status = 'pending' | 'success' | 'error';
+let currentStatus: Status = 'pending';
+
+// Bad - Unnecessary types when inference is sufficient
+const isValid: boolean = true;
+const count: number = 42;
+const message: string = 'Hello';
+```
+
+### Type Safety
+
+- Enable strict mode in `tsconfig.json`
+- Avoid using `any` type
+- Use `unknown` instead of `any` for values of unknown type
+- Use `never` for exhaustive checks
+- Use readonly modifiers when appropriate
+
+```typescript
+// Good
+function processValue(value: unknown): string {
+	if (typeof value === 'string') {
+		return value.toUpperCase();
+	}
+	throw new Error('Value must be a string');
+}
+
+// Bad
+function processValue(value: any): string {
+	return value.toUpperCase(); // Unsafe!
+}
+```
+
+### Type Declarations
+
+- Use `type` for all type definitions by default
+- Use `interface` only when:
+  - You need to implement inheritance/extension
+  - You need module augmentation
+- Use type aliases for all shapes, unions, and complex types
+- Use generics to create reusable components
+
+```typescript
+// Good
+type UserData = {
+	id: string;
+	email: string;
+	preferences: Preferences;
+};
+
+type UserRole = 'admin' | 'user' | 'guest';
+type ValidationResult<T> = { valid: true; data: T } | { valid: false; errors: string[] };
+
+// Only use interface when extending or augmenting
+interface BaseRepository<T> {
+	findById(id: string): Promise<T>;
+	save(entity: T): Promise<T>;
+}
+
+// Module augmentation example
+interface Window {
+	customProperty: string;
+}
+```
+
+## Module Organization
+
+### Imports and Exports
+
+- Export types and interfaces separately from implementations
+- Use named exports over default exports
+- Group related types and interfaces in separate files
+- Use barrel exports (index.ts) for public API
+
+```typescript
+// types.ts
+export type User = {
+	id: string;
+	name: string;
+};
+
+// user.service.ts
+import { User } from './types';
+export class UserService {
+	// implementation
+}
+```
+
+## Advanced Features
+
+### Type Guards
+
+- Use type guards for runtime type checking
+- Create custom type guards for complex types
+- Use discriminated unions for better type narrowing
+
+```typescript
+interface Bird {
+	type: 'bird';
+	fly(): void;
+}
+
+interface Fish {
+	type: 'fish';
+	swim(): void;
+}
+
+function isBird(animal: Bird | Fish): animal is Bird {
+	return animal.type === 'bird';
+}
+```
+
+### Utility Types
+
+- Use TypeScript's built-in utility types for common type transformations:
+
+#### Property Modifiers
+
+- `Partial<T>` - Makes all properties optional
+- `Required<T>` - Makes all properties required
+- `Readonly<T>` - Makes all properties readonly
+- `Record<K, T>` - Creates a type with a set of properties K of type T
+
+#### Property Selection
+
+- `Pick<T, K>` - Selects a subset of properties
+- `Omit<T, K>` - Excludes a subset of properties
+- `Extract<T, U>` - Extracts types assignable to U
+- `Exclude<T, U>` - Excludes types assignable to U
+
+#### Function Types
+
+- `Parameters<T>` - Gets parameter types of a function
+- `ReturnType<T>` - Gets the return type of a function
+- `ConstructorParameters<T>` - Gets constructor parameter types
+- `InstanceType<T>` - Gets the instance type of a constructor
+
+#### Promise and Async Types
+
+- `Awaited<T>` - Gets the type inside a Promise
+- `PromiseLike<T>` - Represents a thenable object
+
+#### Other Utility Types
+
+- `NonNullable<T>` - Removes null and undefined from type
+- `ThisType<T>` - Marks a this context
+- `ThisParameterType<T>` - Extracts the this parameter type
+- `OmitThisParameter<T>` - Removes the this parameter
+
+```typescript
+// Usage examples
+type User = {
+	id: string;
+	name: string;
+	email: string;
+	age?: number;
+	roles: string[];
+};
+
+// Property Modifiers
+type PartialUser = Partial<User>; // All properties optional
+type RequiredUser = Required<User>; // All properties required
+type ReadonlyUser = Readonly<User>; // All properties readonly
+type UserRoleMap = Record<string, string[]>; // { [key: string]: string[] }
+
+// Property Selection
+type UserBasicInfo = Pick<User, 'id' | 'name'>; // Only id and name
+type UserWithoutId = Omit<User, 'id'>; // Everything except id
+
+// Function Types
+function updateUser(id: string, data: Partial<User>): Promise<User> {
+	return Promise.resolve({} as User);
+}
+
+type UpdateUserParams = Parameters<typeof updateUser>; // [string, Partial<User>]
+type UpdateUserReturn = ReturnType<typeof updateUser>; // Promise<User>
+
+// Practical Examples
+type UpdateUserDto = Partial<Omit<User, 'id'>>;
+
+type ApiResponse<T> = {
+	data: T;
+	status: number;
+	message: string;
+};
+```
+
+## Error Handling
+
+### Error Types
+
+- Create specific error types for different error cases
+- Use error classes that extend `Error`
+- Include relevant error information in error types
+
+```typescript
+class ValidationError extends Error {
+	constructor(
+		message: string,
+		public readonly field: string,
+		public readonly value: unknown
+	) {
+		super(message);
+		this.name = 'ValidationError';
+	}
+}
+```
+
+## Async Operations
+
+### Promise Handling
+
+- Use async/await over raw promises
+- Type async function return values explicitly
+- Handle promise rejections appropriately
+- Use Promise utility types when needed
+
+```typescript
+// Good
+async function fetchUser(id: string): Promise<User> {
+	try {
+		const response = await api.get(`/users/${id}`);
+		return response.data;
+	} catch (error) {
+		throw new UserNotFoundError(id);
+	}
+}
+
+// Bad
+function fetchUser(id: string) {
+	return api.get(`/users/${id}`).then((response) => response.data);
+}
+```
