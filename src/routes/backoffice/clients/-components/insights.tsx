@@ -42,13 +42,13 @@ export function Insights() {
   return (
     <ErrorBoundary fallback={<InsightsError />}>
       <Suspense fallback={<InsightsSkeleton />}>
-        <InsightsCards />
+        <InsightsContent />
       </Suspense>
     </ErrorBoundary>
   )
 }
 
-export function InsightsCards() {
+export function InsightsContent() {
   const { data: insights } = useSuspenseQuery(clientQuieries.insights())
 
   return (

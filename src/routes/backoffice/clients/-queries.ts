@@ -29,10 +29,10 @@ export const clientQuieries = {
 
 const getClientInsights = createServerFn({ method: 'GET' }).handler(
   async () => {
-    await new Promise((resolve) => setTimeout(resolve, 1000))
+    /* await new Promise((resolve) => setTimeout(resolve, 1000))
     if (Math.random() < 0.5) {
       throw new Error('Error loading client insights')
-    }
+    } */
     return {
       active: await db.clients.countByStatus('active'),
       inactive: await db.clients.countByStatus('inactive'),
