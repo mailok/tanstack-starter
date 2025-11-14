@@ -12,6 +12,8 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as BackofficeRouteImport } from './routes/backoffice'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as BackofficeIndexRouteImport } from './routes/backoffice/index'
+import { Route as BackofficeClientsRouteImport } from './routes/backoffice/clients'
+import { Route as BackofficeClientsIndexRouteImport } from './routes/backoffice/clients/index'
 
 const BackofficeRoute = BackofficeRouteImport.update({
   id: '/backoffice',
@@ -28,28 +30,54 @@ const BackofficeIndexRoute = BackofficeIndexRouteImport.update({
   path: '/',
   getParentRoute: () => BackofficeRoute,
 } as any)
+const BackofficeClientsRoute = BackofficeClientsRouteImport.update({
+  id: '/clients',
+  path: '/clients',
+  getParentRoute: () => BackofficeRoute,
+} as any)
+const BackofficeClientsIndexRoute = BackofficeClientsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => BackofficeClientsRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/backoffice': typeof BackofficeRouteWithChildren
+  '/backoffice/clients': typeof BackofficeClientsRouteWithChildren
   '/backoffice/': typeof BackofficeIndexRoute
+  '/backoffice/clients/': typeof BackofficeClientsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/backoffice': typeof BackofficeIndexRoute
+  '/backoffice/clients': typeof BackofficeClientsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/backoffice': typeof BackofficeRouteWithChildren
+  '/backoffice/clients': typeof BackofficeClientsRouteWithChildren
   '/backoffice/': typeof BackofficeIndexRoute
+  '/backoffice/clients/': typeof BackofficeClientsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/backoffice' | '/backoffice/'
+  fullPaths:
+    | '/'
+    | '/backoffice'
+    | '/backoffice/clients'
+    | '/backoffice/'
+    | '/backoffice/clients/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/backoffice'
-  id: '__root__' | '/' | '/backoffice' | '/backoffice/'
+  to: '/' | '/backoffice' | '/backoffice/clients'
+  id:
+    | '__root__'
+    | '/'
+    | '/backoffice'
+    | '/backoffice/clients'
+    | '/backoffice/'
+    | '/backoffice/clients/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -80,14 +108,41 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BackofficeIndexRouteImport
       parentRoute: typeof BackofficeRoute
     }
+    '/backoffice/clients': {
+      id: '/backoffice/clients'
+      path: '/clients'
+      fullPath: '/backoffice/clients'
+      preLoaderRoute: typeof BackofficeClientsRouteImport
+      parentRoute: typeof BackofficeRoute
+    }
+    '/backoffice/clients/': {
+      id: '/backoffice/clients/'
+      path: '/'
+      fullPath: '/backoffice/clients/'
+      preLoaderRoute: typeof BackofficeClientsIndexRouteImport
+      parentRoute: typeof BackofficeClientsRoute
+    }
   }
 }
 
+interface BackofficeClientsRouteChildren {
+  BackofficeClientsIndexRoute: typeof BackofficeClientsIndexRoute
+}
+
+const BackofficeClientsRouteChildren: BackofficeClientsRouteChildren = {
+  BackofficeClientsIndexRoute: BackofficeClientsIndexRoute,
+}
+
+const BackofficeClientsRouteWithChildren =
+  BackofficeClientsRoute._addFileChildren(BackofficeClientsRouteChildren)
+
 interface BackofficeRouteChildren {
+  BackofficeClientsRoute: typeof BackofficeClientsRouteWithChildren
   BackofficeIndexRoute: typeof BackofficeIndexRoute
 }
 
 const BackofficeRouteChildren: BackofficeRouteChildren = {
+  BackofficeClientsRoute: BackofficeClientsRouteWithChildren,
   BackofficeIndexRoute: BackofficeIndexRoute,
 }
 

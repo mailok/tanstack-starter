@@ -26,7 +26,7 @@ export function NavGeneral() {
           </Link>
         </SidebarMenuItem>
         <SidebarMenuItem key="clients">
-          <Link to="/backoffice" preload="intent">
+          <Link to="/backoffice/clients" preload="intent">
             {({ isActive }) => (
               <SidebarMenuButton isActive={isActive} asChild>
                 <span>
