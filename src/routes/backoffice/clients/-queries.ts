@@ -1,5 +1,5 @@
 import db from "@/db"
-import { createServerFn } from "@tanstack/react-start"
+import { createServerFn } from '@tanstack/react-start'
 
 export type ClientQuery = {
   status?: string
@@ -30,12 +30,7 @@ export const clientQuieries = {
 
 const getClientInsights = createServerFn({ method: 'GET' }).handler(
   async () => {
-    /* await new Promise((resolve) => setTimeout(resolve, 6000)) */
-
-    /*  const flag = true
-    if (flag) {
-      throw new Error('Error loading client insights')
-    } */
+    //  await sleep()
 
     return {
       active: await db.clients.countByStatus('active'),
