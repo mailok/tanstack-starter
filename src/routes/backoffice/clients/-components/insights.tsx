@@ -3,7 +3,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { AlertTriangle, Clock, RotateCcw, UserCheck, Users, UserX } from 'lucide-react';
 import { Suspense } from 'react';
-import { clientQuieries } from '../queries';
+import { clientQuieries } from '../-queries'
 import { useSuspenseQuery } from '@tanstack/react-query';
 
 const summaryItems = [
