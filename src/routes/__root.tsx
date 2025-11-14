@@ -43,7 +43,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 
 function RootDocument({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className="size-full">
+    <html lang="en" className="size-full dark">
       <head>
         <HeadContent />
       </head>
