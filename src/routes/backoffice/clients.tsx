@@ -7,7 +7,9 @@ export const Route = createFileRoute('/backoffice/clients')({
   component: RouteComponent,
   pendingComponent: PendingRoute,
   loader: async ({ context }) => {
-    context.queryClient.ensureQueryData(clientQuieries.insights())
+    context.queryClient.ensureQueryData(clientQuieries.insights()).catch(() => {
+      console.error('Error loading client insights')
+    })
   },
 })
 

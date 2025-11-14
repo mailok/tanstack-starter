@@ -23,7 +23,8 @@ export const clientKeys = {
 export const clientQuieries = {
   insights: () => ({
     queryKey: clientKeys.insights(),
-    queryFn: ({ signal:_ }: { signal: AbortSignal }) => getClientInsights(),
+    queryFn: ({ signal: _ }: { signal: AbortSignal }) => getClientInsights(),
+    throwOnError: true,
   }),
 }
 
@@ -31,9 +32,11 @@ const getClientInsights = createServerFn({ method: 'GET' }).handler(
   async () => {
     /* await new Promise((resolve) => setTimeout(resolve, 6000)) */
 
-    /*  if (Math.random() < 0.5) {
+    /*  const flag = true
+    if (flag) {
       throw new Error('Error loading client insights')
     } */
+
     return {
       active: await db.clients.countByStatus('active'),
       inactive: await db.clients.countByStatus('inactive'),
