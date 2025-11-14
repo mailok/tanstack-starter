@@ -1,18 +1,11 @@
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Skeleton } from '@/components/ui/skeleton';
-import {
-  AlertTriangle,
-  Clock,
-  RotateCcw,
-  UserCheck,
-  Users,
-  UserX,
-} from 'lucide-react'
+import { Card, CardContent } from '@/components/ui/card'
+import { Skeleton } from '@/components/ui/skeleton'
+import { AlertTriangle, Clock, UserCheck, Users, UserX } from 'lucide-react'
 import { clientQuieries } from '../-queries'
 import { useSuspenseQuery } from '@tanstack/react-query'
-import { Suspense } from 'react'
+import { Suspense, useEffect } from 'react'
 import { ErrorBoundary, useErrorBoundary } from '@/components/error-boundary'
+import { toast } from 'sonner'
 
 const summaryItems = [
   {
@@ -110,34 +103,29 @@ export function InsightsSkeleton() {
 
 export function InsightsError() {
   const { error, resetErrorBoundary } = useErrorBoundary()
+
+  useEffect(() => {
+    let id: string | number | undefined
+    if (error) {
+      id = toast.error('Error loading client insights', {
+        description: error.message,
+        position: 'top-right',
+        duration: 5000,
+        action: {
+          label: 'Retry',
+          onClick: resetErrorBoundary,
+        },
+      })
+      return () => {
+        if (id) {
+          toast.dismiss(id)
+        }
+      }
+    }
+  }, [error, resetErrorBoundary])
+
   return (
     <div className="space-y-4">
-      {/* Error message and retry button */}
-      <div className="flex items-center justify-between rounded-lg border border-red-200 bg-red-50 p-4 dark:border-red-800 dark:bg-red-950/50">
-        <div className="flex items-center space-x-3">
-          <AlertTriangle className="h-5 w-5 text-red-600 dark:text-red-400" />
-          <div>
-            <p className="text-sm font-medium text-red-800 dark:text-red-200">
-              Error loading client data
-            </p>
-            {error && (
-              <p className="mt-1 text-xs text-red-600 dark:text-red-400">
-                {error.message}
-              </p>
-            )}
-          </div>
-        </div>
-        <Button
-          onClick={resetErrorBoundary}
-          variant="outline"
-          size="sm"
-          className="border-red-300 text-red-700 hover:bg-red-100 dark:border-red-700 dark:text-red-300 dark:hover:bg-red-900/50"
-        >
-          <RotateCcw className="mr-2 h-4 w-4" />
-          Retry
-        </Button>
-      </div>
-
       {/* Error state cards with opacity */}
       <div className="grid grid-cols-1 gap-4 opacity-60 sm:grid-cols-2 lg:grid-cols-4">
         {summaryItems.map((item) => {
