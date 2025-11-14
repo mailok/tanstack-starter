@@ -29,7 +29,7 @@ export const clientQuieries = {
 
 const getClientInsights = createServerFn({ method: 'GET' }).handler(
   async () => {
-    await new Promise((resolve) => setTimeout(resolve, 5000))
+    await new Promise((resolve) => setTimeout(resolve, 1000))
     return {
       active: await db.clients.countByStatus('active'),
       inactive: await db.clients.countByStatus('inactive'),

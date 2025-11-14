@@ -56,18 +56,17 @@ export type DatabaseData = {
 	clients: Client[];
 };
 
-// Database file path
-const DB_PATH = path.join(process.cwd(), 'src', 'db', 'data.json');
+const DB_PATH = path.join(process.cwd(), 'public', 'data.json')
 
 // Helper functions
 const readDatabase = async (): Promise<DatabaseData> => {
-	try {
-		const data = await fs.readFile(DB_PATH, 'utf-8');
-		return JSON.parse(data);
-	} catch (error) {
-		throw new Error(`Failed to read database: ${error}`);
-	}
-};
+  try {
+    const data = await fs.readFile(DB_PATH, 'utf-8')
+    return JSON.parse(data)
+  } catch (error) {
+    throw new Error(`Failed to read database: ${error}`)
+  }
+}
 
 const writeDatabase = async (data: DatabaseData): Promise<void> => {
 	try {
