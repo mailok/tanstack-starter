@@ -36,7 +36,7 @@ export function NavSchedule() {
             <CollapsibleContent>
               <SidebarMenuSub>
                 <SidebarMenuSubItem>
-                  <Link to="/backoffice">
+                  <Link to="/">
                     {({ isActive }) => (
                       <SidebarMenuButton isActive={isActive} asChild>
                         <span>Calendar</span>
@@ -45,7 +45,7 @@ export function NavSchedule() {
                   </Link>
                 </SidebarMenuSubItem>
                 <SidebarMenuSubItem>
-                  <Link to="/backoffice">
+                  <Link to="/">
                     {({ isActive }) => (
                       <SidebarMenuButton isActive={isActive} asChild>
                         <span>Availability</span>
@@ -54,7 +54,7 @@ export function NavSchedule() {
                   </Link>
                 </SidebarMenuSubItem>
                 <SidebarMenuSubItem>
-                  <Link to="/backoffice">
+                  <Link to="/">
                     {({ isActive }) => (
                       <SidebarMenuButton isActive={isActive} asChild>
                         <span>

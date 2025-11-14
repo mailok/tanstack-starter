@@ -15,7 +15,7 @@ export function NavSettings() {
       <SidebarGroupLabel>Settings</SidebarGroupLabel>
       <SidebarMenu>
         <SidebarMenuItem key="account">
-          <Link to="/backoffice">
+          <Link to="/">
             {({ isActive }) => (
               <SidebarMenuButton isActive={isActive} asChild>
                 <span>
@@ -27,7 +27,7 @@ export function NavSettings() {
           </Link>
         </SidebarMenuItem>
         <SidebarMenuItem key="notifications">
-          <Link to="/backoffice">
+          <Link to="/">
             {({ isActive }) => (
               <SidebarMenuButton isActive={isActive} asChild>
                 <span>
@@ -42,7 +42,7 @@ export function NavSettings() {
           </Link>
         </SidebarMenuItem>
         <SidebarMenuItem key="preferences">
-          <Link to="/backoffice">
+          <Link to="/">
             {({ isActive }) => (
               <SidebarMenuButton isActive={isActive} asChild>
                 <span>

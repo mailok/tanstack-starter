@@ -38,7 +38,7 @@ export function NavGeneral() {
           </Link>
         </SidebarMenuItem>
         <SidebarMenuItem key="employees">
-          <Link to="/backoffice">
+          <Link to="/">
             {({ isActive }) => (
               <SidebarMenuButton isActive={isActive} asChild>
                 <span>
@@ -50,7 +50,7 @@ export function NavGeneral() {
           </Link>
         </SidebarMenuItem>
         <SidebarMenuItem key="tasks">
-          <Link to="/backoffice">
+          <Link to="/">
             {({ isActive }) => (
               <SidebarMenuButton isActive={isActive} asChild>
                 <span>
