@@ -40,11 +40,12 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
   }),
 
   shellComponent: RootDocument,
+  notFoundComponent: () => <div>Not Found (Root)</div>,
 })
 
 function RootDocument({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className="size-full dark">
+    <html lang="en" className="size-full">
       <head>
         <HeadContent />
       </head>
