@@ -12,6 +12,9 @@ import appCss from '../styles.css?url'
 
 import type { QueryClient } from '@tanstack/react-query'
 import { Toaster } from '@/components/ui/sonner'
+import { ThemeMonitor } from '@/components/theme/theme-monitor'
+import { getThemeServer } from '@/components/theme/theme-server'
+import { cn } from '@/lib/utils'
 
 interface MyRouterContext {
   queryClient: QueryClient
@@ -40,13 +43,22 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
   }),
 
   shellComponent: RootDocument,
+  loader: async () => {
+    const theme = await getThemeServer()
+    return { theme }
+  },
 })
 
 function RootDocument({ children }: { children: React.ReactNode }) {
+  const { theme } = Route.useLoaderData()
   return (
-    <html lang="en" className="size-full">
+    <html
+      lang="en"
+      className={cn('size-full', theme.selected || theme.detected)}
+    >
       <head>
         <HeadContent />
+        <ThemeMonitor />
       </head>
       <body className="size-full">
         {children}

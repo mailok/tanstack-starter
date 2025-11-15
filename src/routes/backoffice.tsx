@@ -7,6 +7,7 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from '@/components/ui/sidebar'
+import { ThemeToggle } from '@/components/theme/theme-toggle'
 
 export const Route = createFileRoute('/backoffice')({
   component: RouteComponent,
@@ -41,7 +42,7 @@ function RouteComponent() {
                   GitHub
                 </a>
               </Button>
-              {/* <ModeToggle /> */}
+              <ThemeToggle />
             </div>
           </div>
         </header>
