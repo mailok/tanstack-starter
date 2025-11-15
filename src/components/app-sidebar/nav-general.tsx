@@ -26,7 +26,10 @@ export function NavGeneral() {
           </Link>
         </SidebarMenuItem>
         <SidebarMenuItem key="clients">
-          <Link to="/backoffice/clients" preload="intent">
+          <Link
+            to="/backoffice/clients"
+            search={{ page: 1, status: 'active', name: '' }}
+          >
             {({ isActive }) => (
               <SidebarMenuButton isActive={isActive} asChild>
                 <span>
