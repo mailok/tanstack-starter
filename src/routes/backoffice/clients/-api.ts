@@ -1,7 +1,6 @@
 import db from '@/db'
 import { createServerFn } from '@tanstack/react-start'
 import { BaseClientSearchSchema } from './-schemas'
-import { sleep } from '@/lib/sleep'
 
 export const getClientInsights = createServerFn({ method: 'GET' }).handler(
   async () => {
