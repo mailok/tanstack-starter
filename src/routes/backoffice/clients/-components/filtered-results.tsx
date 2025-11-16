@@ -24,9 +24,16 @@ import { getInitials } from '../-utils/get-initials'
 import { getGenderLabel } from '../-utils/get-gender-label'
 import { getStatusLabel } from '../-utils/get-status-label'
 
+function useClientSearch() {
+  return useSearch({ from: '/backoffice/clients/' })
+}
+
 export function FilteredResults() {
+  const search = useClientSearch()
+  const resetKey = `${search.page}-${search.status}-${search.name}-${search.viewMode}`
+
   return (
-    <ErrorBoundary fallback={<FilteredResultsError />}>
+    <ErrorBoundary key={resetKey} fallback={<FilteredResultsError />}>
       <Suspense fallback={<FilteredResultsSkeleton />}>
         <FilteredResultsContent />
       </Suspense>
@@ -35,9 +42,8 @@ export function FilteredResults() {
 }
 
 function FilteredResultsContent() {
-  const search = useSearch({
-    from: '/backoffice/clients/',
-  })
+  const search = useClientSearch()
+
   const { data } = useSuspenseQuery(
     clientQueries.filteredClients({
       page: search.page,
@@ -85,8 +91,8 @@ function FilteredResultsSkeleton() {
 
 function EmptyResults() {
   return (
-    <Card className="card-elevated">
-      <CardContent className="p-12 text-center">
+    <div className="size-full flex items-center justify-center">
+      <div className="p-12 text-center">
         <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-muted">
           <svg
             className="h-8 w-8 text-muted-foreground"
@@ -108,8 +114,8 @@ function EmptyResults() {
         <p className="mt-2 text-sm text-muted-foreground">
           No clients were found matching the applied filters.
         </p>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   )
 }
 
@@ -171,7 +177,7 @@ type ClientTableProps = {
   onClick?: (client: Client) => void
 }
 
-export function ClientTable({ clients, onClick }: ClientTableProps) {
+function ClientTable({ clients, onClick }: ClientTableProps) {
   return (
     <div className="bg-card rounded-lg border shadow">
       <Table>
@@ -244,8 +250,8 @@ export function ClientTable({ clients, onClick }: ClientTableProps) {
 function FilteredResultsError() {
   const { error, resetErrorBoundary } = useErrorBoundary()
   return (
-    <Card className="card-elevated">
-      <CardContent className="space-y-4 p-12 text-center">
+    <div className="size-full flex items-center justify-center">
+      <div className="space-y-4 p-12 text-center">
         <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-destructive/10">
           <AlertTriangle className="h-5 w-5 text-red-600" />
         </div>
@@ -261,8 +267,8 @@ function FilteredResultsError() {
         <Button onClick={resetErrorBoundary} variant="outline" className="mt-4">
           Try Again
         </Button>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   )
 }
 

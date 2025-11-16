@@ -17,7 +17,6 @@ export const getClientInsights = createServerFn({ method: 'GET' }).handler(
 export const getFilteredClients = createServerFn({ method: 'GET' })
   .inputValidator(BaseClientSearchSchema)
   .handler(async ({ data }) => {
-    await sleep({ delay: 2000 })
     const { page, name, status, size } = data
     const clients = await db.clients.filterBy((client) => {
       return (
