@@ -1,7 +1,7 @@
 import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { AlertTriangle, Clock, UserCheck, Users, UserX } from 'lucide-react'
-import { clientQuieries } from '../-queries'
+import { clientQueries } from '../-queries'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { Suspense, useEffect } from 'react'
 import { ErrorBoundary, useErrorBoundary } from '@/components/error-boundary'
@@ -49,7 +49,7 @@ export function Insights() {
 }
 
 export function InsightsContent() {
-  const { data: insights } = useSuspenseQuery(clientQuieries.insights())
+  const { data: insights } = useSuspenseQuery(clientQueries.insights())
 
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">

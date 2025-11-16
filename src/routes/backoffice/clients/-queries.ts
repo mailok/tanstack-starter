@@ -1,12 +1,5 @@
-import db from "@/db"
-import { createServerFn } from '@tanstack/react-start'
-
-export type ClientQuery = {
-  status?: string
-  search?: string
-  page?: number
-  size?: number
-}
+import * as api from './-api'
+import { ClientQuery } from './-schemas'
 
 export const clientKeys = {
   all: ['clients'] as const,
@@ -20,23 +13,19 @@ export const clientKeys = {
   benefits: (id: string) => [...clientKeys.all, 'benefits', id] as const,
 }
 
-export const clientQuieries = {
-  insights: () => ({
-    queryKey: clientKeys.insights(),
-    queryFn: ({ signal: _ }: { signal: AbortSignal }) => getClientInsights(),
-    throwOnError: true,
-  }),
+const insights = () => ({
+  queryKey: clientKeys.insights(),
+  queryFn: ({ signal: _ }: { signal: AbortSignal }) => api.getClientInsights(),
+  throwOnError: true,
+})
+
+const filteredClients = (query: ClientQuery) => ({
+  queryKey: clientKeys.list(query),
+  queryFn: () => api.getFilteredClients({ data: query }),
+  throwOnError: true,
+})
+
+export const clientQueries = {
+  insights,
+  filteredClients,
 }
-
-const getClientInsights = createServerFn({ method: 'GET' }).handler(
-  async () => {
-    //  await sleep()
-
-    return {
-      active: await db.clients.countByStatus('active'),
-      inactive: await db.clients.countByStatus('inactive'),
-      pending: await db.clients.countByStatus('pending'),
-      total: await db.clients.count(),
-    } as const
-  },
-)

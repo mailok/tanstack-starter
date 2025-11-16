@@ -1,0 +1,268 @@
+import { useSuspenseQuery } from '@tanstack/react-query'
+import { clientQueries } from '../-queries'
+import { Suspense } from 'react'
+import { ErrorBoundary, useErrorBoundary } from '@/components/error-boundary'
+import { useSearch } from '@tanstack/react-router'
+import { Card, CardContent } from '@/components/ui/card'
+import { Skeleton } from '@/components/ui/skeleton'
+import { AlertTriangle } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { ClientCard } from './client-card'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Client } from '@/db'
+import { Badge } from '@/components/ui/badge'
+import { cn } from '@/lib/utils'
+import { getInitials } from '../-utils/get-initials'
+import { getGenderLabel } from '../-utils/get-gender-label'
+import { getStatusLabel } from '../-utils/get-status-label'
+
+export function FilteredResults() {
+  return (
+    <ErrorBoundary fallback={<FilteredResultsError />}>
+      <Suspense fallback={<FilteredResultsSkeleton />}>
+        <FilteredResultsContent />
+      </Suspense>
+    </ErrorBoundary>
+  )
+}
+
+function FilteredResultsContent() {
+  const search = useSearch({
+    from: '/backoffice/clients/',
+  })
+  const { data } = useSuspenseQuery(
+    clientQueries.filteredClients({
+      page: search.page,
+      status: search.status,
+      name: search.name,
+      size: 10,
+    }),
+  )
+
+  if (data.clients.length === 0) {
+    return <EmptyResults />
+  }
+  if (search.viewMode === 'cards') {
+    return (
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {data.clients.map((client) => (
+          <ClientCard
+            key={client.id}
+            client={client}
+            onClick={(client) => console.log(client)}
+          />
+        ))}
+      </div>
+    )
+  }
+  return <ClientTable clients={data.clients} />
+}
+
+function FilteredResultsSkeleton() {
+  const search = useSearch({
+    from: '/backoffice/clients/',
+  })
+
+  if (search.viewMode === 'cards') {
+    return (
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <CardSkeleton key={i} />
+        ))}
+      </div>
+    )
+  }
+  return <TableSkeleton />
+}
+
+function EmptyResults() {
+  return (
+    <Card className="card-elevated">
+      <CardContent className="p-12 text-center">
+        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-muted">
+          <svg
+            className="h-8 w-8 text-muted-foreground"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+            />
+          </svg>
+        </div>
+        <h3 className="mt-4 text-lg font-semibold text-foreground">
+          No clients found
+        </h3>
+        <p className="mt-2 text-sm text-muted-foreground">
+          No clients were found matching the applied filters.
+        </p>
+      </CardContent>
+    </Card>
+  )
+}
+
+function CardSkeleton() {
+  return (
+    <Card className="card-elevated">
+      <CardContent className="p-6">
+        <div className="flex items-start space-x-4">
+          <Skeleton className="h-16 w-16 rounded-full" />
+          <div className="flex-1 space-y-3">
+            <div className="flex items-start justify-between">
+              <div className="space-y-2">
+                <Skeleton className="h-5 w-32" />
+                <Skeleton className="h-4 w-16" />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Skeleton className="h-4 w-48" />
+              <Skeleton className="h-4 w-36" />
+            </div>
+            <div className="border-border border-t pt-3">
+              <div className="space-y-2">
+                <Skeleton className="h-4 w-40" />
+                <Skeleton className="h-4 w-24" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  )
+}
+
+function TableSkeleton() {
+  return (
+    <div className="rounded-lg border bg-card shadow">
+      <div className="space-y-4 p-4">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <div key={i} className="flex items-center space-x-4">
+            <Skeleton className="h-8 w-8 rounded-full" />
+            <div className="grid flex-1 grid-cols-7 gap-4">
+              <Skeleton className="h-4" />
+              <Skeleton className="h-4" />
+              <Skeleton className="h-4" />
+              <Skeleton className="h-4" />
+              <Skeleton className="h-4" />
+              <Skeleton className="h-4" />
+              <Skeleton className="h-4" />
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+type ClientTableProps = {
+  clients: Client[]
+  onClick?: (client: Client) => void
+}
+
+export function ClientTable({ clients, onClick }: ClientTableProps) {
+  return (
+    <div className="bg-card rounded-lg border shadow">
+      <Table>
+        <TableHeader>
+          <TableRow className="hover:bg-transparent">
+            <TableHead className="w-16"></TableHead>
+            <TableHead>Nombre</TableHead>
+            <TableHead>Email</TableHead>
+            <TableHead>Teléfono</TableHead>
+            <TableHead>Fecha Nacimiento</TableHead>
+            <TableHead>Edad</TableHead>
+            <TableHead>Género</TableHead>
+            <TableHead>Estado</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {clients.map((client) => (
+            <TableRow
+              key={client.id}
+              className={cn(
+                'cursor-pointer transition-colors',
+                onClick && 'hover:bg-card-hover',
+              )}
+              onClick={() => onClick?.(client)}
+            >
+              <TableCell>
+                <Avatar className="h-8 w-8">
+                  <AvatarImage
+                    src={client.personalInformation.photo}
+                    alt={client.personalInformation.name}
+                  />
+                  <AvatarFallback className="bg-primary-muted text-primary text-xs">
+                    {getInitials(client.personalInformation.name)}
+                  </AvatarFallback>
+                </Avatar>
+              </TableCell>
+              <TableCell className="font-medium">
+                {client.personalInformation.name}
+              </TableCell>
+              <TableCell className="text-muted-foreground">
+                {client.personalInformation.email}
+              </TableCell>
+              <TableCell className="text-muted-foreground">
+                {client.personalInformation.phone}
+              </TableCell>
+              <TableCell className="text-muted-foreground">
+                {new Date(
+                  client.personalInformation.birthDate,
+                ).toLocaleDateString('es-ES')}
+              </TableCell>
+              <TableCell className="text-muted-foreground">
+                {client.personalInformation.age}
+              </TableCell>
+              <TableCell className="text-muted-foreground">
+                {getGenderLabel(client.personalInformation.gender)}
+              </TableCell>
+              <TableCell>
+                <Badge className="text-xs" data-status={client.status}>
+                  {getStatusLabel(client.status)}
+                </Badge>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
+  )
+}
+
+function FilteredResultsError() {
+  const { error, resetErrorBoundary } = useErrorBoundary()
+  return (
+    <Card className="card-elevated">
+      <CardContent className="space-y-4 p-12 text-center">
+        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-destructive/10">
+          <AlertTriangle className="h-5 w-5 text-red-600" />
+        </div>
+        <div className="space-y-2">
+          <h3 className="text-lg font-semibold text-foreground">
+            Error loading clients
+          </h3>
+          <p className="mx-auto max-w-md text-sm text-muted-foreground">
+            {error?.message ||
+              'Something went wrong while loading the client data. Please try again.'}
+          </p>
+        </div>
+        <Button onClick={resetErrorBoundary} variant="outline" className="mt-4">
+          Try Again
+        </Button>
+      </CardContent>
+    </Card>
+  )
+}
+

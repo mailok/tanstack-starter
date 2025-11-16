@@ -4,16 +4,8 @@ import {
   StatusFilter,
   ViewModeToggle,
 } from './-components/filters'
-import * as z from 'zod'
-
-const ClientSearchSchema = z.object({
-  page: z.number().catch(1),
-  status: z.enum(['active', 'inactive', 'pending']).catch('active'),
-  name: z.string().default(''),
-  viewMode: z.enum(['cards', 'table']).catch('cards'),
-})
-
-type ClientSearch = z.infer<typeof ClientSearchSchema>
+import { ClientSearch, ClientSearchSchema } from './-schemas'
+import { FilteredResults } from './-components/filtered-results'
 
 const defaultSearch: ClientSearch = {
   page: 1,
@@ -45,8 +37,8 @@ function RouteComponent() {
         </div>
         <ViewModeToggle />
       </div>
-      {/* <ClientList />
-      <ClientsPagination /> */}
+      <FilteredResults />
+      {/* <ClientsPagination /> */}
     </>
   )
 }
