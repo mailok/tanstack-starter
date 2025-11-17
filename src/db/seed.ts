@@ -1,0 +1,956 @@
+import 'dotenv/config'
+import { db } from './index'
+import {
+  NewClient,
+  NewClientBenefits,
+  NewClientMedicalInformation,
+  NewClientPersonalInformation,
+  clients,
+  clientPersonalInformation,
+  clientMedicalInformation,
+  clientBenefits,
+} from './schemas/clients'
+
+type SeedClient = NewClient & {
+  personalInformation: NewClientPersonalInformation
+  medicalInformation: NewClientMedicalInformation | null
+  benefits: NewClientBenefits | null
+}
+
+const seedData: SeedClient[] = [
+  {
+    status: 'active',
+    personalInformation: {
+      clientId: '1',
+      photo:
+        'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face',
+      name: 'Juan Carlos Rodríguez',
+      email: 'juan.rodriguez@email.com',
+      phone: '+1 (555) 123-4567',
+      birthDate: '1985-03-15',
+      age: 39,
+      gender: 'male',
+    },
+    medicalInformation: {
+      clientId: '1',
+      bloodType: 'O+',
+      allergies: ['Polen', 'Penicilina'],
+      chronicConditions: ['Hipertensión'],
+      medications: ['Losartán 50mg', 'Aspirina 100mg'],
+      lastCheckup: '2024-01-05',
+      emergencyContactName: 'María Rodríguez',
+      emergencyContactPhone: '+1 (555) 123-4568',
+      emergencyContactRelationship: 'Esposa',
+    },
+    benefits: {
+      clientId: '1',
+      insuranceProvider: 'Seguros del Norte',
+      policyNumber: 'SN-2023-001234',
+      coverageType: 'Premium',
+      deductible: 500,
+      copay: 25,
+      annualLimit: 50000,
+      dentalCoverage: true,
+      visionCoverage: true,
+      mentalHealthCoverage: true,
+    },
+  },
+  {
+    status: 'pending',
+    personalInformation: {
+      clientId: '2',
+      photo: '',
+      name: 'María González López',
+      email: 'maria.gonzalez@email.com',
+      phone: '+1 (555) 234-5678',
+      birthDate: '1990-07-22',
+      age: 34,
+      gender: 'female',
+    },
+    medicalInformation: null,
+    benefits: null,
+  },
+  {
+    status: 'inactive',
+    personalInformation: {
+      clientId: '3',
+      photo:
+        'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face',
+      name: 'Roberto Silva',
+      email: 'roberto.silva@email.com',
+      phone: '+1 (555) 345-6789',
+      birthDate: '1978-11-08',
+      age: 45,
+      gender: 'male',
+    },
+    medicalInformation: {
+      clientId: '3',
+      bloodType: 'B+',
+      allergies: ['Látex'],
+      chronicConditions: ['Diabetes tipo 2'],
+      medications: ['Metformina 500mg', 'Insulina'],
+      lastCheckup: '2023-11-20',
+      emergencyContactName: 'Elena Silva',
+      emergencyContactPhone: '+1 (555) 345-6790',
+      emergencyContactRelationship: 'Hija',
+    },
+    benefits: {
+      clientId: '3',
+      insuranceProvider: 'HealthGuard',
+      policyNumber: 'HG-2023-009012',
+      coverageType: 'Basic',
+      deductible: 2000,
+      copay: 50,
+      annualLimit: 15000,
+      dentalCoverage: false,
+      visionCoverage: true,
+      mentalHealthCoverage: false,
+    },
+  },
+  {
+    status: 'active',
+    personalInformation: {
+      clientId: '4',
+      photo:
+        'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face',
+      name: 'Ana Patricia Morales',
+      email: 'ana.morales@email.com',
+      phone: '+1 (555) 456-7890',
+      birthDate: '1992-05-30',
+      age: 32,
+      gender: 'female',
+    },
+    medicalInformation: {
+      clientId: '4',
+      bloodType: 'AB+',
+      allergies: ['Nueces'],
+      chronicConditions: ['Asma'],
+      medications: ['Inhalador Salbutamol'],
+      lastCheckup: '2024-01-08',
+      emergencyContactName: 'Luis Morales',
+      emergencyContactPhone: '+1 (555) 456-7891',
+      emergencyContactRelationship: 'Padre',
+    },
+    benefits: {
+      clientId: '4',
+      insuranceProvider: 'VitalCare',
+      policyNumber: 'VC-2023-003456',
+      coverageType: 'Premium',
+      deductible: 300,
+      copay: 20,
+      annualLimit: 75000,
+      dentalCoverage: true,
+      visionCoverage: true,
+      mentalHealthCoverage: true,
+    },
+  },
+  {
+    status: 'active',
+    personalInformation: {
+      clientId: '5',
+      photo:
+        'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face',
+      name: 'Carlos Eduardo Vega',
+      email: 'carlos.vega@email.com',
+      phone: '+1 (555) 567-8901',
+      birthDate: '1987-09-12',
+      age: 37,
+      gender: 'male',
+    },
+    medicalInformation: {
+      clientId: '5',
+      bloodType: 'A+',
+      allergies: [],
+      chronicConditions: [],
+      medications: [],
+      lastCheckup: '2023-12-10',
+      emergencyContactName: 'Patricia Vega',
+      emergencyContactPhone: '+1 (555) 567-8902',
+      emergencyContactRelationship: 'Madre',
+    },
+    benefits: {
+      clientId: '5',
+      insuranceProvider: 'Wellness Plus',
+      policyNumber: 'WP-2023-007890',
+      coverageType: 'Standard',
+      deductible: 800,
+      copay: 30,
+      annualLimit: 30000,
+      dentalCoverage: true,
+      visionCoverage: true,
+      mentalHealthCoverage: false,
+    },
+  },
+  {
+    status: 'pending',
+    personalInformation: {
+      clientId: '6',
+      photo:
+        'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&fit=crop&crop=face',
+      name: 'Sofía Hernández',
+      email: 'sofia.hernandez@email.com',
+      phone: '+1 (555) 678-9012',
+      birthDate: '1995-12-03',
+      age: 29,
+      gender: 'female',
+    },
+    medicalInformation: null,
+    benefits: null,
+  },
+  {
+    status: 'active',
+    personalInformation: {
+      clientId: '7',
+      photo:
+        'https://images.unsplash.com/photo-1511367461989-f85a21fda167?w=150&h=150&fit=crop&crop=face',
+      name: 'Lucía Ramírez',
+      email: 'lucia.ramirez@email.com',
+      phone: '+1 (555) 789-0123',
+      birthDate: '1988-04-18',
+      age: 36,
+      gender: 'female',
+    },
+    medicalInformation: {
+      clientId: '7',
+      bloodType: 'B-',
+      allergies: ['Lácteos'],
+      chronicConditions: ['Artritis'],
+      medications: ['Ibuprofeno 400mg'],
+      lastCheckup: '2024-01-10',
+      emergencyContactName: 'Miguel Ramírez',
+      emergencyContactPhone: '+1 (555) 789-0124',
+      emergencyContactRelationship: 'Esposo',
+    },
+    benefits: {
+      clientId: '7',
+      insuranceProvider: 'HealthMax',
+      policyNumber: 'HM-2023-013456',
+      coverageType: 'Premium',
+      deductible: 400,
+      copay: 25,
+      annualLimit: 60000,
+      dentalCoverage: true,
+      visionCoverage: true,
+      mentalHealthCoverage: true,
+    },
+  },
+  {
+    status: 'inactive',
+    personalInformation: {
+      clientId: '8',
+      photo:
+        'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=150&h=150&fit=crop&crop=face',
+      name: 'Miguel Ángel Torres',
+      email: 'miguel.torres@email.com',
+      phone: '+1 (555) 890-1234',
+      birthDate: '1982-10-25',
+      age: 41,
+      gender: 'male',
+    },
+    medicalInformation: {
+      clientId: '8',
+      bloodType: 'AB-',
+      allergies: ['Polen', 'Ácaros'],
+      chronicConditions: ['Hipertensión', 'Colesterol alto'],
+      medications: ['Atorvastatina 20mg', 'Enalapril 10mg'],
+      lastCheckup: '2023-11-15',
+      emergencyContactName: 'Carmen Torres',
+      emergencyContactPhone: '+1 (555) 890-1235',
+      emergencyContactRelationship: 'Esposa',
+    },
+    benefits: {
+      clientId: '8',
+      insuranceProvider: 'SecureHealth',
+      policyNumber: 'SH-2023-015678',
+      coverageType: 'Standard',
+      deductible: 1200,
+      copay: 35,
+      annualLimit: 35000,
+      dentalCoverage: true,
+      visionCoverage: false,
+      mentalHealthCoverage: false,
+    },
+  },
+  {
+    status: 'pending',
+    personalInformation: {
+      clientId: '9',
+      photo:
+        'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150&h=150&fit=crop&crop=face',
+      name: 'Paula Fernández',
+      email: 'paula.fernandez@email.com',
+      phone: '+1 (555) 901-2345',
+      birthDate: '1993-02-11',
+      age: 31,
+      gender: 'female',
+    },
+    medicalInformation: null,
+    benefits: null,
+  },
+  {
+    status: 'active',
+    personalInformation: {
+      clientId: '10',
+      photo:
+        'https://images.unsplash.com/photo-1463453091185-61582044d556?w=150&h=150&fit=crop&crop=face',
+      name: 'Javier Castillo',
+      email: 'javier.castillo@email.com',
+      phone: '+1 (555) 012-3456',
+      birthDate: '1980-06-09',
+      age: 44,
+      gender: 'male',
+    },
+    medicalInformation: {
+      clientId: '10',
+      bloodType: 'O+',
+      allergies: ['Sulfitos'],
+      chronicConditions: ['Gastritis'],
+      medications: ['Omeprazol 20mg'],
+      lastCheckup: '2024-01-12',
+      emergencyContactName: 'Isabel Castillo',
+      emergencyContactPhone: '+1 (555) 012-3457',
+      emergencyContactRelationship: 'Esposa',
+    },
+    benefits: {
+      clientId: '10',
+      insuranceProvider: 'TotalCare',
+      policyNumber: 'TC-2023-019012',
+      coverageType: 'Premium',
+      deductible: 350,
+      copay: 20,
+      annualLimit: 80000,
+      dentalCoverage: true,
+      visionCoverage: true,
+      mentalHealthCoverage: true,
+    },
+  },
+  {
+    status: 'active',
+    personalInformation: {
+      clientId: '11',
+      photo:
+        'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=150&h=150&fit=crop&crop=face',
+      name: 'Valeria Soto',
+      email: 'valeria.soto@email.com',
+      phone: '+1 (555) 123-6789',
+      birthDate: '1997-08-21',
+      age: 26,
+      gender: 'female',
+    },
+    medicalInformation: {
+      clientId: '11',
+      bloodType: 'B+',
+      allergies: [],
+      chronicConditions: [],
+      medications: [],
+      lastCheckup: '2024-01-15',
+      emergencyContactName: 'Ricardo Soto',
+      emergencyContactPhone: '+1 (555) 123-6790',
+      emergencyContactRelationship: 'Padre',
+    },
+    benefits: {
+      clientId: '11',
+      insuranceProvider: 'HealthGuard',
+      policyNumber: 'HG-2023-020234',
+      coverageType: 'Standard',
+      deductible: 600,
+      copay: 25,
+      annualLimit: 40000,
+      dentalCoverage: true,
+      visionCoverage: true,
+      mentalHealthCoverage: false,
+    },
+  },
+  {
+    status: 'inactive',
+    personalInformation: {
+      clientId: '12',
+      photo: '',
+      name: 'Andrés Pérez',
+      email: 'andres.perez@email.com',
+      phone: '+1 (555) 234-7890',
+      birthDate: '1984-01-27',
+      age: 40,
+      gender: 'male',
+    },
+    medicalInformation: {
+      clientId: '12',
+      bloodType: 'A+',
+      allergies: ['Polen'],
+      chronicConditions: ['Diabetes tipo 1'],
+      medications: ['Insulina', 'Metformina 1000mg'],
+      lastCheckup: '2023-12-05',
+      emergencyContactName: 'Laura Pérez',
+      emergencyContactPhone: '+1 (555) 234-7891',
+      emergencyContactRelationship: 'Esposa',
+    },
+    benefits: {
+      clientId: '12',
+      insuranceProvider: 'MediCare Plus',
+      policyNumber: 'MP-2023-021456',
+      coverageType: 'Basic',
+      deductible: 2000,
+      copay: 50,
+      annualLimit: 12000,
+      dentalCoverage: false,
+      visionCoverage: true,
+      mentalHealthCoverage: false,
+    },
+  },
+  {
+    status: 'pending',
+    personalInformation: {
+      clientId: '13',
+      photo:
+        'https://images.unsplash.com/photo-1519125323398-675f0ddb6308?w=150&h=150&fit=crop&crop=face',
+      name: 'Gabriela Ruiz',
+      email: 'gabriela.ruiz@email.com',
+      phone: '+1 (555) 345-8901',
+      birthDate: '1991-11-14',
+      age: 32,
+      gender: 'female',
+    },
+    medicalInformation: null,
+    benefits: null,
+  },
+  {
+    status: 'active',
+    personalInformation: {
+      clientId: '14',
+      photo:
+        'https://images.unsplash.com/photo-1511367461989-f85a21fda167?w=150&h=150&fit=crop&crop=face',
+      name: 'Tomás Herrera',
+      email: 'tomas.herrera@email.com',
+      phone: '+1 (555) 456-9012',
+      birthDate: '1989-05-05',
+      age: 35,
+      gender: 'male',
+    },
+    medicalInformation: {
+      clientId: '14',
+      bloodType: 'AB+',
+      allergies: ['Penicilina'],
+      chronicConditions: [],
+      medications: ['Vitamina B12'],
+      lastCheckup: '2024-01-18',
+      emergencyContactName: 'Sandra Herrera',
+      emergencyContactPhone: '+1 (555) 456-9013',
+      emergencyContactRelationship: 'Madre',
+    },
+    benefits: {
+      clientId: '14',
+      insuranceProvider: 'Wellness Plus',
+      policyNumber: 'WP-2023-023890',
+      coverageType: 'Premium',
+      deductible: 250,
+      copay: 15,
+      annualLimit: 90000,
+      dentalCoverage: true,
+      visionCoverage: true,
+      mentalHealthCoverage: true,
+    },
+  },
+  {
+    status: 'active',
+    personalInformation: {
+      clientId: '15',
+      photo:
+        'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face',
+      name: 'Diego Mendoza',
+      email: 'diego.mendoza@email.com',
+      phone: '+1 (555) 567-0123',
+      birthDate: '1986-03-18',
+      age: 38,
+      gender: 'male',
+    },
+    medicalInformation: {
+      clientId: '15',
+      bloodType: 'B-',
+      allergies: ['Mariscos', 'Polen'],
+      chronicConditions: ['Hipertensión'],
+      medications: ['Losartán 100mg'],
+      lastCheckup: '2024-01-16',
+      emergencyContactName: 'Patricia Mendoza',
+      emergencyContactPhone: '+1 (555) 567-0124',
+      emergencyContactRelationship: 'Esposa',
+    },
+    benefits: {
+      clientId: '15',
+      insuranceProvider: 'CareFirst',
+      policyNumber: 'CF-2023-025012',
+      coverageType: 'Standard',
+      deductible: 700,
+      copay: 30,
+      annualLimit: 45000,
+      dentalCoverage: true,
+      visionCoverage: true,
+      mentalHealthCoverage: false,
+    },
+  },
+  {
+    status: 'active',
+    personalInformation: {
+      clientId: '16',
+      photo:
+        'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&h=150&fit=crop&crop=face',
+      name: 'Carmen Jiménez',
+      email: 'carmen.jimenez@email.com',
+      phone: '+1 (555) 678-1234',
+      birthDate: '1994-09-25',
+      age: 29,
+      gender: 'female',
+    },
+    medicalInformation: {
+      clientId: '16',
+      bloodType: 'A-',
+      allergies: [],
+      chronicConditions: [],
+      medications: [],
+      lastCheckup: '2024-01-20',
+      emergencyContactName: 'Roberto Jiménez',
+      emergencyContactPhone: '+1 (555) 678-1235',
+      emergencyContactRelationship: 'Padre',
+    },
+    benefits: {
+      clientId: '16',
+      insuranceProvider: 'HealthMax',
+      policyNumber: 'HM-2023-026134',
+      coverageType: 'Premium',
+      deductible: 300,
+      copay: 20,
+      annualLimit: 70000,
+      dentalCoverage: true,
+      visionCoverage: true,
+      mentalHealthCoverage: true,
+    },
+  },
+  {
+    status: 'active',
+    personalInformation: {
+      clientId: '17',
+      photo:
+        'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face',
+      name: 'Fernando Castro',
+      email: 'fernando.castro@email.com',
+      phone: '+1 (555) 789-2345',
+      birthDate: '1983-12-07',
+      age: 40,
+      gender: 'male',
+    },
+    medicalInformation: {
+      clientId: '17',
+      bloodType: 'O+',
+      allergies: ['Látex'],
+      chronicConditions: ['Colesterol alto'],
+      medications: ['Atorvastatina 40mg'],
+      lastCheckup: '2024-01-19',
+      emergencyContactName: 'Elena Castro',
+      emergencyContactPhone: '+1 (555) 789-2346',
+      emergencyContactRelationship: 'Esposa',
+    },
+    benefits: {
+      clientId: '17',
+      insuranceProvider: 'SecureHealth',
+      policyNumber: 'SH-2023-027256',
+      coverageType: 'Standard',
+      deductible: 1000,
+      copay: 35,
+      annualLimit: 40000,
+      dentalCoverage: true,
+      visionCoverage: false,
+      mentalHealthCoverage: true,
+    },
+  },
+  {
+    status: 'active',
+    personalInformation: {
+      clientId: '18',
+      photo:
+        'https://images.unsplash.com/photo-1548372290-8d01b6c8e78c?w=150&h=150&fit=crop&crop=face',
+      name: 'Alejandra Vargas',
+      email: 'alejandra.vargas@email.com',
+      phone: '+1 (555) 890-3456',
+      birthDate: '1996-06-14',
+      age: 27,
+      gender: 'female',
+    },
+    medicalInformation: {
+      clientId: '18',
+      bloodType: 'AB-',
+      allergies: ['Nueces', 'Polen'],
+      chronicConditions: ['Asma'],
+      medications: ['Inhalador Budesonida'],
+      lastCheckup: '2024-01-22',
+      emergencyContactName: 'Carlos Vargas',
+      emergencyContactPhone: '+1 (555) 890-3457',
+      emergencyContactRelationship: 'Padre',
+    },
+    benefits: {
+      clientId: '18',
+      insuranceProvider: 'MediShield',
+      policyNumber: 'MS-2023-028378',
+      coverageType: 'Basic',
+      deductible: 1500,
+      copay: 40,
+      annualLimit: 25000,
+      dentalCoverage: false,
+      visionCoverage: true,
+      mentalHealthCoverage: true,
+    },
+  },
+  {
+    status: 'active',
+    personalInformation: {
+      clientId: '19',
+      photo:
+        'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face',
+      name: 'Ricardo Delgado',
+      email: 'ricardo.delgado@email.com',
+      phone: '+1 (555) 901-4567',
+      birthDate: '1990-01-29',
+      age: 34,
+      gender: 'male',
+    },
+    medicalInformation: {
+      clientId: '19',
+      bloodType: 'A+',
+      allergies: [],
+      chronicConditions: [],
+      medications: ['Multivitamínico'],
+      lastCheckup: '2024-01-21',
+      emergencyContactName: 'María Delgado',
+      emergencyContactPhone: '+1 (555) 901-4568',
+      emergencyContactRelationship: 'Madre',
+    },
+    benefits: {
+      clientId: '19',
+      insuranceProvider: 'TotalCare',
+      policyNumber: 'TC-2023-029490',
+      coverageType: 'Premium',
+      deductible: 400,
+      copay: 25,
+      annualLimit: 65000,
+      dentalCoverage: true,
+      visionCoverage: true,
+      mentalHealthCoverage: true,
+    },
+  },
+  {
+    status: 'active',
+    personalInformation: {
+      clientId: '20',
+      photo:
+        'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face',
+      name: 'Isabella Romero',
+      email: 'isabella.romero@email.com',
+      phone: '+1 (555) 012-5678',
+      birthDate: '1992-08-11',
+      age: 31,
+      gender: 'female',
+    },
+    medicalInformation: {
+      clientId: '20',
+      bloodType: 'B+',
+      allergies: ['Frutas cítricas'],
+      chronicConditions: ['Migrañas'],
+      medications: ['Rizatriptán'],
+      lastCheckup: '2024-01-23',
+      emergencyContactName: 'Antonio Romero',
+      emergencyContactPhone: '+1 (555) 012-5679',
+      emergencyContactRelationship: 'Esposo',
+    },
+    benefits: {
+      clientId: '20',
+      insuranceProvider: 'HealthGuard',
+      policyNumber: 'HG-2023-030512',
+      coverageType: 'Standard',
+      deductible: 800,
+      copay: 30,
+      annualLimit: 50000,
+      dentalCoverage: true,
+      visionCoverage: true,
+      mentalHealthCoverage: false,
+    },
+  },
+  {
+    status: 'active',
+    personalInformation: {
+      clientId: '21',
+      photo:
+        'https://images.unsplash.com/photo-1463453091185-61582044d556?w=150&h=150&fit=crop&crop=face',
+      name: 'Sebastián Ortega',
+      email: 'sebastian.ortega@email.com',
+      phone: '+1 (555) 123-6789',
+      birthDate: '1988-11-03',
+      age: 35,
+      gender: 'male',
+    },
+    medicalInformation: {
+      clientId: '21',
+      bloodType: 'O-',
+      allergies: ['Penicilina'],
+      chronicConditions: ['Hipertensión'],
+      medications: ['Amlodipino 5mg'],
+      lastCheckup: '2024-01-24',
+      emergencyContactName: 'Lucía Ortega',
+      emergencyContactPhone: '+1 (555) 123-6790',
+      emergencyContactRelationship: 'Esposa',
+    },
+    benefits: {
+      clientId: '21',
+      insuranceProvider: 'VitalCare',
+      policyNumber: 'VC-2023-031634',
+      coverageType: 'Premium',
+      deductible: 350,
+      copay: 20,
+      annualLimit: 75000,
+      dentalCoverage: true,
+      visionCoverage: true,
+      mentalHealthCoverage: true,
+    },
+  },
+  {
+    status: 'active',
+    personalInformation: {
+      clientId: '22',
+      photo:
+        'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150&h=150&fit=crop&crop=face',
+      name: 'Natalia Espinoza',
+      email: 'natalia.espinoza@email.com',
+      phone: '+1 (555) 234-7890',
+      birthDate: '1995-04-16',
+      age: 28,
+      gender: 'female',
+    },
+    medicalInformation: {
+      clientId: '22',
+      bloodType: 'A+',
+      allergies: ['Lácteos'],
+      chronicConditions: [],
+      medications: [],
+      lastCheckup: '2024-01-25',
+      emergencyContactName: 'Roberto Espinoza',
+      emergencyContactPhone: '+1 (555) 234-7891',
+      emergencyContactRelationship: 'Padre',
+    },
+    benefits: {
+      clientId: '22',
+      insuranceProvider: 'Wellness Plus',
+      policyNumber: 'WP-2023-032756',
+      coverageType: 'Standard',
+      deductible: 600,
+      copay: 25,
+      annualLimit: 40000,
+      dentalCoverage: true,
+      visionCoverage: true,
+      mentalHealthCoverage: false,
+    },
+  },
+  {
+    status: 'active',
+    personalInformation: {
+      clientId: '23',
+      photo:
+        'https://images.unsplash.com/photo-1519125323398-675f0ddb6308?w=150&h=150&fit=crop&crop=face',
+      name: 'Emilio Navarro',
+      email: 'emilio.navarro@email.com',
+      phone: '+1 (555) 345-8901',
+      birthDate: '1981-07-28',
+      age: 42,
+      gender: 'male',
+    },
+    medicalInformation: {
+      clientId: '23',
+      bloodType: 'AB+',
+      allergies: ['Polen', 'Ácaros'],
+      chronicConditions: ['Diabetes tipo 2'],
+      medications: ['Metformina 850mg', 'Insulina'],
+      lastCheckup: '2024-01-26',
+      emergencyContactName: 'Carmen Navarro',
+      emergencyContactPhone: '+1 (555) 345-8902',
+      emergencyContactRelationship: 'Esposa',
+    },
+    benefits: {
+      clientId: '23',
+      insuranceProvider: 'HealthMax',
+      policyNumber: 'HM-2023-033878',
+      coverageType: 'Premium',
+      deductible: 300,
+      copay: 20,
+      annualLimit: 80000,
+      dentalCoverage: true,
+      visionCoverage: true,
+      mentalHealthCoverage: true,
+    },
+  },
+  {
+    status: 'active',
+    personalInformation: {
+      clientId: '24',
+      photo:
+        'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=150&h=150&fit=crop&crop=face',
+      name: 'Camila Restrepo',
+      email: 'camila.restrepo@email.com',
+      phone: '+1 (555) 456-9012',
+      birthDate: '1993-10-12',
+      age: 30,
+      gender: 'female',
+    },
+    medicalInformation: {
+      clientId: '24',
+      bloodType: 'B-',
+      allergies: ['Mariscos'],
+      chronicConditions: ['Hipotiroidismo'],
+      medications: ['Levotiroxina 75mcg'],
+      lastCheckup: '2024-01-27',
+      emergencyContactName: 'Diego Restrepo',
+      emergencyContactPhone: '+1 (555) 456-9013',
+      emergencyContactRelationship: 'Hermano',
+    },
+    benefits: {
+      clientId: '24',
+      insuranceProvider: 'CareFirst',
+      policyNumber: 'CF-2023-034990',
+      coverageType: 'Standard',
+      deductible: 700,
+      copay: 30,
+      annualLimit: 45000,
+      dentalCoverage: true,
+      visionCoverage: true,
+      mentalHealthCoverage: true,
+    },
+  },
+  {
+    status: 'active',
+    personalInformation: {
+      clientId: '25',
+      photo:
+        'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=150&h=150&fit=crop&crop=face',
+      name: 'Óscar Gutiérrez',
+      email: 'oscar.gutierrez@email.com',
+      phone: '+1 (555) 567-0123',
+      birthDate: '1987-02-22',
+      age: 37,
+      gender: 'male',
+    },
+    medicalInformation: {
+      clientId: '25',
+      bloodType: 'O+',
+      allergies: [],
+      chronicConditions: ['Colesterol alto'],
+      medications: ['Simvastatina 20mg'],
+      lastCheckup: '2024-01-29',
+      emergencyContactName: 'Patricia Gutiérrez',
+      emergencyContactPhone: '+1 (555) 567-0124',
+      emergencyContactRelationship: 'Esposa',
+    },
+    benefits: {
+      clientId: '25',
+      insuranceProvider: 'SecureHealth',
+      policyNumber: 'SH-2023-036112',
+      coverageType: 'Premium',
+      deductible: 400,
+      copay: 25,
+      annualLimit: 70000,
+      dentalCoverage: true,
+      visionCoverage: true,
+      mentalHealthCoverage: true,
+    },
+  },
+]
+
+function mapPersonalInformation(
+  personalInformation: NewClientPersonalInformation,
+  clientId: string,
+) {
+  return {
+    clientId,
+    photo: personalInformation.photo,
+    name: personalInformation.name,
+    email: personalInformation.email,
+    phone: personalInformation.phone,
+    birthDate: personalInformation.birthDate,
+    age: personalInformation.age,
+    gender: personalInformation.gender,
+  }
+}
+
+function mapMedicalInformation(
+  medicalInformation: NewClientMedicalInformation,
+  clientId: string,
+) {
+  return {
+    clientId,
+    bloodType: medicalInformation.bloodType ?? null,
+    allergies: medicalInformation.allergies ?? null,
+    chronicConditions: medicalInformation.chronicConditions ?? null,
+    medications: medicalInformation.medications ?? null,
+    lastCheckup: medicalInformation.lastCheckup ?? null,
+    emergencyContactName: medicalInformation.emergencyContactName ?? null,
+    emergencyContactPhone: medicalInformation.emergencyContactPhone ?? null,
+    emergencyContactRelationship:
+      medicalInformation.emergencyContactRelationship ?? null,
+  }
+}
+
+function mapBenefits(benefits: NewClientBenefits, clientId: string) {
+  return {
+    clientId,
+    insuranceProvider: benefits.insuranceProvider ?? null,
+    policyNumber: benefits.policyNumber ?? null,
+    coverageType: benefits.coverageType ?? null,
+    deductible: benefits.deductible ?? null,
+    copay: benefits.copay ?? null,
+    annualLimit: benefits.annualLimit ?? null,
+    dentalCoverage: benefits.dentalCoverage ?? null,
+    visionCoverage: benefits.visionCoverage ?? null,
+    mentalHealthCoverage: benefits.mentalHealthCoverage ?? null,
+  }
+}
+
+async function seedClient(newClient: SeedClient) {
+  const [createdClient] = await db
+    .insert(clients)
+    .values({
+      status: newClient.status,
+    })
+    .returning({ id: clients.id })
+
+  const clientId = createdClient.id
+
+  await db
+    .insert(clientPersonalInformation)
+    .values(mapPersonalInformation(newClient.personalInformation, clientId))
+
+  if (newClient.medicalInformation) {
+    await db
+      .insert(clientMedicalInformation)
+      .values(mapMedicalInformation(newClient.medicalInformation, clientId))
+  }
+
+  if (newClient.benefits) {
+    await db
+      .insert(clientBenefits)
+      .values(mapBenefits(newClient.benefits, clientId))
+  }
+}
+
+async function seed() {
+  for (const newClient of seedData) {
+    await seedClient(newClient)
+  }
+}
+
+seed()
+  .then(() => {
+    // eslint-disable-next-line no-console
+    console.log('Database seeded successfully')
+    process.exit(0)
+  })
+  .catch((error) => {
+    // eslint-disable-next-line no-console
+    console.error('Error seeding database', error)
+    process.exit(1)
+  })
+
+
