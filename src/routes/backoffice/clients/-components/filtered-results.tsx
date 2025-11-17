@@ -17,12 +17,14 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Client } from '@/db'
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
 import { getInitials } from '../-utils/get-initials'
 import { getGenderLabel } from '../-utils/get-gender-label'
 import { getStatusLabel } from '../-utils/get-status-label'
+import { getFilteredClients } from '../-api'
+
+type Client = Awaited<ReturnType<typeof getFilteredClients>>['clients'][number]
 
 function useClientSearch() {
   return useSearch({ from: '/backoffice/clients/' })

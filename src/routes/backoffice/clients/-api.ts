@@ -1,27 +1,28 @@
 import { db } from '@/db'
 import { createServerFn } from '@tanstack/react-start'
 import { and, count, eq, ilike } from 'drizzle-orm'
-import { clients, clientPersonalInformation } from '@/db/schemas/clients'
+import { ClientTable } from '@/db/schemas/clients/client'
 import { BaseClientSearchSchema } from './-schemas'
+import { PersonalInformationTable } from '@/db/schemas/clients/personal-information'
 
 export const getClientInsights = createServerFn({ method: 'GET' }).handler(
   async () => {
     const [activeRow] = await db
       .select({ count: count() })
-      .from(clients)
-      .where(eq(clients.status, 'active'))
+      .from(ClientTable)
+      .where(eq(ClientTable.status, 'active'))
 
     const [inactiveRow] = await db
       .select({ count: count() })
-      .from(clients)
-      .where(eq(clients.status, 'inactive'))
+      .from(ClientTable)
+      .where(eq(ClientTable.status, 'inactive'))
 
     const [pendingRow] = await db
       .select({ count: count() })
-      .from(clients)
-      .where(eq(clients.status, 'pending'))
+      .from(ClientTable)
+      .where(eq(ClientTable.status, 'pending'))
 
-    const [totalRow] = await db.select({ count: count() }).from(clients)
+    const [totalRow] = await db.select({ count: count() }).from(ClientTable)
 
     return {
       active: Number(activeRow?.count ?? 0),
@@ -39,9 +40,9 @@ export const getFilteredClients = createServerFn({ method: 'GET' })
     const trimmedName = name.trim()
 
     const whereClause = and(
-      eq(clients.status, status),
+      eq(ClientTable.status, status),
       trimmedName
-        ? ilike(clientPersonalInformation.name, `%${trimmedName}%`)
+        ? ilike(PersonalInformationTable.name, `%${trimmedName}%`)
         : undefined,
     )
 
@@ -49,25 +50,25 @@ export const getFilteredClients = createServerFn({ method: 'GET' })
 
     const rows = await db
       .select({
-        id: clients.id,
-        status: clients.status,
-        createdAt: clients.createdAt,
-        updatedAt: clients.updatedAt,
-        photo: clientPersonalInformation.photo,
-        fullName: clientPersonalInformation.name,
-        email: clientPersonalInformation.email,
-        phone: clientPersonalInformation.phone,
-        birthDate: clientPersonalInformation.birthDate,
-        age: clientPersonalInformation.age,
-        gender: clientPersonalInformation.gender,
+        id: ClientTable.id,
+        status: ClientTable.status,
+        createdAt: ClientTable.createdAt,
+        updatedAt: ClientTable.updatedAt,
+        photo: PersonalInformationTable.photo,
+        fullName: PersonalInformationTable.name,
+        email: PersonalInformationTable.email,
+        phone: PersonalInformationTable.phone,
+        birthDate: PersonalInformationTable.birthDate,
+        age: PersonalInformationTable.age,
+        gender: PersonalInformationTable.gender,
       })
-      .from(clients)
+      .from(ClientTable)
       .innerJoin(
-        clientPersonalInformation,
-        eq(clientPersonalInformation.clientId, clients.id),
+        PersonalInformationTable,
+        eq(PersonalInformationTable.clientId, ClientTable.id),
       )
       .where(whereClause)
-      .orderBy(clients.createdAt)
+      .orderBy(ClientTable.createdAt)
       .limit(size)
       .offset(offset)
 

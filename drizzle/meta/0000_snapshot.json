@@ -1,5 +1,5 @@
 {
-  "id": "9b062e48-ba3d-401d-a6f5-5f087c1da52f",
+  "id": "ed199b3f-9e45-472f-aba5-0524b340cbe4",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -10,13 +10,14 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "text",
+          "type": "uuid",
           "primaryKey": true,
-          "notNull": true
+          "notNull": true,
+          "default": "gen_random_uuid()"
         },
-        "client_id": {
-          "name": "client_id",
-          "type": "text",
+        "clientId": {
+          "name": "clientId",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": true
         },
@@ -78,12 +79,12 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "client_benefits_client_id_clients_id_fk": {
-          "name": "client_benefits_client_id_clients_id_fk",
+        "client_benefits_clientId_clients_id_fk": {
+          "name": "client_benefits_clientId_clients_id_fk",
           "tableFrom": "client_benefits",
           "tableTo": "clients",
           "columnsFrom": [
-            "client_id"
+            "clientId"
           ],
           "columnsTo": [
             "id"
@@ -98,19 +99,61 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.client_medical_information": {
-      "name": "client_medical_information",
+    "public.clients": {
+      "name": "clients",
       "schema": "",
       "columns": {
         "id": {
           "name": "id",
-          "type": "text",
+          "type": "uuid",
           "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "status": {
+          "name": "status",
+          "type": "client_status",
+          "typeSchema": "public",
+          "primaryKey": false,
           "notNull": true
         },
-        "client_id": {
-          "name": "client_id",
-          "type": "text",
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.client_medical_informations": {
+      "name": "client_medical_informations",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "clientId": {
+          "name": "clientId",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": true
         },
@@ -165,12 +208,12 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "client_medical_information_client_id_clients_id_fk": {
-          "name": "client_medical_information_client_id_clients_id_fk",
-          "tableFrom": "client_medical_information",
+        "client_medical_informations_clientId_clients_id_fk": {
+          "name": "client_medical_informations_clientId_clients_id_fk",
+          "tableFrom": "client_medical_informations",
           "tableTo": "clients",
           "columnsFrom": [
-            "client_id"
+            "clientId"
           ],
           "columnsTo": [
             "id"
@@ -185,19 +228,20 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.client_personal_information": {
-      "name": "client_personal_information",
+    "public.client_personal_informations": {
+      "name": "client_personal_informations",
       "schema": "",
       "columns": {
         "id": {
           "name": "id",
-          "type": "text",
+          "type": "uuid",
           "primaryKey": true,
-          "notNull": true
+          "notNull": true,
+          "default": "gen_random_uuid()"
         },
-        "client_id": {
-          "name": "client_id",
-          "type": "text",
+        "clientId": {
+          "name": "clientId",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": true
         },
@@ -247,12 +291,12 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "client_personal_information_client_id_clients_id_fk": {
-          "name": "client_personal_information_client_id_clients_id_fk",
-          "tableFrom": "client_personal_information",
+        "client_personal_informations_clientId_clients_id_fk": {
+          "name": "client_personal_informations_clientId_clients_id_fk",
+          "tableFrom": "client_personal_informations",
           "tableTo": "clients",
           "columnsFrom": [
-            "client_id"
+            "clientId"
           ],
           "columnsTo": [
             "id"
@@ -266,58 +310,9 @@
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
-    },
-    "public.clients": {
-      "name": "clients",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "text",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "status": {
-          "name": "status",
-          "type": "client_status",
-          "typeSchema": "public",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        },
-        "updated_at": {
-          "name": "updated_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
     }
   },
   "enums": {
-    "public.client_status": {
-      "name": "client_status",
-      "schema": "public",
-      "values": [
-        "active",
-        "pending",
-        "inactive"
-      ]
-    },
     "public.coverage_type": {
       "name": "coverage_type",
       "schema": "public",
@@ -325,6 +320,15 @@
         "Basic",
         "Standard",
         "Premium"
+      ]
+    },
+    "public.client_status": {
+      "name": "client_status",
+      "schema": "public",
+      "values": [
+        "active",
+        "pending",
+        "inactive"
       ]
     },
     "public.gender": {

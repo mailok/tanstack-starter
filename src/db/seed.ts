@@ -1,20 +1,20 @@
 import 'dotenv/config'
 import { db } from './index'
+import { ClientTable, NewClient } from './schemas/clients/client'
 import {
-  NewClient,
-  NewClientBenefits,
-  NewClientMedicalInformation,
-  NewClientPersonalInformation,
-  clients,
-  clientPersonalInformation,
-  clientMedicalInformation,
-  clientBenefits,
-} from './schemas/clients'
+  NewPersonalInformation,
+  PersonalInformationTable,
+} from './schemas/clients/personal-information'
+import {
+  MedicalInformationTable,
+  NewMedicalInformation,
+} from './schemas/clients/medical-information'
+import { BenefitsTable, NewBenefits } from './schemas/clients/benefits'
 
 type SeedClient = NewClient & {
-  personalInformation: NewClientPersonalInformation
-  medicalInformation: NewClientMedicalInformation | null
-  benefits: NewClientBenefits | null
+  personalInformation: NewPersonalInformation
+  medicalInformation: NewMedicalInformation | null
+  benefits: NewBenefits | null
 }
 
 const seedData: SeedClient[] = [
@@ -860,7 +860,7 @@ const seedData: SeedClient[] = [
 ]
 
 function mapPersonalInformation(
-  personalInformation: NewClientPersonalInformation,
+  personalInformation: NewPersonalInformation,
   clientId: string,
 ) {
   return {
@@ -876,7 +876,7 @@ function mapPersonalInformation(
 }
 
 function mapMedicalInformation(
-  medicalInformation: NewClientMedicalInformation,
+  medicalInformation: NewMedicalInformation,
   clientId: string,
 ) {
   return {
@@ -893,7 +893,7 @@ function mapMedicalInformation(
   }
 }
 
-function mapBenefits(benefits: NewClientBenefits, clientId: string) {
+function mapBenefits(benefits: NewBenefits, clientId: string) {
   return {
     clientId,
     insuranceProvider: benefits.insuranceProvider ?? null,
@@ -910,27 +910,27 @@ function mapBenefits(benefits: NewClientBenefits, clientId: string) {
 
 async function seedClient(newClient: SeedClient) {
   const [createdClient] = await db
-    .insert(clients)
+    .insert(ClientTable)
     .values({
       status: newClient.status,
     })
-    .returning({ id: clients.id })
+    .returning({ id: ClientTable.id })
 
   const clientId = createdClient.id
 
   await db
-    .insert(clientPersonalInformation)
+    .insert(PersonalInformationTable)
     .values(mapPersonalInformation(newClient.personalInformation, clientId))
 
   if (newClient.medicalInformation) {
     await db
-      .insert(clientMedicalInformation)
+      .insert(MedicalInformationTable)
       .values(mapMedicalInformation(newClient.medicalInformation, clientId))
   }
 
   if (newClient.benefits) {
     await db
-      .insert(clientBenefits)
+      .insert(BenefitsTable)
       .values(mapBenefits(newClient.benefits, clientId))
   }
 }

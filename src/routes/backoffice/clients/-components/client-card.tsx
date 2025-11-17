@@ -1,30 +1,20 @@
 import { Calendar, Mail, Phone, User } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent } from '@/components/ui/card';
-import type { Client } from '@/db';
-import { cn } from '@/lib/utils';
+import { Card, CardContent } from '@/components/ui/card'
+import { cn } from '@/lib/utils'
 import { getInitials } from '../-utils/get-initials'
+import { getFilteredClients } from '../-api'
+import { getStatusLabel } from '../-utils/get-status-label'
 
-interface ClientCardProps {
-  client: Client;
-  onClick?: (client: Client) => void;
+type Client = Awaited<ReturnType<typeof getFilteredClients>>['clients'][number]
+
+type Props = {
+  client: Client
+  onClick?: (client: Client) => void
 }
 
-const getStatusLabel = (status: Client['status']) => {
-  switch (status) {
-    case 'active':
-      return 'Active';
-    case 'inactive':
-      return 'Inactive';
-    case 'pending':
-      return 'Pending';
-    default:
-      return status;
-  }
-};
-
-export function ClientCard({ client, onClick }: ClientCardProps) {
+export function ClientCard({ client, onClick }: Props) {
   return (
     <Card
       className={cn(
