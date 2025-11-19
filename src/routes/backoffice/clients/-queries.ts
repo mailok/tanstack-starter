@@ -21,7 +21,7 @@ const insights = () => ({
 
 const filteredClients = (query: ClientQuery) => ({
   queryKey: clientKeys.list(query),
-  queryFn: () => api.getFilteredClients({ data: query }),
+  queryFn: () => api.getClientsPage({ data: query }),
   throwOnError: true,
 })
 

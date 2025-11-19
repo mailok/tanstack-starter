@@ -1,5 +1,5 @@
 {
-  "id": "ed199b3f-9e45-472f-aba5-0524b340cbe4",
+  "id": "bec219fa-8bef-4fb9-af27-39dfb248cff2",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -21,21 +21,21 @@
           "primaryKey": false,
           "notNull": true
         },
-        "insurance_provider": {
-          "name": "insurance_provider",
+        "insuranceProvider": {
+          "name": "insuranceProvider",
           "type": "text",
           "primaryKey": false,
           "notNull": false
         },
-        "policy_number": {
-          "name": "policy_number",
+        "policyNumber": {
+          "name": "policyNumber",
           "type": "text",
           "primaryKey": false,
           "notNull": false
         },
-        "coverage_type": {
-          "name": "coverage_type",
-          "type": "coverage_type",
+        "coverageType": {
+          "name": "coverageType",
+          "type": "coverageType",
           "typeSchema": "public",
           "primaryKey": false,
           "notNull": false
@@ -52,26 +52,26 @@
           "primaryKey": false,
           "notNull": false
         },
-        "annual_limit": {
-          "name": "annual_limit",
+        "annualLimit": {
+          "name": "annualLimit",
           "type": "integer",
           "primaryKey": false,
           "notNull": false
         },
-        "dental_coverage": {
-          "name": "dental_coverage",
+        "dentalCoverage": {
+          "name": "dentalCoverage",
           "type": "boolean",
           "primaryKey": false,
           "notNull": false
         },
-        "vision_coverage": {
-          "name": "vision_coverage",
+        "visionCoverage": {
+          "name": "visionCoverage",
           "type": "boolean",
           "primaryKey": false,
           "notNull": false
         },
-        "mental_health_coverage": {
-          "name": "mental_health_coverage",
+        "mentalHealthCoverage": {
+          "name": "mentalHealthCoverage",
           "type": "boolean",
           "primaryKey": false,
           "notNull": false
@@ -112,20 +112,20 @@
         },
         "status": {
           "name": "status",
-          "type": "client_status",
+          "type": "clientStatus",
           "typeSchema": "public",
           "primaryKey": false,
           "notNull": true
         },
-        "created_at": {
-          "name": "created_at",
+        "createdAt": {
+          "name": "createdAt",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
         },
-        "updated_at": {
-          "name": "updated_at",
+        "updatedAt": {
+          "name": "updatedAt",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": true,
@@ -157,8 +157,8 @@
           "primaryKey": false,
           "notNull": true
         },
-        "blood_type": {
-          "name": "blood_type",
+        "bloodType": {
+          "name": "bloodType",
           "type": "text",
           "primaryKey": false,
           "notNull": false
@@ -169,8 +169,8 @@
           "primaryKey": false,
           "notNull": false
         },
-        "chronic_conditions": {
-          "name": "chronic_conditions",
+        "chronicConditions": {
+          "name": "chronicConditions",
           "type": "text[]",
           "primaryKey": false,
           "notNull": false
@@ -181,26 +181,26 @@
           "primaryKey": false,
           "notNull": false
         },
-        "last_checkup": {
-          "name": "last_checkup",
+        "lastCheckup": {
+          "name": "lastCheckup",
           "type": "text",
           "primaryKey": false,
           "notNull": false
         },
-        "emergency_contact_name": {
-          "name": "emergency_contact_name",
+        "emergencyContactName": {
+          "name": "emergencyContactName",
           "type": "text",
           "primaryKey": false,
           "notNull": false
         },
-        "emergency_contact_phone": {
-          "name": "emergency_contact_phone",
+        "emergencyContactPhone": {
+          "name": "emergencyContactPhone",
           "type": "text",
           "primaryKey": false,
           "notNull": false
         },
-        "emergency_contact_relationship": {
-          "name": "emergency_contact_relationship",
+        "emergencyContactRelationship": {
+          "name": "emergencyContactRelationship",
           "type": "text",
           "primaryKey": false,
           "notNull": false
@@ -269,8 +269,8 @@
           "primaryKey": false,
           "notNull": true
         },
-        "birth_date": {
-          "name": "birth_date",
+        "birthDate": {
+          "name": "birthDate",
           "type": "text",
           "primaryKey": false,
           "notNull": true
@@ -313,8 +313,8 @@
     }
   },
   "enums": {
-    "public.coverage_type": {
-      "name": "coverage_type",
+    "public.coverageType": {
+      "name": "coverageType",
       "schema": "public",
       "values": [
         "Basic",
@@ -322,8 +322,8 @@
         "Premium"
       ]
     },
-    "public.client_status": {
-      "name": "client_status",
+    "public.clientStatus": {
+      "name": "clientStatus",
       "schema": "public",
       "values": [
         "active",

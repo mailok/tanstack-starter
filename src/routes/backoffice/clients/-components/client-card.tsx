@@ -4,10 +4,10 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 import { getInitials } from '../-utils/get-initials'
-import { getFilteredClients } from '../-api'
+import { GetClientsPageResponse } from '../-api'
 import { getStatusLabel } from '../-utils/get-status-label'
 
-type Client = Awaited<ReturnType<typeof getFilteredClients>>['clients'][number]
+type Client = GetClientsPageResponse['clients'][number]
 
 type Props = {
   client: Client
@@ -27,12 +27,9 @@ export function ClientCard({ client, onClick }: Props) {
         <div className="flex items-start space-x-4">
           {/* Avatar */}
           <Avatar className="ring-border h-16 w-16 ring-2">
-            <AvatarImage
-              src={client.personalInformation.photo}
-              alt={client.personalInformation.name}
-            />
+            <AvatarImage src={client.photo} alt={client.name} />
             <AvatarFallback className="bg-primary-muted text-primary font-semibold">
-              {getInitials(client.personalInformation.name)}
+              {getInitials(client.name)}
             </AvatarFallback>
           </Avatar>
 
@@ -41,7 +38,7 @@ export function ClientCard({ client, onClick }: Props) {
             <div className="mb-3 flex items-start justify-between">
               <div className="min-w-0 flex-1">
                 <h3 className="text-foreground truncate text-base font-semibold">
-                  {client.personalInformation.name}
+                  {client.name}
                 </h3>
                 <Badge className="mt-1" data-status={client.status}>
                   {getStatusLabel(client.status)}
@@ -53,13 +50,11 @@ export function ClientCard({ client, onClick }: Props) {
             <div className="space-y-2">
               <div className="text-muted-foreground flex items-center text-sm">
                 <Mail className="mr-2 h-4 w-4 shrink-0" />
-                <span className="truncate">
-                  {client.personalInformation.email}
-                </span>
+                <span className="truncate">{client.email}</span>
               </div>
               <div className="text-muted-foreground flex items-center text-sm">
                 <Phone className="mr-2 h-4 w-4 shrink-0" />
-                <span>{client.personalInformation.phone}</span>
+                <span>{client.phone}</span>
               </div>
             </div>
 
@@ -71,18 +66,16 @@ export function ClientCard({ client, onClick }: Props) {
               <div className="text-muted-foreground flex items-center text-sm">
                 <Calendar className="mr-2 h-4 w-4 shrink-0" />
                 <span>
-                  {new Date(
-                    client.personalInformation.birthDate,
-                  ).toLocaleDateString('en-US')}{' '}
-                  ({client.personalInformation.age} years)
+                  {new Date(client.birthDate).toLocaleDateString('en-US')} (
+                  {client.age} years)
                 </span>
               </div>
               <div className="text-muted-foreground flex items-center text-sm">
                 <User className="mr-2 h-4 w-4 shrink-0" />
                 <span className="capitalize">
-                  {client.personalInformation.gender === 'male'
+                  {client.gender === 'male'
                     ? 'Male'
-                    : client.personalInformation.gender === 'female'
+                    : client.gender === 'female'
                       ? 'Female'
                       : 'Other'}
                 </span>

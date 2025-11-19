@@ -22,9 +22,9 @@ import { cn } from '@/lib/utils'
 import { getInitials } from '../-utils/get-initials'
 import { getGenderLabel } from '../-utils/get-gender-label'
 import { getStatusLabel } from '../-utils/get-status-label'
-import { getFilteredClients } from '../-api'
+import { GetClientsPageResponse } from '../-api'
 
-type Client = Awaited<ReturnType<typeof getFilteredClients>>['clients'][number]
+type Client = GetClientsPageResponse['clients'][number]
 
 function useClientSearch() {
   return useSearch({ from: '/backoffice/clients/' })
@@ -207,34 +207,27 @@ function ClientTable({ clients, onClick }: ClientTableProps) {
             >
               <TableCell>
                 <Avatar className="h-8 w-8">
-                  <AvatarImage
-                    src={client.personalInformation.photo}
-                    alt={client.personalInformation.name}
-                  />
+                  <AvatarImage src={client.photo} alt={client.name} />
                   <AvatarFallback className="bg-primary-muted text-primary text-xs">
-                    {getInitials(client.personalInformation.name)}
+                    {getInitials(client.name)}
                   </AvatarFallback>
                 </Avatar>
               </TableCell>
-              <TableCell className="font-medium">
-                {client.personalInformation.name}
+              <TableCell className="font-medium">{client.name}</TableCell>
+              <TableCell className="text-muted-foreground">
+                {client.email}
               </TableCell>
               <TableCell className="text-muted-foreground">
-                {client.personalInformation.email}
+                {client.phone}
               </TableCell>
               <TableCell className="text-muted-foreground">
-                {client.personalInformation.phone}
+                {new Date(client.birthDate).toLocaleDateString('es-ES')}
               </TableCell>
               <TableCell className="text-muted-foreground">
-                {new Date(
-                  client.personalInformation.birthDate,
-                ).toLocaleDateString('es-ES')}
+                {client.age}
               </TableCell>
               <TableCell className="text-muted-foreground">
-                {client.personalInformation.age}
-              </TableCell>
-              <TableCell className="text-muted-foreground">
-                {getGenderLabel(client.personalInformation.gender)}
+                {getGenderLabel(client.gender)}
               </TableCell>
               <TableCell>
                 <Badge className="text-xs" data-status={client.status}>

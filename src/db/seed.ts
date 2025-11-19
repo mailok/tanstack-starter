@@ -1,27 +1,29 @@
 import 'dotenv/config'
 import { db } from './index'
-import { ClientTable, NewClient } from './schemas/clients/client'
+import { type ClientRow, ClientTable } from './schemas/client'
 import {
-  NewPersonalInformation,
+  type InsertPersonalInformationRow,
   PersonalInformationTable,
-} from './schemas/clients/personal-information'
+} from './schemas/client/personal-information'
 import {
+  type InsertMedicalInformationRow,
   MedicalInformationTable,
-  NewMedicalInformation,
-} from './schemas/clients/medical-information'
-import { BenefitsTable, NewBenefits } from './schemas/clients/benefits'
+} from './schemas/client/medical-information'
+import {
+  BenefitsTable,
+  type InsertBenefitsRow,
+} from './schemas/client/benefits'
 
-type SeedClient = NewClient & {
-  personalInformation: NewPersonalInformation
-  medicalInformation: NewMedicalInformation | null
-  benefits: NewBenefits | null
+type Client = Omit<ClientRow, 'id' | 'createdAt' | 'updatedAt'> & {
+  personalInformation: Omit<InsertPersonalInformationRow, 'clientId'>
+  medicalInformation?: Omit<InsertMedicalInformationRow, 'clientId'>
+  benefits?: Omit<InsertBenefitsRow, 'clientId'>
 }
 
-const seedData: SeedClient[] = [
+const seedData: Client[] = [
   {
     status: 'active',
     personalInformation: {
-      clientId: '1',
       photo:
         'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face',
       name: 'Juan Carlos Rodríguez',
@@ -32,7 +34,6 @@ const seedData: SeedClient[] = [
       gender: 'male',
     },
     medicalInformation: {
-      clientId: '1',
       bloodType: 'O+',
       allergies: ['Polen', 'Penicilina'],
       chronicConditions: ['Hipertensión'],
@@ -43,7 +44,6 @@ const seedData: SeedClient[] = [
       emergencyContactRelationship: 'Esposa',
     },
     benefits: {
-      clientId: '1',
       insuranceProvider: 'Seguros del Norte',
       policyNumber: 'SN-2023-001234',
       coverageType: 'Premium',
@@ -58,7 +58,6 @@ const seedData: SeedClient[] = [
   {
     status: 'pending',
     personalInformation: {
-      clientId: '2',
       photo: '',
       name: 'María González López',
       email: 'maria.gonzalez@email.com',
@@ -67,13 +66,10 @@ const seedData: SeedClient[] = [
       age: 34,
       gender: 'female',
     },
-    medicalInformation: null,
-    benefits: null,
   },
   {
     status: 'inactive',
     personalInformation: {
-      clientId: '3',
       photo:
         'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face',
       name: 'Roberto Silva',
@@ -84,7 +80,6 @@ const seedData: SeedClient[] = [
       gender: 'male',
     },
     medicalInformation: {
-      clientId: '3',
       bloodType: 'B+',
       allergies: ['Látex'],
       chronicConditions: ['Diabetes tipo 2'],
@@ -95,7 +90,6 @@ const seedData: SeedClient[] = [
       emergencyContactRelationship: 'Hija',
     },
     benefits: {
-      clientId: '3',
       insuranceProvider: 'HealthGuard',
       policyNumber: 'HG-2023-009012',
       coverageType: 'Basic',
@@ -110,7 +104,6 @@ const seedData: SeedClient[] = [
   {
     status: 'active',
     personalInformation: {
-      clientId: '4',
       photo:
         'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face',
       name: 'Ana Patricia Morales',
@@ -121,7 +114,6 @@ const seedData: SeedClient[] = [
       gender: 'female',
     },
     medicalInformation: {
-      clientId: '4',
       bloodType: 'AB+',
       allergies: ['Nueces'],
       chronicConditions: ['Asma'],
@@ -132,7 +124,6 @@ const seedData: SeedClient[] = [
       emergencyContactRelationship: 'Padre',
     },
     benefits: {
-      clientId: '4',
       insuranceProvider: 'VitalCare',
       policyNumber: 'VC-2023-003456',
       coverageType: 'Premium',
@@ -147,7 +138,6 @@ const seedData: SeedClient[] = [
   {
     status: 'active',
     personalInformation: {
-      clientId: '5',
       photo:
         'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face',
       name: 'Carlos Eduardo Vega',
@@ -158,7 +148,6 @@ const seedData: SeedClient[] = [
       gender: 'male',
     },
     medicalInformation: {
-      clientId: '5',
       bloodType: 'A+',
       allergies: [],
       chronicConditions: [],
@@ -169,7 +158,6 @@ const seedData: SeedClient[] = [
       emergencyContactRelationship: 'Madre',
     },
     benefits: {
-      clientId: '5',
       insuranceProvider: 'Wellness Plus',
       policyNumber: 'WP-2023-007890',
       coverageType: 'Standard',
@@ -184,7 +172,6 @@ const seedData: SeedClient[] = [
   {
     status: 'pending',
     personalInformation: {
-      clientId: '6',
       photo:
         'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&fit=crop&crop=face',
       name: 'Sofía Hernández',
@@ -194,13 +181,10 @@ const seedData: SeedClient[] = [
       age: 29,
       gender: 'female',
     },
-    medicalInformation: null,
-    benefits: null,
   },
   {
     status: 'active',
     personalInformation: {
-      clientId: '7',
       photo:
         'https://images.unsplash.com/photo-1511367461989-f85a21fda167?w=150&h=150&fit=crop&crop=face',
       name: 'Lucía Ramírez',
@@ -211,7 +195,6 @@ const seedData: SeedClient[] = [
       gender: 'female',
     },
     medicalInformation: {
-      clientId: '7',
       bloodType: 'B-',
       allergies: ['Lácteos'],
       chronicConditions: ['Artritis'],
@@ -222,7 +205,6 @@ const seedData: SeedClient[] = [
       emergencyContactRelationship: 'Esposo',
     },
     benefits: {
-      clientId: '7',
       insuranceProvider: 'HealthMax',
       policyNumber: 'HM-2023-013456',
       coverageType: 'Premium',
@@ -237,7 +219,6 @@ const seedData: SeedClient[] = [
   {
     status: 'inactive',
     personalInformation: {
-      clientId: '8',
       photo:
         'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=150&h=150&fit=crop&crop=face',
       name: 'Miguel Ángel Torres',
@@ -248,7 +229,6 @@ const seedData: SeedClient[] = [
       gender: 'male',
     },
     medicalInformation: {
-      clientId: '8',
       bloodType: 'AB-',
       allergies: ['Polen', 'Ácaros'],
       chronicConditions: ['Hipertensión', 'Colesterol alto'],
@@ -259,7 +239,6 @@ const seedData: SeedClient[] = [
       emergencyContactRelationship: 'Esposa',
     },
     benefits: {
-      clientId: '8',
       insuranceProvider: 'SecureHealth',
       policyNumber: 'SH-2023-015678',
       coverageType: 'Standard',
@@ -274,7 +253,6 @@ const seedData: SeedClient[] = [
   {
     status: 'pending',
     personalInformation: {
-      clientId: '9',
       photo:
         'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150&h=150&fit=crop&crop=face',
       name: 'Paula Fernández',
@@ -284,13 +262,10 @@ const seedData: SeedClient[] = [
       age: 31,
       gender: 'female',
     },
-    medicalInformation: null,
-    benefits: null,
   },
   {
     status: 'active',
     personalInformation: {
-      clientId: '10',
       photo:
         'https://images.unsplash.com/photo-1463453091185-61582044d556?w=150&h=150&fit=crop&crop=face',
       name: 'Javier Castillo',
@@ -301,7 +276,6 @@ const seedData: SeedClient[] = [
       gender: 'male',
     },
     medicalInformation: {
-      clientId: '10',
       bloodType: 'O+',
       allergies: ['Sulfitos'],
       chronicConditions: ['Gastritis'],
@@ -312,7 +286,6 @@ const seedData: SeedClient[] = [
       emergencyContactRelationship: 'Esposa',
     },
     benefits: {
-      clientId: '10',
       insuranceProvider: 'TotalCare',
       policyNumber: 'TC-2023-019012',
       coverageType: 'Premium',
@@ -327,7 +300,6 @@ const seedData: SeedClient[] = [
   {
     status: 'active',
     personalInformation: {
-      clientId: '11',
       photo:
         'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=150&h=150&fit=crop&crop=face',
       name: 'Valeria Soto',
@@ -338,7 +310,6 @@ const seedData: SeedClient[] = [
       gender: 'female',
     },
     medicalInformation: {
-      clientId: '11',
       bloodType: 'B+',
       allergies: [],
       chronicConditions: [],
@@ -349,7 +320,6 @@ const seedData: SeedClient[] = [
       emergencyContactRelationship: 'Padre',
     },
     benefits: {
-      clientId: '11',
       insuranceProvider: 'HealthGuard',
       policyNumber: 'HG-2023-020234',
       coverageType: 'Standard',
@@ -364,7 +334,6 @@ const seedData: SeedClient[] = [
   {
     status: 'inactive',
     personalInformation: {
-      clientId: '12',
       photo: '',
       name: 'Andrés Pérez',
       email: 'andres.perez@email.com',
@@ -374,7 +343,6 @@ const seedData: SeedClient[] = [
       gender: 'male',
     },
     medicalInformation: {
-      clientId: '12',
       bloodType: 'A+',
       allergies: ['Polen'],
       chronicConditions: ['Diabetes tipo 1'],
@@ -385,7 +353,6 @@ const seedData: SeedClient[] = [
       emergencyContactRelationship: 'Esposa',
     },
     benefits: {
-      clientId: '12',
       insuranceProvider: 'MediCare Plus',
       policyNumber: 'MP-2023-021456',
       coverageType: 'Basic',
@@ -400,7 +367,6 @@ const seedData: SeedClient[] = [
   {
     status: 'pending',
     personalInformation: {
-      clientId: '13',
       photo:
         'https://images.unsplash.com/photo-1519125323398-675f0ddb6308?w=150&h=150&fit=crop&crop=face',
       name: 'Gabriela Ruiz',
@@ -410,13 +376,10 @@ const seedData: SeedClient[] = [
       age: 32,
       gender: 'female',
     },
-    medicalInformation: null,
-    benefits: null,
   },
   {
     status: 'active',
     personalInformation: {
-      clientId: '14',
       photo:
         'https://images.unsplash.com/photo-1511367461989-f85a21fda167?w=150&h=150&fit=crop&crop=face',
       name: 'Tomás Herrera',
@@ -427,7 +390,6 @@ const seedData: SeedClient[] = [
       gender: 'male',
     },
     medicalInformation: {
-      clientId: '14',
       bloodType: 'AB+',
       allergies: ['Penicilina'],
       chronicConditions: [],
@@ -438,7 +400,6 @@ const seedData: SeedClient[] = [
       emergencyContactRelationship: 'Madre',
     },
     benefits: {
-      clientId: '14',
       insuranceProvider: 'Wellness Plus',
       policyNumber: 'WP-2023-023890',
       coverageType: 'Premium',
@@ -453,7 +414,6 @@ const seedData: SeedClient[] = [
   {
     status: 'active',
     personalInformation: {
-      clientId: '15',
       photo:
         'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face',
       name: 'Diego Mendoza',
@@ -464,7 +424,6 @@ const seedData: SeedClient[] = [
       gender: 'male',
     },
     medicalInformation: {
-      clientId: '15',
       bloodType: 'B-',
       allergies: ['Mariscos', 'Polen'],
       chronicConditions: ['Hipertensión'],
@@ -475,7 +434,6 @@ const seedData: SeedClient[] = [
       emergencyContactRelationship: 'Esposa',
     },
     benefits: {
-      clientId: '15',
       insuranceProvider: 'CareFirst',
       policyNumber: 'CF-2023-025012',
       coverageType: 'Standard',
@@ -490,7 +448,6 @@ const seedData: SeedClient[] = [
   {
     status: 'active',
     personalInformation: {
-      clientId: '16',
       photo:
         'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&h=150&fit=crop&crop=face',
       name: 'Carmen Jiménez',
@@ -501,7 +458,6 @@ const seedData: SeedClient[] = [
       gender: 'female',
     },
     medicalInformation: {
-      clientId: '16',
       bloodType: 'A-',
       allergies: [],
       chronicConditions: [],
@@ -512,7 +468,6 @@ const seedData: SeedClient[] = [
       emergencyContactRelationship: 'Padre',
     },
     benefits: {
-      clientId: '16',
       insuranceProvider: 'HealthMax',
       policyNumber: 'HM-2023-026134',
       coverageType: 'Premium',
@@ -527,7 +482,6 @@ const seedData: SeedClient[] = [
   {
     status: 'active',
     personalInformation: {
-      clientId: '17',
       photo:
         'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face',
       name: 'Fernando Castro',
@@ -538,7 +492,6 @@ const seedData: SeedClient[] = [
       gender: 'male',
     },
     medicalInformation: {
-      clientId: '17',
       bloodType: 'O+',
       allergies: ['Látex'],
       chronicConditions: ['Colesterol alto'],
@@ -549,7 +502,6 @@ const seedData: SeedClient[] = [
       emergencyContactRelationship: 'Esposa',
     },
     benefits: {
-      clientId: '17',
       insuranceProvider: 'SecureHealth',
       policyNumber: 'SH-2023-027256',
       coverageType: 'Standard',
@@ -564,7 +516,6 @@ const seedData: SeedClient[] = [
   {
     status: 'active',
     personalInformation: {
-      clientId: '18',
       photo:
         'https://images.unsplash.com/photo-1548372290-8d01b6c8e78c?w=150&h=150&fit=crop&crop=face',
       name: 'Alejandra Vargas',
@@ -575,7 +526,6 @@ const seedData: SeedClient[] = [
       gender: 'female',
     },
     medicalInformation: {
-      clientId: '18',
       bloodType: 'AB-',
       allergies: ['Nueces', 'Polen'],
       chronicConditions: ['Asma'],
@@ -586,7 +536,6 @@ const seedData: SeedClient[] = [
       emergencyContactRelationship: 'Padre',
     },
     benefits: {
-      clientId: '18',
       insuranceProvider: 'MediShield',
       policyNumber: 'MS-2023-028378',
       coverageType: 'Basic',
@@ -601,7 +550,6 @@ const seedData: SeedClient[] = [
   {
     status: 'active',
     personalInformation: {
-      clientId: '19',
       photo:
         'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face',
       name: 'Ricardo Delgado',
@@ -612,7 +560,6 @@ const seedData: SeedClient[] = [
       gender: 'male',
     },
     medicalInformation: {
-      clientId: '19',
       bloodType: 'A+',
       allergies: [],
       chronicConditions: [],
@@ -623,7 +570,6 @@ const seedData: SeedClient[] = [
       emergencyContactRelationship: 'Madre',
     },
     benefits: {
-      clientId: '19',
       insuranceProvider: 'TotalCare',
       policyNumber: 'TC-2023-029490',
       coverageType: 'Premium',
@@ -638,7 +584,6 @@ const seedData: SeedClient[] = [
   {
     status: 'active',
     personalInformation: {
-      clientId: '20',
       photo:
         'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face',
       name: 'Isabella Romero',
@@ -649,7 +594,6 @@ const seedData: SeedClient[] = [
       gender: 'female',
     },
     medicalInformation: {
-      clientId: '20',
       bloodType: 'B+',
       allergies: ['Frutas cítricas'],
       chronicConditions: ['Migrañas'],
@@ -660,7 +604,6 @@ const seedData: SeedClient[] = [
       emergencyContactRelationship: 'Esposo',
     },
     benefits: {
-      clientId: '20',
       insuranceProvider: 'HealthGuard',
       policyNumber: 'HG-2023-030512',
       coverageType: 'Standard',
@@ -675,7 +618,6 @@ const seedData: SeedClient[] = [
   {
     status: 'active',
     personalInformation: {
-      clientId: '21',
       photo:
         'https://images.unsplash.com/photo-1463453091185-61582044d556?w=150&h=150&fit=crop&crop=face',
       name: 'Sebastián Ortega',
@@ -686,7 +628,6 @@ const seedData: SeedClient[] = [
       gender: 'male',
     },
     medicalInformation: {
-      clientId: '21',
       bloodType: 'O-',
       allergies: ['Penicilina'],
       chronicConditions: ['Hipertensión'],
@@ -697,7 +638,6 @@ const seedData: SeedClient[] = [
       emergencyContactRelationship: 'Esposa',
     },
     benefits: {
-      clientId: '21',
       insuranceProvider: 'VitalCare',
       policyNumber: 'VC-2023-031634',
       coverageType: 'Premium',
@@ -712,7 +652,6 @@ const seedData: SeedClient[] = [
   {
     status: 'active',
     personalInformation: {
-      clientId: '22',
       photo:
         'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150&h=150&fit=crop&crop=face',
       name: 'Natalia Espinoza',
@@ -723,7 +662,6 @@ const seedData: SeedClient[] = [
       gender: 'female',
     },
     medicalInformation: {
-      clientId: '22',
       bloodType: 'A+',
       allergies: ['Lácteos'],
       chronicConditions: [],
@@ -734,7 +672,6 @@ const seedData: SeedClient[] = [
       emergencyContactRelationship: 'Padre',
     },
     benefits: {
-      clientId: '22',
       insuranceProvider: 'Wellness Plus',
       policyNumber: 'WP-2023-032756',
       coverageType: 'Standard',
@@ -749,7 +686,6 @@ const seedData: SeedClient[] = [
   {
     status: 'active',
     personalInformation: {
-      clientId: '23',
       photo:
         'https://images.unsplash.com/photo-1519125323398-675f0ddb6308?w=150&h=150&fit=crop&crop=face',
       name: 'Emilio Navarro',
@@ -760,7 +696,6 @@ const seedData: SeedClient[] = [
       gender: 'male',
     },
     medicalInformation: {
-      clientId: '23',
       bloodType: 'AB+',
       allergies: ['Polen', 'Ácaros'],
       chronicConditions: ['Diabetes tipo 2'],
@@ -771,7 +706,6 @@ const seedData: SeedClient[] = [
       emergencyContactRelationship: 'Esposa',
     },
     benefits: {
-      clientId: '23',
       insuranceProvider: 'HealthMax',
       policyNumber: 'HM-2023-033878',
       coverageType: 'Premium',
@@ -786,7 +720,6 @@ const seedData: SeedClient[] = [
   {
     status: 'active',
     personalInformation: {
-      clientId: '24',
       photo:
         'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=150&h=150&fit=crop&crop=face',
       name: 'Camila Restrepo',
@@ -797,7 +730,6 @@ const seedData: SeedClient[] = [
       gender: 'female',
     },
     medicalInformation: {
-      clientId: '24',
       bloodType: 'B-',
       allergies: ['Mariscos'],
       chronicConditions: ['Hipotiroidismo'],
@@ -808,7 +740,6 @@ const seedData: SeedClient[] = [
       emergencyContactRelationship: 'Hermano',
     },
     benefits: {
-      clientId: '24',
       insuranceProvider: 'CareFirst',
       policyNumber: 'CF-2023-034990',
       coverageType: 'Standard',
@@ -823,7 +754,6 @@ const seedData: SeedClient[] = [
   {
     status: 'active',
     personalInformation: {
-      clientId: '25',
       photo:
         'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=150&h=150&fit=crop&crop=face',
       name: 'Óscar Gutiérrez',
@@ -834,7 +764,6 @@ const seedData: SeedClient[] = [
       gender: 'male',
     },
     medicalInformation: {
-      clientId: '25',
       bloodType: 'O+',
       allergies: [],
       chronicConditions: ['Colesterol alto'],
@@ -845,7 +774,6 @@ const seedData: SeedClient[] = [
       emergencyContactRelationship: 'Esposa',
     },
     benefits: {
-      clientId: '25',
       insuranceProvider: 'SecureHealth',
       policyNumber: 'SH-2023-036112',
       coverageType: 'Premium',
@@ -859,60 +787,12 @@ const seedData: SeedClient[] = [
   },
 ]
 
-function mapPersonalInformation(
-  personalInformation: NewPersonalInformation,
-  clientId: string,
-) {
-  return {
-    clientId,
-    photo: personalInformation.photo,
-    name: personalInformation.name,
-    email: personalInformation.email,
-    phone: personalInformation.phone,
-    birthDate: personalInformation.birthDate,
-    age: personalInformation.age,
-    gender: personalInformation.gender,
-  }
-}
-
-function mapMedicalInformation(
-  medicalInformation: NewMedicalInformation,
-  clientId: string,
-) {
-  return {
-    clientId,
-    bloodType: medicalInformation.bloodType ?? null,
-    allergies: medicalInformation.allergies ?? null,
-    chronicConditions: medicalInformation.chronicConditions ?? null,
-    medications: medicalInformation.medications ?? null,
-    lastCheckup: medicalInformation.lastCheckup ?? null,
-    emergencyContactName: medicalInformation.emergencyContactName ?? null,
-    emergencyContactPhone: medicalInformation.emergencyContactPhone ?? null,
-    emergencyContactRelationship:
-      medicalInformation.emergencyContactRelationship ?? null,
-  }
-}
-
-function mapBenefits(benefits: NewBenefits, clientId: string) {
-  return {
-    clientId,
-    insuranceProvider: benefits.insuranceProvider ?? null,
-    policyNumber: benefits.policyNumber ?? null,
-    coverageType: benefits.coverageType ?? null,
-    deductible: benefits.deductible ?? null,
-    copay: benefits.copay ?? null,
-    annualLimit: benefits.annualLimit ?? null,
-    dentalCoverage: benefits.dentalCoverage ?? null,
-    visionCoverage: benefits.visionCoverage ?? null,
-    mentalHealthCoverage: benefits.mentalHealthCoverage ?? null,
-  }
-}
-
-async function seedClient(newClient: SeedClient) {
+async function insertClient(client: Client) {
+  const { status, personalInformation, medicalInformation, benefits } = client
   const [createdClient] = await db
     .insert(ClientTable)
     .values({
-      status: newClient.status,
+      status,
     })
     .returning({ id: ClientTable.id })
 
@@ -920,24 +800,22 @@ async function seedClient(newClient: SeedClient) {
 
   await db
     .insert(PersonalInformationTable)
-    .values(mapPersonalInformation(newClient.personalInformation, clientId))
+    .values({ ...personalInformation, clientId })
 
-  if (newClient.medicalInformation) {
+  if (medicalInformation) {
     await db
       .insert(MedicalInformationTable)
-      .values(mapMedicalInformation(newClient.medicalInformation, clientId))
+      .values({ ...medicalInformation, clientId })
   }
 
-  if (newClient.benefits) {
-    await db
-      .insert(BenefitsTable)
-      .values(mapBenefits(newClient.benefits, clientId))
+  if (benefits) {
+    await db.insert(BenefitsTable).values({ ...benefits, clientId })
   }
 }
 
 async function seed() {
   for (const newClient of seedData) {
-    await seedClient(newClient)
+    await insertClient(newClient)
   }
 }
 

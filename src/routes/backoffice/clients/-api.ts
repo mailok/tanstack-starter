@@ -1,39 +1,43 @@
 import { db } from '@/db'
 import { createServerFn } from '@tanstack/react-start'
 import { and, count, eq, ilike } from 'drizzle-orm'
-import { ClientTable } from '@/db/schemas/clients/client'
+import { ClientTable } from '@/db/schemas/client'
 import { BaseClientSearchSchema } from './-schemas'
-import { PersonalInformationTable } from '@/db/schemas/clients/personal-information'
+import { PersonalInformationTable } from '@/db/schemas/client/personal-information'
 
 export const getClientInsights = createServerFn({ method: 'GET' }).handler(
   async () => {
-    const [activeRow] = await db
+    const [{ count: active }] = await db
       .select({ count: count() })
       .from(ClientTable)
       .where(eq(ClientTable.status, 'active'))
 
-    const [inactiveRow] = await db
+    const [{ count: inactive }] = await db
       .select({ count: count() })
       .from(ClientTable)
       .where(eq(ClientTable.status, 'inactive'))
 
-    const [pendingRow] = await db
+    const [{ count: pending }] = await db
       .select({ count: count() })
       .from(ClientTable)
       .where(eq(ClientTable.status, 'pending'))
 
-    const [totalRow] = await db.select({ count: count() }).from(ClientTable)
+    const [{ count: total }] = await db
+      .select({ count: count() })
+      .from(ClientTable)
 
     return {
-      active: Number(activeRow?.count ?? 0),
-      inactive: Number(inactiveRow?.count ?? 0),
-      pending: Number(pendingRow?.count ?? 0),
-      total: Number(totalRow?.count ?? 0),
+      active,
+      inactive,
+      pending,
+      total,
     } as const
   },
 )
 
-export const getFilteredClients = createServerFn({ method: 'GET' })
+export type GetClientsPageResponse = Awaited<ReturnType<typeof getClientsPage>>
+
+export const getClientsPage = createServerFn({ method: 'GET' })
   .inputValidator(BaseClientSearchSchema)
   .handler(async ({ data }) => {
     const { page, name, status, size } = data
@@ -48,14 +52,12 @@ export const getFilteredClients = createServerFn({ method: 'GET' })
 
     const offset = (page - 1) * size
 
-    const rows = await db
+    const clients = await db
       .select({
         id: ClientTable.id,
         status: ClientTable.status,
-        createdAt: ClientTable.createdAt,
-        updatedAt: ClientTable.updatedAt,
         photo: PersonalInformationTable.photo,
-        fullName: PersonalInformationTable.name,
+        name: PersonalInformationTable.name,
         email: PersonalInformationTable.email,
         phone: PersonalInformationTable.phone,
         birthDate: PersonalInformationTable.birthDate,
@@ -72,27 +74,7 @@ export const getFilteredClients = createServerFn({ method: 'GET' })
       .limit(size)
       .offset(offset)
 
-    const paginatedClients = rows.map((row) => ({
-      id: row.id,
-      status: row.status,
-      createdAt: row.createdAt,
-      updatedAt: row.updatedAt,
-      personalInformation: {
-        photo: row.photo,
-        name: row.fullName,
-        email: row.email,
-        phone: row.phone,
-        birthDate: row.birthDate,
-        age: row.age,
-        gender: row.gender,
-      },
-    }))
-
     return {
-      clients: paginatedClients,
-      pagination: {
-        currentPage: page,
-        totalPages: Math.ceil(rows.length / size),
-      },
+      clients,
     }
   })
