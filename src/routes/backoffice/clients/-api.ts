@@ -64,7 +64,17 @@ export const getClientsPage = createServerFn({ method: 'GET' })
       .limit(size)
       .offset(offset)
 
-    return {
-      clients,
-    }
+      const [{ total }] = await db
+        .select({ total: count() })
+        .from(ClientTable)
+        .innerJoin(
+          PersonalInformationTable,
+          eq(PersonalInformationTable.clientId, ClientTable.id),
+        )
+        .where(whereClause)
+
+      return {
+        clients,
+        total,
+      }
   })
