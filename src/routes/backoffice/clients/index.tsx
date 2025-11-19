@@ -6,6 +6,7 @@ import {
 } from './-components/filters'
 import { ClientSearch, ClientSearchSchema } from './-schemas'
 import { FilteredResults } from './-components/filtered-results'
+import { clientQueries } from './-queries'
 
 const defaultSearch: ClientSearch = {
   page: 1,
@@ -21,11 +22,14 @@ export const Route = createFileRoute('/backoffice/clients/')({
     middlewares: [stripSearchParams(defaultSearch)],
   },
   loaderDeps: ({ search }) => search,
-  loader: async ({ deps: _searchFilter }) => {
-    // Prefetch queries
-    return {}
+  loader: async ({ context, deps }) => {
+    const { page, name, status } = deps
+    context.queryClient.prefetchQuery(
+      clientQueries.filteredClients({ page, name, status, size: 10 }),
+    )
   },
 })
+
 
 function RouteComponent() {
   return (

@@ -17,12 +17,14 @@ const insights = () => ({
   queryKey: clientKeys.insights(),
   queryFn: ({ signal: _ }: { signal: AbortSignal }) => api.getClientInsights(),
   throwOnError: true,
+  staleTime: 1000 * 30, // 30 seconds
 })
 
 const filteredClients = (query: ClientQuery) => ({
   queryKey: clientKeys.list(query),
   queryFn: () => api.getClientsPage({ data: query }),
   throwOnError: true,
+  staleTime: 1000 * 3, // 3 seconds
 })
 
 export const clientQueries = {
