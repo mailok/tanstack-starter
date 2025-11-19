@@ -7,23 +7,13 @@ import { PersonalInformationTable } from '@/db/schemas/client/personal-informati
 
 export const getClientInsights = createServerFn({ method: 'GET' }).handler(
   async () => {
-    const [{ count: active }] = await db
-      .select({ count: count() })
-      .from(ClientTable)
-      .where(eq(ClientTable.status, 'active'))
-
-    const [{ count: inactive }] = await db
-      .select({ count: count() })
-      .from(ClientTable)
-      .where(eq(ClientTable.status, 'inactive'))
-
-    const [{ count: pending }] = await db
-      .select({ count: count() })
-      .from(ClientTable)
-      .where(eq(ClientTable.status, 'pending'))
-
-    const [{ count: total }] = await db
-      .select({ count: count() })
+    const [{ active, inactive, pending, total }] = await db
+      .select({
+        active: count(eq(ClientTable.status, 'active')),
+        inactive: count(eq(ClientTable.status, 'inactive')),
+        pending: count(eq(ClientTable.status, 'pending')),
+        total: count(),
+      })
       .from(ClientTable)
 
     return {
