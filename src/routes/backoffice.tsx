@@ -35,7 +35,7 @@ function RouteComponent() {
                 className="hidden sm:flex"
               >
                 <a
-                  href="https://github.com/mailok/react-spa-starter"
+                  href="https://github.com/mailok/tanstack-starter"
                   rel="noopener noreferrer"
                   target="_blank"
                   className="dark:text-foreground"
