@@ -8,6 +8,7 @@ import {
   SidebarTrigger,
 } from '@/components/ui/sidebar'
 import { ThemeToggle } from '@/components/theme/theme-toggle'
+import { Breadcrumbs } from '@/components/breadcrums'
 
 export const Route = createFileRoute('/backoffice')({
   component: RouteComponent,
@@ -25,7 +26,7 @@ function RouteComponent() {
               orientation="vertical"
               className="mx-2 data-[orientation=vertical]:h-4"
             />
-            {/* <Breadcrumbs /> */}
+            <Breadcrumbs />
             <div className="ml-auto flex items-center gap-2">
               <Button
                 variant="ghost"

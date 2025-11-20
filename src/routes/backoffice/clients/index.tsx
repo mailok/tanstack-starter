@@ -1,4 +1,4 @@
-import { createFileRoute, stripSearchParams } from '@tanstack/react-router'
+import { createFileRoute, Link, stripSearchParams } from '@tanstack/react-router'
 import {
   SearchFilter,
   StatusFilter,
@@ -8,12 +8,23 @@ import { ClientSearch, ClientSearchSchema } from './-schemas'
 import { FilteredResults } from './-components/filtered-results'
 import { clientQueries } from './-queries'
 import { minutes } from '@/lib/time'
+import { BreadcrumbItem, BreadcrumbLink } from '@/components/ui/breadcrumb'
 
 const defaultSearch: ClientSearch = {
   page: 1,
   status: 'active',
   name: '',
   viewMode: 'cards',
+}
+
+function Crumb() {
+  return (
+    <BreadcrumbItem className="hidden md:block">
+      <BreadcrumbLink asChild>
+        <Link to="/backoffice/clients" search={{ ...defaultSearch }}>Clients</Link>
+      </BreadcrumbLink>
+    </BreadcrumbItem>
+  );
 }
 
 export const Route = createFileRoute('/backoffice/clients/')({
@@ -30,6 +41,9 @@ export const Route = createFileRoute('/backoffice/clients/')({
     )
   },
   staleTime: minutes.TEN,
+  staticData: {
+    crumb: <Crumb />
+  }
 })
 
 

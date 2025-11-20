@@ -6,6 +6,12 @@ import * as TanstackQuery from './integrations/tanstack-query/root-provider'
 import { routeTree } from './routeTree.gen'
 import { NotFound } from './components/not-found'
 
+declare module '@tanstack/react-router' {
+  interface StaticDataRouteOption {
+    crumb?: React.ReactNode
+  }
+}
+
 // Create a new router instance
 export const getRouter = () => {
   const rqContext = TanstackQuery.getContext()

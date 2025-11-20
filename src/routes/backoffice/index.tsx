@@ -1,10 +1,24 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Link } from '@tanstack/react-router'
 import { DataTable } from './-components/data-table'
 import { ChartAreaInteractive } from './-components/chart-area-interactive'
 import { SectionCards } from './-components/section-cards'
+import { BreadcrumbItem, BreadcrumbLink } from '@/components/ui/breadcrumb';
+
+function Crumb() {
+  return (
+    <BreadcrumbItem className="hidden md:block">
+      <BreadcrumbLink asChild>
+        <Link to="/backoffice">Dashboard</Link>
+      </BreadcrumbLink>
+    </BreadcrumbItem>
+  );
+}
 
 export const Route = createFileRoute('/backoffice/')({
   component: RouteComponent,
+  staticData: {
+    crumb: <Crumb />
+  }
 })
 
 function RouteComponent() {
