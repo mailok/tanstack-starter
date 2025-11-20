@@ -6,35 +6,40 @@ import { useSuspenseQuery } from '@tanstack/react-query'
 import { Suspense, useEffect } from 'react'
 import { ErrorBoundary, useErrorBoundary } from '@/components/error-boundary'
 import { toast } from 'sonner'
+import { cn } from '@/lib/utils'
 
 const summaryItems = [
   {
     key: 'total' as const,
     label: 'Total Clients',
     icon: Users,
-    colorClass: 'text-blue-600',
-    bgClass: 'bg-blue-100',
+    gradient: 'from-blue-500 to-cyan-400',
+    shadow: 'shadow-blue-500/20',
+    iconColor: 'text-white',
   },
   {
     key: 'active' as const,
     label: 'Active',
     icon: UserCheck,
-    colorClass: 'text-green-600',
-    bgClass: 'bg-green-100',
+    gradient: 'from-primary to-purple-400', // Using the new primary (Electric Purple)
+    shadow: 'shadow-primary/20',
+    iconColor: 'text-white',
   },
   {
     key: 'pending' as const,
     label: 'Pending',
     icon: Clock,
-    colorClass: 'text-orange-600',
-    bgClass: 'bg-orange-100',
+    gradient: 'from-orange-500 to-amber-400',
+    shadow: 'shadow-orange-500/20',
+    iconColor: 'text-white',
   },
   {
     key: 'inactive' as const,
     label: 'Inactive',
     icon: UserX,
-    colorClass: 'text-red-600',
-    bgClass: 'bg-red-100',
+    gradient: 'from-red-500 to-pink-500',
+    shadow: 'shadow-red-500/20',
+    iconColor: 'text-white',
   },
 ]
 
@@ -53,24 +58,43 @@ export function InsightsContent() {
 
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-      {summaryItems.map((item) => {
+      {summaryItems.map((item, index) => {
         const Icon = item.icon
         const value = insights[item.key]
 
         return (
-          <Card key={item.key} className="card-elevated status-indicator">
-            <CardContent className="p-6">
-              <div className="flex items-center space-x-4">
-                <div
-                  className={`flex h-12 w-12 items-center justify-center rounded-lg ${item.bgClass}`}
-                >
-                  <Icon className={`h-6 w-6 ${item.colorClass}`} />
-                </div>
+          <Card
+            key={item.key}
+            className={cn(
+              "border-none overflow-hidden relative group hover:scale-105 transition-all duration-300 hover:shadow-xl",
+              "animate-in fade-in slide-in-from-bottom-4 fill-mode-backwards"
+            )}
+            style={{ animationDelay: `${index * 100}ms` }}
+          >
+            <div className={cn(
+              "absolute inset-0 opacity-[0.03] dark:opacity-[0.05] bg-gradient-to-br",
+              item.gradient
+            )} />
+
+            <CardContent className="p-6 relative z-10">
+              <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">
+                  <p className="text-sm font-medium text-muted-foreground mb-1">
                     {item.label}
                   </p>
-                  <p className="text-2xl font-bold text-foreground">{value}</p>
+                  <p className="text-3xl font-bold text-foreground tracking-tight">
+                    {value}
+                  </p>
+                </div>
+
+                <div
+                  className={cn(
+                    "flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br shadow-lg transform group-hover:rotate-6 transition-transform duration-300",
+                    item.gradient,
+                    item.shadow
+                  )}
+                >
+                  <Icon className={cn("h-6 w-6", item.iconColor)} />
                 </div>
               </div>
             </CardContent>
@@ -85,14 +109,14 @@ export function InsightsSkeleton() {
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
       {summaryItems.map((item) => (
-        <Card key={item.key} className="card-elevated">
+        <Card key={item.key} className="border-none shadow-sm">
           <CardContent className="p-6">
-            <div className="flex items-center space-x-4">
-              <Skeleton className="h-12 w-12 rounded-lg" />
+            <div className="flex items-center justify-between">
               <div className="space-y-2">
                 <Skeleton className="h-4 w-20" />
-                <Skeleton className="h-6 w-8" />
+                <Skeleton className="h-8 w-12" />
               </div>
+              <Skeleton className="h-12 w-12 rounded-xl" />
             </div>
           </CardContent>
         </Card>
@@ -126,23 +150,22 @@ export function InsightsError() {
 
   return (
     <div className="space-y-4">
-      {/* Error state cards with opacity */}
       <div className="grid grid-cols-1 gap-4 opacity-60 sm:grid-cols-2 lg:grid-cols-4">
         {summaryItems.map((item) => {
           return (
-            <Card key={item.key} className="card-elevated status-indicator">
+            <Card key={item.key} className="border-none shadow-sm">
               <CardContent className="p-6">
-                <div className="flex items-center space-x-4">
-                  <div
-                    className={`flex h-12 w-12 items-center justify-center rounded-lg bg-red-100 dark:bg-red-900/50`}
-                  >
-                    <AlertTriangle className="h-6 w-6 text-red-600 dark:text-red-400" />
-                  </div>
+                <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-muted-foreground">
+                    <p className="text-sm font-medium text-muted-foreground mb-1">
                       {item.label}
                     </p>
-                    <p className="text-2xl font-bold text-foreground">0</p>
+                    <p className="text-3xl font-bold text-foreground">0</p>
+                  </div>
+                  <div
+                    className="flex h-12 w-12 items-center justify-center rounded-xl bg-red-100 dark:bg-red-900/50"
+                  >
+                    <AlertTriangle className="h-6 w-6 text-red-600 dark:text-red-400" />
                   </div>
                 </div>
               </CardContent>

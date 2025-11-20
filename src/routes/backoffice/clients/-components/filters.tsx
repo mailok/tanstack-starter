@@ -1,5 +1,5 @@
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { getRouteApi, useRouter } from '@tanstack/react-router'
+import { cn } from '@/lib/utils'
 import { useState, useEffect } from 'react'
 import { useDebounce } from '@uidotdev/usehooks'
 import { SearchInput } from '@/components/search-input'
@@ -8,8 +8,9 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
-import { Button } from '@/components/ui/button'
 import { LayoutGrid, Table2 } from 'lucide-react'
+
+import { PillGroup, PillGroupItem } from '@/components/ui/pill-group'
 
 function useClientSearch() {
   const router = useRouter()
@@ -30,31 +31,14 @@ export function StatusFilter() {
   const [{ status }, setClientSearch] = useClientSearch()
 
   return (
-    <Tabs defaultValue={status}>
-      <TabsList>
-        <TabsTrigger
-          className="cursor-pointer"
-          value="active"
-          onClick={() => setClientSearch({ status: 'active', page: 1 })}
-        >
-          Active
-        </TabsTrigger>
-        <TabsTrigger
-          className="cursor-pointer"
-          value="pending"
-          onClick={() => setClientSearch({ status: 'pending', page: 1 })}
-        >
-          Pending
-        </TabsTrigger>
-        <TabsTrigger
-          className="cursor-pointer"
-          value="inactive"
-          onClick={() => setClientSearch({ status: 'inactive', page: 1 })}
-        >
-          Inactive
-        </TabsTrigger>
-      </TabsList>
-    </Tabs>
+    <PillGroup
+      value={status}
+      onValueChange={(value) => setClientSearch({ status: value as any, page: 1 })}
+    >
+      <PillGroupItem value="active">Active</PillGroupItem>
+      <PillGroupItem value="pending">Pending</PillGroupItem>
+      <PillGroupItem value="inactive">Inactive</PillGroupItem>
+    </PillGroup>
   )
 }
 
@@ -83,17 +67,20 @@ export function ViewModeToggle() {
   const [{ viewMode }, setClientSearch] = useClientSearch()
 
   return (
-    <div className="flex items-center space-x-1">
+    <div className="flex items-center gap-3">
       <Tooltip>
         <TooltipTrigger asChild>
-          <Button
-            variant={viewMode === 'cards' ? 'default' : 'outline'}
-            size="sm"
+          <button
             onClick={() => setClientSearch({ viewMode: 'cards' })}
-            className="cursor-pointer"
+            className={cn(
+              "flex h-10 w-10 items-center justify-center rounded-xl transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+              viewMode === 'cards'
+                ? "bg-primary text-primary-foreground shadow-md scale-105"
+                : "bg-card border border-border text-muted-foreground hover:border-primary/50 hover:text-foreground hover:shadow-sm"
+            )}
           >
-            <LayoutGrid className="h-4 w-4" />
-          </Button>
+            <LayoutGrid className="h-5 w-5" />
+          </button>
         </TooltipTrigger>
         <TooltipContent>
           <p>View as cards</p>
@@ -101,14 +88,17 @@ export function ViewModeToggle() {
       </Tooltip>
       <Tooltip>
         <TooltipTrigger asChild>
-          <Button
-            variant={viewMode === 'table' ? 'default' : 'outline'}
-            size="sm"
+          <button
             onClick={() => setClientSearch({ viewMode: 'table' })}
-            className="cursor-pointer"
+            className={cn(
+              "flex h-10 w-10 items-center justify-center rounded-xl transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+              viewMode === 'table'
+                ? "bg-primary text-primary-foreground shadow-md scale-105"
+                : "bg-card border border-border text-muted-foreground hover:border-primary/50 hover:text-foreground hover:shadow-sm"
+            )}
           >
-            <Table2 className="h-4 w-4" />
-          </Button>
+            <Table2 className="h-5 w-5" />
+          </button>
         </TooltipTrigger>
         <TooltipContent>
           <p>View as table</p>

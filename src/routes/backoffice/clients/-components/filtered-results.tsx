@@ -61,12 +61,17 @@ function FilteredResultsContent() {
   if (search.viewMode === 'cards') {
     return (
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {data.clients.map((client) => (
-          <ClientCard
+        {data.clients.map((client, index) => (
+          <div
             key={client.id}
-            client={client}
-            onClick={(client) => console.log(client)}
-          />
+            className="animate-in fade-in slide-in-from-bottom-4 fill-mode-backwards"
+            style={{ animationDelay: `${index * 50}ms` }}
+          >
+            <ClientCard
+              client={client}
+              onClick={(client) => console.log(client)}
+            />
+          </div>
         ))}
       </div>
     )
