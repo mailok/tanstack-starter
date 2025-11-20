@@ -28,7 +28,7 @@ export function NavGeneral() {
         <SidebarMenuItem key="clients">
           <Link
             to="/backoffice/clients"
-            search={{ page: 1, status: 'active', name: '' }}
+            search={{ page: 1, status: 'active', name: '', viewMode: 'cards' }}
           >
             {({ isActive }) => (
               <SidebarMenuButton isActive={isActive} asChild>

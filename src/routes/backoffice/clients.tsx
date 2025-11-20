@@ -1,6 +1,7 @@
 import { createFileRoute, Outlet } from '@tanstack/react-router'
 import { Insights, InsightsSkeleton } from './clients/-components/insights'
 import { clientQueries } from './clients/-queries'
+import { minutes } from '@/lib/time'
 
 export const Route = createFileRoute('/backoffice/clients')({
   component: RouteComponent,
@@ -10,6 +11,7 @@ export const Route = createFileRoute('/backoffice/clients')({
       console.error('Error loading client insights')
     })
   },
+  staleTime: minutes.TEN,
 })
 
 function RouteComponent() {

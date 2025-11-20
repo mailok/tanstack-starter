@@ -1,8 +1,8 @@
-import { db } from '@/db'
 import { createServerFn } from '@tanstack/react-start'
 import { and, count, eq, ilike } from 'drizzle-orm'
-import { ClientTable } from '@/db/schemas/client'
 import { BaseClientSearchSchema } from './-schemas'
+import { ClientTable } from '@/db/schemas/client'
+import { db } from '@/db'
 import { PersonalInformationTable } from '@/db/schemas/client/personal-information'
 
 export const getClientInsights = createServerFn({ method: 'GET' }).handler(
@@ -42,36 +42,37 @@ export const getClientsPage = createServerFn({ method: 'GET' })
 
     const offset = (page - 1) * size
 
-    const clients = await db
-      .select({
-        id: ClientTable.id,
-        status: ClientTable.status,
-        photo: PersonalInformationTable.photo,
-        name: PersonalInformationTable.name,
-        email: PersonalInformationTable.email,
-        phone: PersonalInformationTable.phone,
-        birthDate: PersonalInformationTable.birthDate,
-        age: PersonalInformationTable.age,
-        gender: PersonalInformationTable.gender,
-      })
-      .from(ClientTable)
-      .innerJoin(
-        PersonalInformationTable,
-        eq(PersonalInformationTable.clientId, ClientTable.id),
-      )
-      .where(whereClause)
-      .orderBy(ClientTable.createdAt)
-      .limit(size)
-      .offset(offset)
-
-    const [{ total }] = await db
-      .select({ total: count() })
-      .from(ClientTable)
-      .innerJoin(
-        PersonalInformationTable,
-        eq(PersonalInformationTable.clientId, ClientTable.id),
-      )
-      .where(whereClause)
+    const [clients, [{ total }]] = await Promise.all([
+      db
+        .select({
+          id: ClientTable.id,
+          status: ClientTable.status,
+          photo: PersonalInformationTable.photo,
+          name: PersonalInformationTable.name,
+          email: PersonalInformationTable.email,
+          phone: PersonalInformationTable.phone,
+          birthDate: PersonalInformationTable.birthDate,
+          age: PersonalInformationTable.age,
+          gender: PersonalInformationTable.gender,
+        })
+        .from(ClientTable)
+        .innerJoin(
+          PersonalInformationTable,
+          eq(PersonalInformationTable.clientId, ClientTable.id),
+        )
+        .where(whereClause)
+        .orderBy(ClientTable.createdAt)
+        .limit(size)
+        .offset(offset),
+      db
+        .select({ total: count() })
+        .from(ClientTable)
+        .innerJoin(
+          PersonalInformationTable,
+          eq(PersonalInformationTable.clientId, ClientTable.id),
+        )
+        .where(whereClause),
+    ])
 
     return {
       clients,

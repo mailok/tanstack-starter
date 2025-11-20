@@ -47,6 +47,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
     const theme = await getThemeServer()
     return { theme }
   },
+  staleTime: Infinity,
 })
 
 function RootDocument({ children }: { children: React.ReactNode }) {

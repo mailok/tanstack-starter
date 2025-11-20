@@ -7,6 +7,7 @@ import {
 import { ClientSearch, ClientSearchSchema } from './-schemas'
 import { FilteredResults } from './-components/filtered-results'
 import { clientQueries } from './-queries'
+import { minutes } from '@/lib/time'
 
 const defaultSearch: ClientSearch = {
   page: 1,
@@ -28,6 +29,7 @@ export const Route = createFileRoute('/backoffice/clients/')({
       clientQueries.filteredClients({ page, name, status, size: 10 }),
     )
   },
+  staleTime: minutes.TEN,
 })
 
 
