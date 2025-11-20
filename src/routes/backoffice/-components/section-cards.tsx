@@ -14,8 +14,7 @@ const cards = [
     icon: IconCurrencyDollar,
     gradient: "from-blue-500 to-cyan-400",
     shadow: "shadow-blue-500/20",
-    iconColor: "text-blue-600 dark:text-blue-100",
-    iconBg: "bg-blue-100 dark:bg-blue-900/30"
+    iconColor: "text-white"
   },
   {
     title: "New Customers",
@@ -27,8 +26,7 @@ const cards = [
     icon: IconUsers,
     gradient: "from-purple-500 to-pink-400",
     shadow: "shadow-purple-500/20",
-    iconColor: "text-purple-600 dark:text-purple-100",
-    iconBg: "bg-purple-100 dark:bg-purple-900/30"
+    iconColor: "text-white"
   },
   {
     title: "Active Accounts",
@@ -40,8 +38,7 @@ const cards = [
     icon: IconActivity,
     gradient: "from-emerald-500 to-teal-400",
     shadow: "shadow-emerald-500/20",
-    iconColor: "text-emerald-600 dark:text-emerald-100",
-    iconBg: "bg-emerald-100 dark:bg-emerald-900/30"
+    iconColor: "text-white"
   },
   {
     title: "Growth Rate",
@@ -53,8 +50,7 @@ const cards = [
     icon: IconChartBar,
     gradient: "from-orange-500 to-amber-400",
     shadow: "shadow-orange-500/20",
-    iconColor: "text-orange-600 dark:text-orange-100",
-    iconBg: "bg-orange-100 dark:bg-orange-900/30"
+    iconColor: "text-white"
   }
 ];
 
