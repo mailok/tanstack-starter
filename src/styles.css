@@ -146,14 +146,14 @@ code {
   /* --text-sm: 0.90rem; */
 }
 
-[data-status='active'] {
+[data-slot='badge'][data-status='active'] {
 	@apply border-green-200 bg-green-100 text-green-800 dark:border-green-800/30 dark:bg-green-900/20 dark:text-green-400;
 }
 
-[data-status='inactive'] {
+[data-slot='badge'][data-status='inactive'] {
 	@apply border-red-200 bg-red-100 text-red-800 dark:border-red-800/30 dark:bg-red-900/20 dark:text-red-400;
 }
 
-[data-status='pending'] {
+[data-slot='badge'][data-status='pending'] {
 	@apply border-yellow-200 bg-yellow-100 text-yellow-800 dark:border-yellow-800/30 dark:bg-yellow-900/20 dark:text-yellow-400;
 }
