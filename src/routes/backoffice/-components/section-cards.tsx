@@ -1,102 +1,114 @@
-import { IconTrendingDown, IconTrendingUp } from '@tabler/icons-react';
-
+import { IconTrendingDown, IconTrendingUp, IconCurrencyDollar, IconUsers, IconActivity, IconChartBar } from '@tabler/icons-react';
 import { Badge } from '@/components/ui/badge';
-import {
-  Card,
-  CardAction,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
+import { cn } from '@/lib/utils';
+
+const cards = [
+  {
+    title: "Total Revenue",
+    value: "$1,250.00",
+    change: "+12.5%",
+    trend: "up",
+    description: "Trending up this month",
+    subtext: "Visitors for the last 6 months",
+    icon: IconCurrencyDollar,
+    gradient: "from-blue-500 to-cyan-400",
+    shadow: "shadow-blue-500/20",
+    iconColor: "text-blue-600 dark:text-blue-100",
+    iconBg: "bg-blue-100 dark:bg-blue-900/30"
+  },
+  {
+    title: "New Customers",
+    value: "1,234",
+    change: "-20%",
+    trend: "down",
+    description: "Down 20% this period",
+    subtext: "Acquisition needs attention",
+    icon: IconUsers,
+    gradient: "from-purple-500 to-pink-400",
+    shadow: "shadow-purple-500/20",
+    iconColor: "text-purple-600 dark:text-purple-100",
+    iconBg: "bg-purple-100 dark:bg-purple-900/30"
+  },
+  {
+    title: "Active Accounts",
+    value: "45,678",
+    change: "+12.5%",
+    trend: "up",
+    description: "Strong user retention",
+    subtext: "Engagement exceed targets",
+    icon: IconActivity,
+    gradient: "from-emerald-500 to-teal-400",
+    shadow: "shadow-emerald-500/20",
+    iconColor: "text-emerald-600 dark:text-emerald-100",
+    iconBg: "bg-emerald-100 dark:bg-emerald-900/30"
+  },
+  {
+    title: "Growth Rate",
+    value: "4.5%",
+    change: "+4.5%",
+    trend: "up",
+    description: "Steady performance increase",
+    subtext: "Meets growth projections",
+    icon: IconChartBar,
+    gradient: "from-orange-500 to-amber-400",
+    shadow: "shadow-orange-500/20",
+    iconColor: "text-orange-600 dark:text-orange-100",
+    iconBg: "bg-orange-100 dark:bg-orange-900/30"
+  }
+];
 
 export function SectionCards() {
   return (
-    <div className="*:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card grid grid-cols-1 gap-4 px-4 *:data-[slot=card]:shadow-xs lg:px-6 @xl/main:grid-cols-2 @5xl/main:grid-cols-4">
-      {/* Total Revenue */}
-      <Card className="@container/card">
-        <CardHeader>
-          <CardDescription>Total Revenue</CardDescription>
-          <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-            $1,250.00
-          </CardTitle>
-          <CardAction>
-            <Badge className="border-transparent bg-emerald-500 text-emerald-50 dark:bg-emerald-600">
-              <IconTrendingUp /> +12.5%
-            </Badge>
-          </CardAction>
-        </CardHeader>
-        <CardFooter className="flex-col items-start gap-1.5 text-sm">
-          <div className="line-clamp-1 flex gap-2 font-medium">
-            Trending up this month <IconTrendingUp className="size-4" />
-          </div>
-          <div className="text-muted-foreground">
-            Visitors for the last 6 months
-          </div>
-        </CardFooter>
-      </Card>
-      {/* New Customers */}
-      <Card className="@container/card">
-        <CardHeader>
-          <CardDescription>New Customers</CardDescription>
-          <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-            1,234
-          </CardTitle>
-          <CardAction>
-            <Badge className="border-transparent bg-red-500 text-red-50 dark:bg-red-600">
-              <IconTrendingDown /> -20%
-            </Badge>
-          </CardAction>
-        </CardHeader>
-        <CardFooter className="flex-col items-start gap-1.5 text-sm">
-          <div className="line-clamp-1 flex gap-2 font-medium">
-            Down 20% this period <IconTrendingDown className="size-4" />
-          </div>
-          <div className="text-muted-foreground">
-            Acquisition needs attention
-          </div>
-        </CardFooter>
-      </Card>
-      {/* Active Accounts */}
-      <Card className="@container/card">
-        <CardHeader>
-          <CardDescription>Active Accounts</CardDescription>
-          <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-            45,678
-          </CardTitle>
-          <CardAction>
-            <Badge className="border-transparent bg-emerald-500 text-emerald-50 dark:bg-emerald-600">
-              <IconTrendingUp /> +12.5%
-            </Badge>
-          </CardAction>
-        </CardHeader>
-        <CardFooter className="flex-col items-start gap-1.5 text-sm">
-          <div className="line-clamp-1 flex gap-2 font-medium">
-            Strong user retention <IconTrendingUp className="size-4" />
-          </div>
-          <div className="text-muted-foreground">Engagement exceed targets</div>
-        </CardFooter>
-      </Card>
-      {/* Growth Rate */}
-      <Card className="@container/card">
-        <CardHeader>
-          <CardDescription>Growth Rate</CardDescription>
-          <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-            4.5%
-          </CardTitle>
-          <CardAction>
-            <Badge className="border-transparent bg-emerald-500 text-emerald-50 dark:bg-emerald-600">
-              <IconTrendingUp /> +4.5%
-            </Badge>
-          </CardAction>
-        </CardHeader>
-        <CardFooter className="flex-col items-start gap-1.5 text-sm">
-          <div className="line-clamp-1 flex gap-2 font-medium">
-            Steady performance increase <IconTrendingUp className="size-4" />
-          </div>
-          <div className="text-muted-foreground">Meets growth projections</div>
-        </CardFooter>
-      </Card>
+    <div className="grid grid-cols-1 gap-6 px-4 lg:px-6 @xl/main:grid-cols-2 @5xl/main:grid-cols-4">
+      {cards.map((card, index) => (
+        <Card
+          key={card.title}
+          className={cn(
+            "group relative overflow-hidden border-none shadow-sm transition-all duration-300 hover:shadow-xl hover:scale-105",
+            "animate-in fade-in slide-in-from-bottom-4 fill-mode-backwards"
+          )}
+          style={{ animationDelay: `${index * 100}ms` }}
+        >
+          <CardContent className="p-5">
+            <div className="flex justify-between items-start mb-3">
+              <div
+                className={cn(
+                  "flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br shadow-lg transform group-hover:rotate-6 transition-transform duration-300",
+                  card.gradient,
+                  card.shadow
+                )}
+              >
+                <card.icon className={cn("h-6 w-6", card.iconColor)} />
+              </div>
+              <Badge
+                variant="secondary"
+                className={cn(
+                  "font-medium",
+                  card.trend === 'up'
+                    ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400"
+                    : "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"
+                )}
+              >
+                {card.trend === 'up' ? <IconTrendingUp className="w-3 h-3 mr-1" /> : <IconTrendingDown className="w-3 h-3 mr-1" />}
+                {card.change}
+              </Badge>
+            </div>
+
+            <div className="space-y-0.5">
+              <h3 className="text-sm font-medium text-muted-foreground">{card.title}</h3>
+              <div className="text-2xl font-bold text-foreground tracking-tight">{card.value}</div>
+            </div>
+
+            <div className="mt-3 pt-3 border-t border-border/50">
+              <div className="flex items-center text-xs font-medium text-foreground">
+                {card.description}
+              </div>
+              <p className="text-xs text-muted-foreground mt-0.5">{card.subtext}</p>
+            </div>
+          </CardContent>
+        </Card>
+      ))}
     </div>
   );
 }

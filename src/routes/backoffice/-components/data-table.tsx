@@ -50,6 +50,7 @@ import {
 import { Area, AreaChart, CartesianGrid, XAxis } from 'recharts';
 import { toast } from 'sonner';
 import * as z from 'zod'
+import { cn } from '@/lib/utils';
 
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Badge } from '@/components/ui/badge';
@@ -175,7 +176,7 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
     header: 'Section Type',
     cell: ({ row }) => (
       <div className="w-32">
-        <Badge variant="outline" className="text-muted-foreground px-1.5">
+        <Badge variant="secondary" className="font-medium opacity-90 hover:opacity-100 transition-opacity">
           {row.original.type}
         </Badge>
       </div>
@@ -185,11 +186,19 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
     accessorKey: 'status',
     header: 'Status',
     cell: ({ row }) => (
-      <Badge variant="outline" className="text-muted-foreground px-1.5">
+      <Badge
+        variant="outline"
+        className={cn(
+          "px-2 py-0.5 font-medium transition-colors border-transparent",
+          row.original.status === 'Done'
+            ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400"
+            : "bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400"
+        )}
+      >
         {row.original.status === 'Done' ? (
-          <IconCircleCheckFilled className="fill-green-500 dark:fill-green-400" />
+          <IconCircleCheckFilled className="mr-1.5 size-3 fill-current" />
         ) : (
-          <IconLoader />
+          <IconLoader className="mr-1.5 size-3 animate-spin" />
         )}
         {row.original.status}
       </Badge>
@@ -315,7 +324,7 @@ function DraggableRow({ row }: { row: Row<z.infer<typeof schema>> }) {
       data-state={row.getIsSelected() && 'selected'}
       data-dragging={isDragging}
       ref={setNodeRef}
-      className="relative z-0 data-[dragging=true]:z-10 data-[dragging=true]:opacity-80"
+      className="relative z-0 transition-colors hover:bg-muted/50 data-[selected=true]:bg-muted data-[dragging=true]:z-10 data-[dragging=true]:opacity-80 data-[dragging=true]:shadow-xl data-[dragging=true]:scale-105"
       style={{
         transform: CSS.Transform.toString(transform),
         transition: transition,
@@ -1084,7 +1093,7 @@ export function DataTable() {
         value="outline"
         className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6"
       >
-        <div className="overflow-hidden rounded-lg border">
+        <div className="overflow-hidden rounded-xl border border-border/50 shadow-sm bg-card">
           <DndContext
             collisionDetection={closestCenter}
             modifiers={[restrictToVerticalAxis]}
@@ -1093,7 +1102,7 @@ export function DataTable() {
             id={sortableId}
           >
             <Table>
-              <TableHeader className="bg-muted sticky top-0 z-10">
+              <TableHeader className="bg-muted/50 sticky top-0 z-10 backdrop-blur-sm">
                 {table.getHeaderGroups().map((headerGroup) => (
                   <TableRow key={headerGroup.id}>
                     {headerGroup.headers.map((header) => {
@@ -1102,9 +1111,9 @@ export function DataTable() {
                           {header.isPlaceholder
                             ? null
                             : flexRender(
-                                header.column.columnDef.header,
-                                header.getContext()
-                              )}
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
                         </TableHead>
                       );
                     })}
