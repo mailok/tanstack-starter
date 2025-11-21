@@ -15,3 +15,4 @@ export const ClientTable = pgTable('clients', {
 
 export type ClientRow = typeof ClientTable.$inferSelect
 export type InsertClientRow = typeof ClientTable.$inferInsert
+export type ClientStatus = ClientRow['status']

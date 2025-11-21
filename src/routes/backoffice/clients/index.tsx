@@ -1,4 +1,8 @@
-import { createFileRoute, stripSearchParams } from '@tanstack/react-router'
+import {
+  createFileRoute,
+  stripSearchParams,
+  useRouter,
+} from '@tanstack/react-router'
 import {
   SearchFilter,
   StatusFilter,
@@ -36,15 +40,34 @@ export const Route = createFileRoute('/backoffice/clients/')({
 })
 
 function RouteComponent() {
+  const router = useRouter()
+  const search = Route.useSearch()
+
+  function setClientSearch(values: Partial<typeof search>) {
+    router.navigate({
+      to: '/backoffice/clients',
+      search: { ...search, ...values },
+    })
+  }
+
   return (
     <div className="flex size-full flex-col gap-6 p-6">
       <Insights />
       <div className="@container flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <StatusFilter />
-          <SearchFilter />
+          <StatusFilter
+            statusSelected={search.status}
+            selectStatus={(value) => setClientSearch({ status: value })}
+          />
+          <SearchFilter
+            name={search.name}
+            setName={(value) => setClientSearch({ name: value })}
+          />
         </div>
-        <ViewModeToggle />
+        <ViewModeToggle
+          viewMode={search.viewMode}
+          setViewMode={(value) => setClientSearch({ viewMode: value })}
+        />
       </div>
       <FilteredResults />
       {/* <ClientsPagination /> */}
