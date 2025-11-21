@@ -7,7 +7,6 @@ import { db } from '@/db'
 import { PersonalInformationTable } from '@/db/schemas/client/personal-information'
 import { MedicalInformationTable } from '@/db/schemas/client/medical-information'
 import { BenefitsTable } from '@/db/schemas/client/benefits'
-// import { sleep } from '@/lib/sleep'
 
 export const getClientInsights = createServerFn({ method: 'GET' }).handler(
   async () => {

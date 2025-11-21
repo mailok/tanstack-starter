@@ -31,15 +31,12 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from '@/components/ui/empty'
+import { useClientSearch } from '../-hooks/use-client-search'
 
 type Client = GetClientsPageResponse['clients'][number]
 
-function useClientSearch() {
-  return useSearch({ from: '/backoffice/clients/' })
-}
-
 export function FilteredResults() {
-  const search = useClientSearch()
+  const [search] = useClientSearch()
   const resetKey = `${search.page}-${search.status}-${search.name}-${search.viewMode}`
 
   return (
@@ -52,15 +49,15 @@ export function FilteredResults() {
 }
 
 function FilteredResultsContent() {
-  const search = useClientSearch()
+  const [search] = useClientSearch()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
 
   const { data } = useSuspenseQuery(
     clientQueries.filteredClients({
       page: search.page,
-      status: search.status,
       name: search.name,
+      status: search.status,
       size: 10,
     }),
   )

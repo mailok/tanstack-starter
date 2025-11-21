@@ -11,19 +11,17 @@ import {
 
 import { PillGroup, PillGroupItem } from '@/components/ui/pill-group'
 import { ClientStatus } from '@/db/schemas/client'
+import { useClientSearch } from '../-hooks/use-client-search'
 
-type StatusFilterProps = {
-  statusSelected: ClientStatus
-  selectStatus: (value: ClientStatus) => void
-}
-
-export function StatusFilter(props: StatusFilterProps) {
-  const { statusSelected, selectStatus } = props
+export function StatusFilter() {
+  const [search, setClientSearch] = useClientSearch()
 
   return (
     <PillGroup
-      value={statusSelected}
-      onValueChange={(value) => selectStatus(value as ClientStatus)}
+      value={search.status}
+      onValueChange={(value) =>
+        setClientSearch({ status: value as ClientStatus, page: 1 })
+      }
     >
       <PillGroupItem value="active">Active</PillGroupItem>
       <PillGroupItem value="pending">Pending</PillGroupItem>
@@ -32,20 +30,18 @@ export function StatusFilter(props: StatusFilterProps) {
   )
 }
 
-type SearchFilterProps = {
-  name: string
-  setName: (value: string) => void
-}
-
-export function SearchFilter(props: SearchFilterProps) {
-  const { name, setName } = props
+export function SearchFilter() {
+  const [search, setClientSearch] = useClientSearch()
+  const name = search.name ?? ''
 
   const [localSearch, setLocalSearch] = useState(name)
   const debouncedSearchTerm = useDebounce(localSearch, 500)
 
   useEffect(() => {
-    setName(debouncedSearchTerm)
-  }, [debouncedSearchTerm, setName])
+    if (debouncedSearchTerm !== name) {
+      setClientSearch({ name: debouncedSearchTerm, page: 1 })
+    }
+  }, [debouncedSearchTerm, name, setClientSearch])
 
   return (
     <div className="hidden items-center space-x-2 @lg:flex">
@@ -59,20 +55,15 @@ export function SearchFilter(props: SearchFilterProps) {
   )
 }
 
-type ViewModeToggleProps = {
-  viewMode: 'cards' | 'table'
-  setViewMode: (value: 'cards' | 'table') => void
-}
-
-export function ViewModeToggle(props: ViewModeToggleProps) {
-  const { viewMode, setViewMode } = props
+export function ViewModeToggle() {
+  const [{ viewMode }, setClientSearch] = useClientSearch()
 
   return (
     <div className="flex items-center gap-3">
       <Tooltip>
         <TooltipTrigger asChild>
           <button
-            onClick={() => setViewMode('cards')}
+            onClick={() => setClientSearch({ viewMode: 'cards' })}
             className={cn(
               'flex h-10 w-10 items-center justify-center rounded-xl transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
               viewMode === 'cards'
@@ -90,7 +81,7 @@ export function ViewModeToggle(props: ViewModeToggleProps) {
       <Tooltip>
         <TooltipTrigger asChild>
           <button
-            onClick={() => setViewMode('table')}
+            onClick={() => setClientSearch({ viewMode: 'table' })}
             className={cn(
               'flex h-10 w-10 items-center justify-center rounded-xl transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
               viewMode === 'table'
