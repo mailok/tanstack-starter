@@ -1,7 +1,7 @@
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { Suspense } from 'react'
 import { useNavigate, useSearch } from '@tanstack/react-router'
-import { AlertTriangle } from 'lucide-react'
+import { AlertTriangle, Users } from 'lucide-react'
 import { clientQueries } from '../-queries'
 import { getInitials } from '../-utils/get-initials'
 import { getGenderLabel } from '../-utils/get-gender-label'
@@ -23,6 +23,14 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from '@/components/ui/empty'
 
 type Client = GetClientsPageResponse['clients'][number]
 
@@ -100,31 +108,19 @@ function FilteredResultsSkeleton() {
 
 function EmptyResults() {
   return (
-    <div className="size-full flex items-center justify-center">
-      <div className="p-12 text-center">
-        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-muted">
-          <svg
-            className="h-8 w-8 text-muted-foreground"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
-            />
-          </svg>
-        </div>
-        <h3 className="mt-4 text-lg font-semibold text-foreground">
-          No clients found
-        </h3>
-        <p className="mt-2 text-sm text-muted-foreground">
-          No clients were found matching the applied filters.
-        </p>
-      </div>
-    </div>
+    <Empty>
+      <EmptyContent>
+        <EmptyHeader>
+          <EmptyMedia variant="icon">
+            <Users />
+          </EmptyMedia>
+          <EmptyTitle>No clients found</EmptyTitle>
+          <EmptyDescription>
+            No clients were found matching the applied filters.
+          </EmptyDescription>
+        </EmptyHeader>
+      </EmptyContent>
+    </Empty>
   )
 }
 
