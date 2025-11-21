@@ -1,8 +1,8 @@
-import { useSuspenseQuery } from '@tanstack/react-query'
+import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
 import { Suspense } from 'react'
 import { useNavigate, useSearch } from '@tanstack/react-router'
 import { AlertTriangle, Users } from 'lucide-react'
-import { clientQueries } from '../-queries'
+import { clientKeys, clientQueries } from '../-queries'
 import { getInitials } from '../-utils/get-initials'
 import { getGenderLabel } from '../-utils/get-gender-label'
 import { getStatusLabel } from '../-utils/get-status-label'
@@ -54,6 +54,7 @@ export function FilteredResults() {
 function FilteredResultsContent() {
   const search = useClientSearch()
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
 
   const { data } = useSuspenseQuery(
     clientQueries.filteredClients({
@@ -64,7 +65,13 @@ function FilteredResultsContent() {
     }),
   )
 
-  const handleClientClick = (client: Client) => {
+  function viewClientDetails(client: Client) {
+    queryClient.setQueryData(clientKeys.header(client.id), {
+      id: client.id,
+      name: client.name,
+      status: client.status,
+      photo: client.photo,
+    })
     navigate({ to: `/backoffice/clients/${client.id}/personal-info`, search })
   }
 
@@ -80,13 +87,13 @@ function FilteredResultsContent() {
             className="animate-in fade-in slide-in-from-bottom-4 fill-mode-backwards"
             style={{ animationDelay: `${index * 50}ms` }}
           >
-            <ClientCard client={client} onClick={handleClientClick} />
+            <ClientCard client={client} onClick={viewClientDetails} />
           </div>
         ))}
       </div>
     )
   }
-  return <ClientTable clients={data.clients} onClick={handleClientClick} />
+  return <ClientTable clients={data.clients} onClick={viewClientDetails} />
 }
 
 function FilteredResultsSkeleton() {
