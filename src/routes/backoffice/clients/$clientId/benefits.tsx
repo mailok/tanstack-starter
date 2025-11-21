@@ -1,14 +1,21 @@
 import { createFileRoute, stripSearchParams } from '@tanstack/react-router'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { Suspense } from 'react'
-import { Check, X } from 'lucide-react'
+import { Check, FileX, X } from 'lucide-react'
 import { ClientDetailsError } from '../-components/client-details-error'
 import { ClientSearchSchema, defaultClientSearch } from '../-schemas'
 import { clientBenefitsQueryOptions } from '@/routes/backoffice/clients/-queries'
 import { ErrorBoundary } from '@/components/error-boundary'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from '@/components/ui/empty'
 
 export const Route = createFileRoute('/backoffice/clients/$clientId/benefits')({
   validateSearch: ClientSearchSchema,
@@ -36,6 +43,24 @@ function ClientBenefitsContent({ clientId }: { clientId: string }) {
   const { data: benefits } = useSuspenseQuery(
     clientBenefitsQueryOptions(clientId),
   )
+
+  if (!benefits) {
+    return (
+      <Empty>
+        <EmptyContent>
+          <EmptyHeader>
+            <EmptyMedia variant="icon">
+              <FileX />
+            </EmptyMedia>
+            <EmptyTitle>No Benefits Information</EmptyTitle>
+            <EmptyDescription>
+              This client doesn't have any benefits information on file yet.
+            </EmptyDescription>
+          </EmptyHeader>
+        </EmptyContent>
+      </Empty>
+    )
+  }
 
   return (
     <div className="grid gap-6 md:grid-cols-2">

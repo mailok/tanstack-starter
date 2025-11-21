@@ -1,6 +1,7 @@
 import { createFileRoute, stripSearchParams } from '@tanstack/react-router'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { Suspense } from 'react'
+import { FileX } from 'lucide-react'
 import { ClientDetailsError } from '../-components/client-details-error'
 import { ClientSearchSchema, defaultClientSearch } from '../-schemas'
 import { clientMedicalInformationQueryOptions } from '@/routes/backoffice/clients/-queries'
@@ -8,7 +9,14 @@ import { ErrorBoundary } from '@/components/error-boundary'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from '@/components/ui/empty'
 
 export const Route = createFileRoute(
   '/backoffice/clients/$clientId/medical-info',
@@ -38,6 +46,24 @@ function ClientMedicalInformationContent({ clientId }: { clientId: string }) {
   const { data: medical } = useSuspenseQuery(
     clientMedicalInformationQueryOptions(clientId),
   )
+
+  if (!medical) {
+    return (
+      <Empty>
+        <EmptyContent>
+          <EmptyHeader>
+            <EmptyMedia variant="icon">
+              <FileX />
+            </EmptyMedia>
+            <EmptyTitle>No Medical Information</EmptyTitle>
+            <EmptyDescription>
+              This client doesn't have any medical information on file yet.
+            </EmptyDescription>
+          </EmptyHeader>
+        </EmptyContent>
+      </Empty>
+    )
+  }
 
   return (
     <div className="grid gap-6 md:grid-cols-2">

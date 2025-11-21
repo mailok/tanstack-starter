@@ -108,11 +108,7 @@ export const getClientMedicalInformation = createServerFn({ method: 'GET' })
       .from(MedicalInformationTable)
       .where(eq(MedicalInformationTable.clientId, clientId))
 
-    if (!medicalInfo) {
-      throw new Error('Client medical information not found')
-    }
-
-    return medicalInfo
+    return medicalInfo ?? null
   })
 
 export const getClientBenefits = createServerFn({ method: 'GET' })
@@ -123,11 +119,7 @@ export const getClientBenefits = createServerFn({ method: 'GET' })
       .from(BenefitsTable)
       .where(eq(BenefitsTable.clientId, clientId))
 
-    if (!benefits) {
-      throw new Error('Client benefits not found')
-    }
-
-    return benefits
+    return benefits ?? null
   })
 
 export const getClientHeaderInfo = createServerFn({ method: 'GET' })
