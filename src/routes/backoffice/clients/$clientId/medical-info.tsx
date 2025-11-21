@@ -4,7 +4,7 @@ import { Suspense } from 'react'
 import { FileX } from 'lucide-react'
 import { ClientDetailsError } from '../-components/client-details-error'
 import { ClientSearchSchema, defaultClientSearch } from '../-schemas'
-import { clientMedicalInformationQueryOptions } from '@/routes/backoffice/clients/-queries'
+import { clientQueries } from '@/routes/backoffice/clients/-queries'
 import { ErrorBoundary } from '@/components/error-boundary'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -26,7 +26,7 @@ export const Route = createFileRoute(
     middlewares: [stripSearchParams(defaultClientSearch)],
   },
   loader: ({ context: { queryClient }, params: { clientId } }) =>
-    queryClient.ensureQueryData(clientMedicalInformationQueryOptions(clientId)),
+    queryClient.ensureQueryData(clientQueries.medicalInformation(clientId)),
   component: ClientMedicalInformation,
 })
 
@@ -44,7 +44,7 @@ export function ClientMedicalInformation() {
 
 function ClientMedicalInformationContent({ clientId }: { clientId: string }) {
   const { data: medical } = useSuspenseQuery(
-    clientMedicalInformationQueryOptions(clientId),
+    clientQueries.medicalInformation(clientId),
   )
 
   if (!medical) {

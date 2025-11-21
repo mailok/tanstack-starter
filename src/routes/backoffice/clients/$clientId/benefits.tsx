@@ -4,7 +4,7 @@ import { Suspense } from 'react'
 import { Check, FileX, X } from 'lucide-react'
 import { ClientDetailsError } from '../-components/client-details-error'
 import { ClientSearchSchema, defaultClientSearch } from '../-schemas'
-import { clientBenefitsQueryOptions } from '@/routes/backoffice/clients/-queries'
+import { clientQueries } from '@/routes/backoffice/clients/-queries'
 import { ErrorBoundary } from '@/components/error-boundary'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -23,7 +23,7 @@ export const Route = createFileRoute('/backoffice/clients/$clientId/benefits')({
     middlewares: [stripSearchParams(defaultClientSearch)],
   },
   loader: ({ context: { queryClient }, params: { clientId } }) =>
-    queryClient.ensureQueryData(clientBenefitsQueryOptions(clientId)),
+    queryClient.ensureQueryData(clientQueries.benefits(clientId)),
   component: ClientBenefits,
 })
 
@@ -40,9 +40,7 @@ export function ClientBenefits() {
 }
 
 function ClientBenefitsContent({ clientId }: { clientId: string }) {
-  const { data: benefits } = useSuspenseQuery(
-    clientBenefitsQueryOptions(clientId),
-  )
+  const { data: benefits } = useSuspenseQuery(clientQueries.benefits(clientId))
 
   if (!benefits) {
     return (

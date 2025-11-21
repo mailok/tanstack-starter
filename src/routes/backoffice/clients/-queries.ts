@@ -28,16 +28,6 @@ const filteredClients = (query: ClientQuery) => ({
   staleTime: 1000 * 3, // 3 seconds
 })
 
-export const clientMedicalInformationQueryOptions = (clientId: string) => ({
-  queryKey: clientKeys.medicalInformation(clientId),
-  queryFn: () => api.getClientMedicalInformation({ data: clientId }),
-})
-
-export const clientBenefitsQueryOptions = (clientId: string) => ({
-  queryKey: clientKeys.benefits(clientId),
-  queryFn: () => api.getClientBenefits({ data: clientId }),
-})
-
 const headerInfo = (clientId: string) => ({
   queryKey: clientKeys.header(clientId),
   queryFn: () => api.getClientHeaderInfo({ data: clientId }),
@@ -50,9 +40,21 @@ const personalInformation = (clientId: string) => ({
   throwOnError: true,
 })
 
+const medicalInformation = (clientId: string) => ({
+  queryKey: clientKeys.medicalInformation(clientId),
+  queryFn: () => api.getClientMedicalInformation({ data: clientId }),
+})
+
+const benefits = (clientId: string) => ({
+  queryKey: clientKeys.benefits(clientId),
+  queryFn: () => api.getClientBenefits({ data: clientId }),
+})
+
 export const clientQueries = {
   insights,
   filteredClients,
   headerInfo,
-  personalInformation
+  personalInformation,
+  medicalInformation,
+  benefits,
 }
