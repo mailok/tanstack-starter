@@ -5,6 +5,8 @@ import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { getInitials } from '../../-utils/get-initials'
+import { ErrorBoundary } from '@/components/error-boundary'
+import { AlertCircle } from 'lucide-react'
 
 type Props = {
   clientId: string
@@ -12,9 +14,11 @@ type Props = {
 
 export function HeaderInfo({ clientId }: Props) {
   return (
-    <Suspense fallback={<HeaderInfoSkeleton />}>
-      <HeaderInfoContent clientId={clientId} />
-    </Suspense>
+    <ErrorBoundary fallback={<HeaderInfoError />}>
+      <Suspense fallback={<HeaderInfoSkeleton />}>
+        <HeaderInfoContent clientId={clientId} />
+      </Suspense>
+    </ErrorBoundary>
   )
 }
 
@@ -57,6 +61,21 @@ function HeaderInfoSkeleton() {
       <div className="flex flex-col gap-2 items-center md:items-start w-full">
         <Skeleton className="h-6 w-32" />
         <Skeleton className="h-5 w-16 rounded-full" />
+      </div>
+    </div>
+  )
+}
+
+function HeaderInfoError() {
+  return (
+    <div className="flex flex-col items-center md:items-start gap-4 text-center md:text-left p-4 md:px-0">
+      <div className="h-16 w-16 rounded-full bg-destructive/10 flex items-center justify-center ring-4 ring-background">
+        <AlertCircle className="h-10 w-10 text-destructive" />
+      </div>
+      <div className="flex flex-col gap-2 w-full items-center md:items-start">
+        <h1 className="text-lg tracking-tight leading-tight text-destructive">
+          Can't load client info
+        </h1>
       </div>
     </div>
   )

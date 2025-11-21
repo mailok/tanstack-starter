@@ -16,9 +16,14 @@ function Crumb() {
   const { clientId } = Route.useParams()
   const search = Route.useSearch()
 
-  const { data: client, isLoading } = useQuery(
-    clientQueries.headerInfo(clientId),
-  )
+  const {
+    data: client,
+    isLoading,
+    isError,
+  } = useQuery({
+    ...clientQueries.headerInfo(clientId),
+    throwOnError: false,
+  })
 
   return (
     <BreadcrumbItem className="hidden md:block">
@@ -30,6 +35,10 @@ function Crumb() {
         >
           {isLoading ? (
             <Skeleton className="h-4 w-24" />
+          ) : isError ? (
+            <span className="h-4 w-24 text-destructive">
+              Can't load client info
+            </span>
           ) : (
             client?.name || `Client ${clientId}`
           )}
