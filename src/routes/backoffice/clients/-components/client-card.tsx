@@ -1,11 +1,11 @@
-import { Calendar, Mail, Phone, User } from 'lucide-react';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
+import { Calendar, Mail, Phone, User } from 'lucide-react'
+import { getInitials } from '../-utils/get-initials'
+import { getStatusLabel } from '../-utils/get-status-label'
+import type { GetClientsPageResponse } from '../-api'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
-import { getInitials } from '../-utils/get-initials'
-import { GetClientsPageResponse } from '../-api'
-import { getStatusLabel } from '../-utils/get-status-label'
 
 type Client = GetClientsPageResponse['clients'][number]
 
@@ -29,7 +29,11 @@ export function ClientCard({ client, onClick }: Props) {
         <div className="flex items-start gap-5">
           {/* Avatar */}
           <Avatar className="h-20 w-20 ring-4 ring-background shadow-md group-hover:scale-105 transition-transform duration-300">
-            <AvatarImage src={client.photo} alt={client.name} className="object-cover" />
+            <AvatarImage
+              src={client.photo}
+              alt={client.name}
+              className="object-cover"
+            />
             <AvatarFallback className="bg-gradient-to-br from-primary/10 to-purple-500/10 text-primary text-xl font-bold">
               {getInitials(client.name)}
             </AvatarFallback>
@@ -78,9 +82,7 @@ export function ClientCard({ client, onClick }: Props) {
               </div>
               <div className="flex items-center text-xs text-muted-foreground">
                 <User className="mr-2 h-3.5 w-3.5 opacity-70" />
-                <span className="capitalize">
-                  {client.gender}
-                </span>
+                <span className="capitalize">{client.gender}</span>
               </div>
             </div>
           </div>

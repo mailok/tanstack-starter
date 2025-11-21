@@ -83,12 +83,8 @@
           "name": "client_benefits_clientId_clients_id_fk",
           "tableFrom": "client_benefits",
           "tableTo": "clients",
-          "columnsFrom": [
-            "clientId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["clientId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -212,12 +208,8 @@
           "name": "client_medical_informations_clientId_clients_id_fk",
           "tableFrom": "client_medical_informations",
           "tableTo": "clients",
-          "columnsFrom": [
-            "clientId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["clientId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -295,12 +287,8 @@
           "name": "client_personal_informations_clientId_clients_id_fk",
           "tableFrom": "client_personal_informations",
           "tableTo": "clients",
-          "columnsFrom": [
-            "clientId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["clientId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -316,28 +304,17 @@
     "public.coverageType": {
       "name": "coverageType",
       "schema": "public",
-      "values": [
-        "Basic",
-        "Standard",
-        "Premium"
-      ]
+      "values": ["Basic", "Standard", "Premium"]
     },
     "public.clientStatus": {
       "name": "clientStatus",
       "schema": "public",
-      "values": [
-        "active",
-        "pending",
-        "inactive"
-      ]
+      "values": ["active", "pending", "inactive"]
     },
     "public.gender": {
       "name": "gender",
       "schema": "public",
-      "values": [
-        "male",
-        "female"
-      ]
+      "values": ["male", "female"]
     }
   },
   "schemas": {},

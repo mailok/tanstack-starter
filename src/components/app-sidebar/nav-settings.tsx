@@ -1,13 +1,13 @@
-import { User, Bell, Settings } from 'lucide-react';
-import { Link } from '@tanstack/react-router';
+import { Bell, Settings, User } from 'lucide-react'
+import { Link } from '@tanstack/react-router'
 import {
   SidebarGroup,
   SidebarGroupLabel,
   SidebarMenu,
-  SidebarMenuItem,
-  SidebarMenuButton,
   SidebarMenuBadge,
-} from '../ui/sidebar';
+  SidebarMenuButton,
+  SidebarMenuItem,
+} from '../ui/sidebar'
 
 export function NavSettings() {
   return (

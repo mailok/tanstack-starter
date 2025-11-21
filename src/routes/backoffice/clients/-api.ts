@@ -1,9 +1,13 @@
 import { createServerFn } from '@tanstack/react-start'
 import { and, count, eq, ilike } from 'drizzle-orm'
+import * as z from 'zod'
 import { BaseClientSearchSchema } from './-schemas'
 import { ClientTable } from '@/db/schemas/client'
 import { db } from '@/db'
 import { PersonalInformationTable } from '@/db/schemas/client/personal-information'
+import { MedicalInformationTable } from '@/db/schemas/client/medical-information'
+import { BenefitsTable } from '@/db/schemas/client/benefits'
+// import { sleep } from '@/lib/sleep'
 
 export const getClientInsights = createServerFn({ method: 'GET' }).handler(
   async () => {
@@ -78,4 +82,74 @@ export const getClientsPage = createServerFn({ method: 'GET' })
       clients,
       total,
     }
+  })
+
+export const getClientPersonalInformation = createServerFn({ method: 'GET' })
+  .inputValidator(z.string())
+  .handler(async ({ data: clientId }) => {
+    // await sleep({ error: { random: true } })
+    const [personalInfo] = await db
+      .select()
+      .from(PersonalInformationTable)
+      .where(eq(PersonalInformationTable.clientId, clientId))
+
+    if (!personalInfo) {
+      throw new Error('Client personal information not found')
+    }
+
+    return personalInfo
+  })
+
+export const getClientMedicalInformation = createServerFn({ method: 'GET' })
+  .inputValidator(z.string())
+  .handler(async ({ data: clientId }) => {
+    const [medicalInfo] = await db
+      .select()
+      .from(MedicalInformationTable)
+      .where(eq(MedicalInformationTable.clientId, clientId))
+
+    if (!medicalInfo) {
+      throw new Error('Client medical information not found')
+    }
+
+    return medicalInfo
+  })
+
+export const getClientBenefits = createServerFn({ method: 'GET' })
+  .inputValidator(z.string())
+  .handler(async ({ data: clientId }) => {
+    const [benefits] = await db
+      .select()
+      .from(BenefitsTable)
+      .where(eq(BenefitsTable.clientId, clientId))
+
+    if (!benefits) {
+      throw new Error('Client benefits not found')
+    }
+
+    return benefits
+  })
+
+export const getClientHeaderInfo = createServerFn({ method: 'GET' })
+  .inputValidator(z.string())
+  .handler(async ({ data: clientId }) => {
+    const [client] = await db
+      .select({
+        id: ClientTable.id,
+        status: ClientTable.status,
+        photo: PersonalInformationTable.photo,
+        name: PersonalInformationTable.name,
+      })
+      .from(ClientTable)
+      .innerJoin(
+        PersonalInformationTable,
+        eq(PersonalInformationTable.clientId, ClientTable.id),
+      )
+      .where(eq(ClientTable.id, clientId))
+
+    if (!client) {
+      throw new Error('Client not found')
+    }
+
+    return client
   })

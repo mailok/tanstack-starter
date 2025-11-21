@@ -1,14 +1,14 @@
 import { getRouteApi, useRouter } from '@tanstack/react-router'
-import { cn } from '@/lib/utils'
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useDebounce } from '@uidotdev/usehooks'
+import { LayoutGrid, Table2 } from 'lucide-react'
+import { cn } from '@/lib/utils'
 import { SearchInput } from '@/components/search-input'
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
-import { LayoutGrid, Table2 } from 'lucide-react'
 
 import { PillGroup, PillGroupItem } from '@/components/ui/pill-group'
 
@@ -33,7 +33,9 @@ export function StatusFilter() {
   return (
     <PillGroup
       value={status}
-      onValueChange={(value) => setClientSearch({ status: value as any, page: 1 })}
+      onValueChange={(value) =>
+        setClientSearch({ status: value as any, page: 1 })
+      }
     >
       <PillGroupItem value="active">Active</PillGroupItem>
       <PillGroupItem value="pending">Pending</PillGroupItem>
@@ -73,10 +75,10 @@ export function ViewModeToggle() {
           <button
             onClick={() => setClientSearch({ viewMode: 'cards' })}
             className={cn(
-              "flex h-10 w-10 items-center justify-center rounded-xl transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+              'flex h-10 w-10 items-center justify-center rounded-xl transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
               viewMode === 'cards'
-                ? "bg-primary text-primary-foreground shadow-md scale-105"
-                : "bg-card border border-border text-muted-foreground hover:border-primary/50 hover:text-foreground hover:shadow-sm"
+                ? 'bg-primary text-primary-foreground shadow-md scale-105'
+                : 'bg-card border border-border text-muted-foreground hover:border-primary/50 hover:text-foreground hover:shadow-sm',
             )}
           >
             <LayoutGrid className="h-5 w-5" />
@@ -91,10 +93,10 @@ export function ViewModeToggle() {
           <button
             onClick={() => setClientSearch({ viewMode: 'table' })}
             className={cn(
-              "flex h-10 w-10 items-center justify-center rounded-xl transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+              'flex h-10 w-10 items-center justify-center rounded-xl transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
               viewMode === 'table'
-                ? "bg-primary text-primary-foreground shadow-md scale-105"
-                : "bg-card border border-border text-muted-foreground hover:border-primary/50 hover:text-foreground hover:shadow-sm"
+                ? 'bg-primary text-primary-foreground shadow-md scale-105'
+                : 'bg-card border border-border text-muted-foreground hover:border-primary/50 hover:text-foreground hover:shadow-sm',
             )}
           >
             <Table2 className="h-5 w-5" />

@@ -1,32 +1,36 @@
-import { createFileRoute, Outlet } from '@tanstack/react-router'
-import { Insights, InsightsSkeleton } from './clients/-components/insights'
-import { clientQueries } from './clients/-queries'
-import { minutes } from '@/lib/time'
+import {
+  Link,
+  Outlet,
+  createFileRoute,
+  stripSearchParams,
+} from '@tanstack/react-router'
+import { ClientSearchSchema, defaultClientSearch } from './clients/-schemas'
+import { BreadcrumbItem, BreadcrumbLink } from '@/components/ui/breadcrumb'
 
 export const Route = createFileRoute('/backoffice/clients')({
-  component: RouteComponent,
-  pendingComponent: PendingRoute,
-  loader: async ({ context }) => {
-    context.queryClient.ensureQueryData(clientQueries.insights()).catch(() => {
-      console.error('Error loading client insights')
-    })
+  component: ClientsLayout,
+  validateSearch: ClientSearchSchema,
+  search: {
+    middlewares: [stripSearchParams(defaultClientSearch)],
   },
-  staleTime: minutes.TEN,
+  staticData: {
+    crumb: <Crumb />,
+  },
 })
 
-function RouteComponent() {
+function Crumb() {
+  const search = Route.useSearch()
   return (
-    <div className="flex size-full flex-col gap-6 p-6">
-      <Insights />
-      <Outlet />
-    </div>
+    <BreadcrumbItem className="hidden md:block">
+      <BreadcrumbLink asChild>
+        <Link to="/backoffice/clients" search={search}>
+          Clients
+        </Link>
+      </BreadcrumbLink>
+    </BreadcrumbItem>
   )
 }
 
-function PendingRoute() {
-  return (
-    <div className="flex size-full flex-col gap-6 p-6">
-      <InsightsSkeleton />
-    </div>
-  )
+function ClientsLayout() {
+  return <Outlet />
 }

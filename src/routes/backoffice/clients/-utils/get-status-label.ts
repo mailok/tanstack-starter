@@ -1,4 +1,4 @@
-import { Client } from "@/db"
+import type { Client } from '@/db'
 
 export function getStatusLabel(status: Client['status']): string {
   switch (status) {

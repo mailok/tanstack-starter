@@ -1,6 +1,5 @@
 import * as z from 'zod'
 
-
 export const ClientStatusSchema = z.enum(['active', 'inactive', 'pending'])
 export const ClientViewModeSchema = z.enum(['cards', 'table'])
 
@@ -20,3 +19,10 @@ export const ClientSearchSchema = z.object({
 
 export type ClientSearch = z.infer<typeof ClientSearchSchema>
 export type ClientQuery = z.infer<typeof BaseClientSearchSchema>
+
+export const defaultClientSearch: ClientSearch = {
+  page: 1,
+  status: 'active',
+  name: '',
+  viewMode: 'cards',
+}

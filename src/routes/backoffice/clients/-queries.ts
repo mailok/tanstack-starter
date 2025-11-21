@@ -1,5 +1,5 @@
 import * as api from './-api'
-import { ClientQuery } from './-schemas'
+import type { ClientQuery } from './-schemas'
 
 export const clientKeys = {
   all: ['clients'] as const,
@@ -27,7 +27,31 @@ const filteredClients = (query: ClientQuery) => ({
   staleTime: 1000 * 3, // 3 seconds
 })
 
+export const clientMedicalInformationQueryOptions = (clientId: string) => ({
+  queryKey: clientKeys.medicalInformation(clientId),
+  queryFn: () => api.getClientMedicalInformation({ data: clientId }),
+})
+
+export const clientBenefitsQueryOptions = (clientId: string) => ({
+  queryKey: clientKeys.benefits(clientId),
+  queryFn: () => api.getClientBenefits({ data: clientId }),
+})
+
+const headerInfo = (clientId: string) => ({
+  queryKey: clientKeys.client(clientId),
+  queryFn: () => api.getClientHeaderInfo({ data: clientId }),
+  throwOnError: true,
+})
+
+const personalInformation = (clientId: string) => ({
+  queryKey: clientKeys.personalInformation(clientId),
+  queryFn: () => api.getClientPersonalInformation({ data: clientId }),
+  throwOnError: true,
+})
+
 export const clientQueries = {
   insights,
   filteredClients,
+  headerInfo,
+  personalInformation
 }

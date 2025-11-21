@@ -14,6 +14,10 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as BackofficeIndexRouteImport } from './routes/backoffice/index'
 import { Route as BackofficeClientsRouteImport } from './routes/backoffice/clients'
 import { Route as BackofficeClientsIndexRouteImport } from './routes/backoffice/clients/index'
+import { Route as BackofficeClientsClientIdRouteImport } from './routes/backoffice/clients/$clientId'
+import { Route as BackofficeClientsClientIdPersonalInfoRouteImport } from './routes/backoffice/clients/$clientId/personal-info'
+import { Route as BackofficeClientsClientIdMedicalInfoRouteImport } from './routes/backoffice/clients/$clientId/medical-info'
+import { Route as BackofficeClientsClientIdBenefitsRouteImport } from './routes/backoffice/clients/$clientId/benefits'
 
 const BackofficeRoute = BackofficeRouteImport.update({
   id: '/backoffice',
@@ -40,18 +44,50 @@ const BackofficeClientsIndexRoute = BackofficeClientsIndexRouteImport.update({
   path: '/',
   getParentRoute: () => BackofficeClientsRoute,
 } as any)
+const BackofficeClientsClientIdRoute =
+  BackofficeClientsClientIdRouteImport.update({
+    id: '/$clientId',
+    path: '/$clientId',
+    getParentRoute: () => BackofficeClientsRoute,
+  } as any)
+const BackofficeClientsClientIdPersonalInfoRoute =
+  BackofficeClientsClientIdPersonalInfoRouteImport.update({
+    id: '/personal-info',
+    path: '/personal-info',
+    getParentRoute: () => BackofficeClientsClientIdRoute,
+  } as any)
+const BackofficeClientsClientIdMedicalInfoRoute =
+  BackofficeClientsClientIdMedicalInfoRouteImport.update({
+    id: '/medical-info',
+    path: '/medical-info',
+    getParentRoute: () => BackofficeClientsClientIdRoute,
+  } as any)
+const BackofficeClientsClientIdBenefitsRoute =
+  BackofficeClientsClientIdBenefitsRouteImport.update({
+    id: '/benefits',
+    path: '/benefits',
+    getParentRoute: () => BackofficeClientsClientIdRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/backoffice': typeof BackofficeRouteWithChildren
   '/backoffice/clients': typeof BackofficeClientsRouteWithChildren
   '/backoffice/': typeof BackofficeIndexRoute
+  '/backoffice/clients/$clientId': typeof BackofficeClientsClientIdRouteWithChildren
   '/backoffice/clients/': typeof BackofficeClientsIndexRoute
+  '/backoffice/clients/$clientId/benefits': typeof BackofficeClientsClientIdBenefitsRoute
+  '/backoffice/clients/$clientId/medical-info': typeof BackofficeClientsClientIdMedicalInfoRoute
+  '/backoffice/clients/$clientId/personal-info': typeof BackofficeClientsClientIdPersonalInfoRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/backoffice': typeof BackofficeIndexRoute
+  '/backoffice/clients/$clientId': typeof BackofficeClientsClientIdRouteWithChildren
   '/backoffice/clients': typeof BackofficeClientsIndexRoute
+  '/backoffice/clients/$clientId/benefits': typeof BackofficeClientsClientIdBenefitsRoute
+  '/backoffice/clients/$clientId/medical-info': typeof BackofficeClientsClientIdMedicalInfoRoute
+  '/backoffice/clients/$clientId/personal-info': typeof BackofficeClientsClientIdPersonalInfoRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -59,7 +95,11 @@ export interface FileRoutesById {
   '/backoffice': typeof BackofficeRouteWithChildren
   '/backoffice/clients': typeof BackofficeClientsRouteWithChildren
   '/backoffice/': typeof BackofficeIndexRoute
+  '/backoffice/clients/$clientId': typeof BackofficeClientsClientIdRouteWithChildren
   '/backoffice/clients/': typeof BackofficeClientsIndexRoute
+  '/backoffice/clients/$clientId/benefits': typeof BackofficeClientsClientIdBenefitsRoute
+  '/backoffice/clients/$clientId/medical-info': typeof BackofficeClientsClientIdMedicalInfoRoute
+  '/backoffice/clients/$clientId/personal-info': typeof BackofficeClientsClientIdPersonalInfoRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -68,16 +108,31 @@ export interface FileRouteTypes {
     | '/backoffice'
     | '/backoffice/clients'
     | '/backoffice/'
+    | '/backoffice/clients/$clientId'
     | '/backoffice/clients/'
+    | '/backoffice/clients/$clientId/benefits'
+    | '/backoffice/clients/$clientId/medical-info'
+    | '/backoffice/clients/$clientId/personal-info'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/backoffice' | '/backoffice/clients'
+  to:
+    | '/'
+    | '/backoffice'
+    | '/backoffice/clients/$clientId'
+    | '/backoffice/clients'
+    | '/backoffice/clients/$clientId/benefits'
+    | '/backoffice/clients/$clientId/medical-info'
+    | '/backoffice/clients/$clientId/personal-info'
   id:
     | '__root__'
     | '/'
     | '/backoffice'
     | '/backoffice/clients'
     | '/backoffice/'
+    | '/backoffice/clients/$clientId'
     | '/backoffice/clients/'
+    | '/backoffice/clients/$clientId/benefits'
+    | '/backoffice/clients/$clientId/medical-info'
+    | '/backoffice/clients/$clientId/personal-info'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -122,14 +177,65 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BackofficeClientsIndexRouteImport
       parentRoute: typeof BackofficeClientsRoute
     }
+    '/backoffice/clients/$clientId': {
+      id: '/backoffice/clients/$clientId'
+      path: '/$clientId'
+      fullPath: '/backoffice/clients/$clientId'
+      preLoaderRoute: typeof BackofficeClientsClientIdRouteImport
+      parentRoute: typeof BackofficeClientsRoute
+    }
+    '/backoffice/clients/$clientId/personal-info': {
+      id: '/backoffice/clients/$clientId/personal-info'
+      path: '/personal-info'
+      fullPath: '/backoffice/clients/$clientId/personal-info'
+      preLoaderRoute: typeof BackofficeClientsClientIdPersonalInfoRouteImport
+      parentRoute: typeof BackofficeClientsClientIdRoute
+    }
+    '/backoffice/clients/$clientId/medical-info': {
+      id: '/backoffice/clients/$clientId/medical-info'
+      path: '/medical-info'
+      fullPath: '/backoffice/clients/$clientId/medical-info'
+      preLoaderRoute: typeof BackofficeClientsClientIdMedicalInfoRouteImport
+      parentRoute: typeof BackofficeClientsClientIdRoute
+    }
+    '/backoffice/clients/$clientId/benefits': {
+      id: '/backoffice/clients/$clientId/benefits'
+      path: '/benefits'
+      fullPath: '/backoffice/clients/$clientId/benefits'
+      preLoaderRoute: typeof BackofficeClientsClientIdBenefitsRouteImport
+      parentRoute: typeof BackofficeClientsClientIdRoute
+    }
   }
 }
 
+interface BackofficeClientsClientIdRouteChildren {
+  BackofficeClientsClientIdBenefitsRoute: typeof BackofficeClientsClientIdBenefitsRoute
+  BackofficeClientsClientIdMedicalInfoRoute: typeof BackofficeClientsClientIdMedicalInfoRoute
+  BackofficeClientsClientIdPersonalInfoRoute: typeof BackofficeClientsClientIdPersonalInfoRoute
+}
+
+const BackofficeClientsClientIdRouteChildren: BackofficeClientsClientIdRouteChildren =
+  {
+    BackofficeClientsClientIdBenefitsRoute:
+      BackofficeClientsClientIdBenefitsRoute,
+    BackofficeClientsClientIdMedicalInfoRoute:
+      BackofficeClientsClientIdMedicalInfoRoute,
+    BackofficeClientsClientIdPersonalInfoRoute:
+      BackofficeClientsClientIdPersonalInfoRoute,
+  }
+
+const BackofficeClientsClientIdRouteWithChildren =
+  BackofficeClientsClientIdRoute._addFileChildren(
+    BackofficeClientsClientIdRouteChildren,
+  )
+
 interface BackofficeClientsRouteChildren {
+  BackofficeClientsClientIdRoute: typeof BackofficeClientsClientIdRouteWithChildren
   BackofficeClientsIndexRoute: typeof BackofficeClientsIndexRoute
 }
 
 const BackofficeClientsRouteChildren: BackofficeClientsRouteChildren = {
+  BackofficeClientsClientIdRoute: BackofficeClientsClientIdRouteWithChildren,
   BackofficeClientsIndexRoute: BackofficeClientsIndexRoute,
 }
 

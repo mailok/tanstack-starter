@@ -1,13 +1,17 @@
 import { useSuspenseQuery } from '@tanstack/react-query'
-import { clientQueries } from '../-queries'
 import { Suspense } from 'react'
+import { useNavigate, useSearch } from '@tanstack/react-router'
+import { AlertTriangle } from 'lucide-react'
+import { clientQueries } from '../-queries'
+import { getInitials } from '../-utils/get-initials'
+import { getGenderLabel } from '../-utils/get-gender-label'
+import { getStatusLabel } from '../-utils/get-status-label'
+import { ClientCard } from './client-card'
+import type { GetClientsPageResponse } from '../-api'
 import { ErrorBoundary, useErrorBoundary } from '@/components/error-boundary'
-import { useSearch } from '@tanstack/react-router'
 import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
-import { AlertTriangle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { ClientCard } from './client-card'
 import {
   Table,
   TableBody,
@@ -19,10 +23,6 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
-import { getInitials } from '../-utils/get-initials'
-import { getGenderLabel } from '../-utils/get-gender-label'
-import { getStatusLabel } from '../-utils/get-status-label'
-import { GetClientsPageResponse } from '../-api'
 
 type Client = GetClientsPageResponse['clients'][number]
 
@@ -45,6 +45,7 @@ export function FilteredResults() {
 
 function FilteredResultsContent() {
   const search = useClientSearch()
+  const navigate = useNavigate()
 
   const { data } = useSuspenseQuery(
     clientQueries.filteredClients({
@@ -54,6 +55,10 @@ function FilteredResultsContent() {
       size: 10,
     }),
   )
+
+  const handleClientClick = (client: Client) => {
+    navigate({ to: `/backoffice/clients/${client.id}/personal-info`, search })
+  }
 
   if (data.clients.length === 0) {
     return <EmptyResults />
@@ -67,16 +72,13 @@ function FilteredResultsContent() {
             className="animate-in fade-in slide-in-from-bottom-4 fill-mode-backwards"
             style={{ animationDelay: `${index * 50}ms` }}
           >
-            <ClientCard
-              client={client}
-              onClick={(client) => console.log(client)}
-            />
+            <ClientCard client={client} onClick={handleClientClick} />
           </div>
         ))}
       </div>
     )
   }
-  return <ClientTable clients={data.clients} />
+  return <ClientTable clients={data.clients} onClick={handleClientClick} />
 }
 
 function FilteredResultsSkeleton() {
@@ -180,7 +182,7 @@ function TableSkeleton() {
 }
 
 type ClientTableProps = {
-  clients: Client[]
+  clients: Array<Client>
   onClick?: (client: Client) => void
 }
 
@@ -271,4 +273,3 @@ function FilteredResultsError() {
     </div>
   )
 }
-

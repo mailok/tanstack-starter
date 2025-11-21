@@ -1,55 +1,44 @@
-import { createFileRoute, Link, stripSearchParams } from '@tanstack/react-router'
+import { createFileRoute, stripSearchParams } from '@tanstack/react-router'
 import {
   SearchFilter,
   StatusFilter,
   ViewModeToggle,
 } from './-components/filters'
-import { ClientSearch, ClientSearchSchema } from './-schemas'
+import { ClientSearchSchema, defaultClientSearch } from './-schemas'
 import { FilteredResults } from './-components/filtered-results'
 import { clientQueries } from './-queries'
+import { Insights, InsightsSkeleton } from './-components/insights'
 import { minutes } from '@/lib/time'
-import { BreadcrumbItem, BreadcrumbLink } from '@/components/ui/breadcrumb'
-
-const defaultSearch: ClientSearch = {
-  page: 1,
-  status: 'active',
-  name: '',
-  viewMode: 'cards',
-}
-
-function Crumb() {
-  return (
-    <BreadcrumbItem className="hidden md:block">
-      <BreadcrumbLink asChild>
-        <Link to="/backoffice/clients" search={{ ...defaultSearch }}>Clients</Link>
-      </BreadcrumbLink>
-    </BreadcrumbItem>
-  );
-}
 
 export const Route = createFileRoute('/backoffice/clients/')({
   component: RouteComponent,
+  pendingComponent: PendingRoute,
   validateSearch: ClientSearchSchema,
   search: {
-    middlewares: [stripSearchParams(defaultSearch)],
+    middlewares: [stripSearchParams(defaultClientSearch)],
   },
   loaderDeps: ({ search }) => search,
   loader: async ({ context, deps }) => {
     const { page, name, status } = deps
-    context.queryClient.prefetchQuery(
-      clientQueries.filteredClients({ page, name, status, size: 10 }),
-    )
+
+    Promise.all([
+      context.queryClient
+        .ensureQueryData(clientQueries.insights())
+        .catch(() => {
+          console.error('Error loading client insights')
+        }),
+      context.queryClient.prefetchQuery(
+        clientQueries.filteredClients({ page, name, status, size: 10 }),
+      ),
+    ])
   },
   staleTime: minutes.TEN,
-  staticData: {
-    crumb: <Crumb />
-  }
 })
-
 
 function RouteComponent() {
   return (
-    <>
+    <div className="flex size-full flex-col gap-6 p-6">
+      <Insights />
       <div className="@container flex items-center justify-between">
         <div className="flex items-center gap-4">
           <StatusFilter />
@@ -59,6 +48,14 @@ function RouteComponent() {
       </div>
       <FilteredResults />
       {/* <ClientsPagination /> */}
-    </>
+    </div>
+  )
+}
+
+function PendingRoute() {
+  return (
+    <div className="flex size-full flex-col gap-6 p-6">
+      <InsightsSkeleton />
+    </div>
   )
 }

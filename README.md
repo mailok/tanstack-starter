@@ -126,10 +126,10 @@ To add a new route, simply create a new file in the `./src/routes` directory.
 To use SPA navigation, import the `Link` component:
 
 ```tsx
-import { Link } from "@tanstack/react-router";
+import { Link } from '@tanstack/react-router'
 
 // Usage
-<Link to="/about">About</Link>
+;<Link to="/about">About</Link>
 ```
 
 ### Data Fetching
@@ -139,16 +139,16 @@ You can use TanStack Query or TanStack Router's built-in loaders:
 ```tsx
 // Using route loader
 const route = createRoute({
-  path: "/users",
+  path: '/users',
   loader: async () => {
-    const response = await fetch("/api/users");
-    return response.json();
+    const response = await fetch('/api/users')
+    return response.json()
   },
   component: () => {
-    const data = route.useLoaderData();
-    return <div>{/* Render data */}</div>;
+    const data = route.useLoaderData()
+    return <div>{/* Render data */}</div>
   },
-});
+})
 ```
 
 ### State Management

@@ -174,21 +174,21 @@ code {
 /* --- Component Overrides & Slot Customization --- */
 
 /* Custom sidebar width override */
-[data-slot="sidebar"] {
+[data-slot='sidebar'] {
   --sidebar-width: 18rem;
 }
 
 /* Card Polish */
-[data-slot="card"] {
+[data-slot='card'] {
   @apply transition-all duration-200;
 }
 
-[data-slot="card"]:hover {
+[data-slot='card']:hover {
   @apply shadow-md border-primary/20;
 }
 
 /* Button Polish */
-[data-slot="button"] {
+[data-slot='button'] {
   @apply transition-transform active:scale-95 shadow-sm;
 }
 

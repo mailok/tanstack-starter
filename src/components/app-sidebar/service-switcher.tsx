@@ -1,10 +1,10 @@
-import * as React from 'react';
+import * as React from 'react'
 import {
   AudioWaveform,
   ChevronsUpDown,
   Command,
   GalleryVerticalEnd,
-} from 'lucide-react';
+} from 'lucide-react'
 
 import {
   DropdownMenu,
@@ -13,13 +13,13 @@ import {
   DropdownMenuLabel,
   DropdownMenuShortcut,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from '@/components/ui/dropdown-menu'
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from '@/components/ui/sidebar';
+} from '@/components/ui/sidebar'
 
 const data = {
   services: [
@@ -39,14 +39,14 @@ const data = {
       plan: 'PCA',
     },
   ],
-};
+}
 
 export function ServiceSwitcher() {
-  const { isMobile } = useSidebar();
-  const [activeService, setActiveService] = React.useState(data.services[2]);
+  const { isMobile } = useSidebar()
+  const [activeService, setActiveService] = React.useState(data.services[2])
 
   if (!activeService) {
-    return null;
+    return null
   }
 
   return (
@@ -96,5 +96,5 @@ export function ServiceSwitcher() {
         </DropdownMenu>
       </SidebarMenuItem>
     </SidebarMenu>
-  );
+  )
 }

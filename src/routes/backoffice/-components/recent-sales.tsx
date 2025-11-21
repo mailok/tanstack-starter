@@ -1,9 +1,9 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import avatar01 from "@/assets/avatars/01.png";
-import avatar02 from "@/assets/avatars/02.png";
-import avatar03 from "@/assets/avatars/03.png";
-import avatar04 from "@/assets/avatars/04.png";
-import avatar05 from "@/assets/avatars/05.png";
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import avatar01 from '@/assets/avatars/01.png'
+import avatar02 from '@/assets/avatars/02.png'
+import avatar03 from '@/assets/avatars/03.png'
+import avatar04 from '@/assets/avatars/04.png'
+import avatar05 from '@/assets/avatars/05.png'
 
 export function RecentSales() {
   return (
@@ -68,5 +68,5 @@ export function RecentSales() {
         <div className="ml-auto font-medium">+$39.00</div>
       </div>
     </div>
-  );
+  )
 }

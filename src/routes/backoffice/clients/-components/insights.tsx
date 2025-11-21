@@ -1,11 +1,11 @@
-import { Card, CardContent } from '@/components/ui/card'
-import { Skeleton } from '@/components/ui/skeleton'
-import { AlertTriangle, Clock, UserCheck, Users, UserX } from 'lucide-react'
-import { clientQueries } from '../-queries'
+import { AlertTriangle, Clock, UserCheck, UserX, Users } from 'lucide-react'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { Suspense, useEffect } from 'react'
-import { ErrorBoundary, useErrorBoundary } from '@/components/error-boundary'
 import { toast } from 'sonner'
+import { clientQueries } from '../-queries'
+import { ErrorBoundary, useErrorBoundary } from '@/components/error-boundary'
+import { Skeleton } from '@/components/ui/skeleton'
+import { Card, CardContent } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 
 const summaryItems = [
@@ -58,7 +58,7 @@ export function InsightsContent() {
 
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-      {summaryItems.map((item, index) => {
+      {summaryItems.map((item) => {
         const Icon = item.icon
         const value = insights[item.key]
 
@@ -66,15 +66,15 @@ export function InsightsContent() {
           <Card
             key={item.key}
             className={cn(
-              "border-none overflow-hidden relative group hover:scale-105 transition-all duration-300 hover:shadow-xl",
-              "animate-in fade-in slide-in-from-bottom-4 fill-mode-backwards"
+              'border-none overflow-hidden relative group transition-all duration-300',
             )}
-            style={{ animationDelay: `${index * 100}ms` }}
           >
-            <div className={cn(
-              "absolute inset-0 opacity-[0.03] dark:opacity-[0.05] bg-gradient-to-br",
-              item.gradient
-            )} />
+            <div
+              className={cn(
+                'absolute inset-0 opacity-[0.03] dark:opacity-[0.05] bg-gradient-to-br',
+                item.gradient,
+              )}
+            />
 
             <CardContent className="p-6 relative z-10">
               <div className="flex items-center justify-between">
@@ -89,12 +89,12 @@ export function InsightsContent() {
 
                 <div
                   className={cn(
-                    "flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br shadow-lg transform group-hover:rotate-6 transition-transform duration-300",
+                    'flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br shadow-lg transform group-hover:rotate-6 transition-transform duration-300',
                     item.gradient,
-                    item.shadow
+                    item.shadow,
                   )}
                 >
-                  <Icon className={cn("h-6 w-6", item.iconColor)} />
+                  <Icon className={cn('h-6 w-6', item.iconColor)} />
                 </div>
               </div>
             </CardContent>
@@ -162,9 +162,7 @@ export function InsightsError() {
                     </p>
                     <p className="text-3xl font-bold text-foreground">0</p>
                   </div>
-                  <div
-                    className="flex h-12 w-12 items-center justify-center rounded-xl bg-red-100 dark:bg-red-900/50"
-                  >
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-red-100 dark:bg-red-900/50">
                     <AlertTriangle className="h-6 w-6 text-red-600 dark:text-red-400" />
                   </div>
                 </div>

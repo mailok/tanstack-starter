@@ -1,23 +1,23 @@
-import * as React from 'react';
+import * as React from 'react'
 import {
-  closestCenter,
   DndContext,
+  
   KeyboardSensor,
   MouseSensor,
   TouchSensor,
+  
+  closestCenter,
   useSensor,
-  useSensors,
-  type DragEndEvent,
-  type UniqueIdentifier,
-} from '@dnd-kit/core';
-import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
+  useSensors
+} from '@dnd-kit/core'
+import { restrictToVerticalAxis } from '@dnd-kit/modifiers'
 import {
-  arrayMove,
   SortableContext,
+  arrayMove,
   useSortable,
   verticalListSortingStrategy,
-} from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
+} from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 import {
   IconChevronDown,
   IconChevronLeft,
@@ -31,10 +31,13 @@ import {
   IconLoader,
   IconPlus,
   IconTrendingUp,
-} from '@tabler/icons-react';
+} from '@tabler/icons-react'
 import {
-  type ColumnDef,
-  type ColumnFiltersState,
+  
+  
+  
+  
+  
   flexRender,
   getCoreRowModel,
   getFacetedRowModel,
@@ -42,26 +45,26 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  type Row,
-  type SortingState,
-  useReactTable,
-  type VisibilityState,
-} from '@tanstack/react-table';
-import { Area, AreaChart, CartesianGrid, XAxis } from 'recharts';
-import { toast } from 'sonner';
+  useReactTable
+} from '@tanstack/react-table'
+import { Area, AreaChart, CartesianGrid, XAxis } from 'recharts'
+import { toast } from 'sonner'
 import * as z from 'zod'
-import { cn } from '@/lib/utils';
+import type {ColumnDef, ColumnFiltersState, Row, SortingState, VisibilityState} from '@tanstack/react-table';
+import type {DragEndEvent, UniqueIdentifier} from '@dnd-kit/core';
+import type {ChartConfig} from '@/components/ui/chart';
+import { cn } from '@/lib/utils'
 
-import { useIsMobile } from '@/hooks/use-mobile';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import { useIsMobile } from '@/hooks/use-mobile'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import {
-  type ChartConfig,
+  
   ChartContainer,
   ChartTooltip,
-  ChartTooltipContent,
-} from '@/components/ui/chart';
-import { Checkbox } from '@/components/ui/checkbox';
+  ChartTooltipContent
+} from '@/components/ui/chart'
+import { Checkbox } from '@/components/ui/checkbox'
 import {
   Drawer,
   DrawerClose,
@@ -71,7 +74,7 @@ import {
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
-} from '@/components/ui/drawer';
+} from '@/components/ui/drawer'
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -79,17 +82,17 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+} from '@/components/ui/dropdown-menu'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Separator } from '@/components/ui/separator';
+} from '@/components/ui/select'
+import { Separator } from '@/components/ui/separator'
 import {
   Table,
   TableBody,
@@ -97,8 +100,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+} from '@/components/ui/table'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const schema = z.object({
@@ -109,13 +112,13 @@ export const schema = z.object({
   target: z.string(),
   limit: z.string(),
   reviewer: z.string(),
-});
+})
 
 // Create a separate component for the drag handle
 function DragHandle({ id }: { id: number }) {
   const { attributes, listeners } = useSortable({
     id,
-  });
+  })
 
   return (
     <Button
@@ -128,10 +131,10 @@ function DragHandle({ id }: { id: number }) {
       <IconGripVertical className="text-muted-foreground size-3" />
       <span className="sr-only">Drag to reorder</span>
     </Button>
-  );
+  )
 }
 
-const columns: ColumnDef<z.infer<typeof schema>>[] = [
+const columns: Array<ColumnDef<z.infer<typeof schema>>> = [
   {
     id: 'drag',
     header: () => null,
@@ -167,7 +170,7 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
     accessorKey: 'header',
     header: 'Header',
     cell: ({ row }) => {
-      return <TableCellViewer item={row.original} />;
+      return <TableCellViewer item={row.original} />
     },
     enableHiding: false,
   },
@@ -176,7 +179,10 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
     header: 'Section Type',
     cell: ({ row }) => (
       <div className="w-32">
-        <Badge variant="secondary" className="font-medium opacity-90 hover:opacity-100 transition-opacity">
+        <Badge
+          variant="secondary"
+          className="font-medium opacity-90 hover:opacity-100 transition-opacity"
+        >
           {row.original.type}
         </Badge>
       </div>
@@ -189,10 +195,10 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
       <Badge
         variant="outline"
         className={cn(
-          "px-2 py-0.5 font-medium transition-colors border-transparent",
+          'px-2 py-0.5 font-medium transition-colors border-transparent',
           row.original.status === 'Done'
-            ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400"
-            : "bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400"
+            ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400'
+            : 'bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400',
         )}
       >
         {row.original.status === 'Done' ? (
@@ -210,12 +216,12 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
     cell: ({ row }) => (
       <form
         onSubmit={(e) => {
-          e.preventDefault();
+          e.preventDefault()
           toast.promise(new Promise((resolve) => setTimeout(resolve, 1000)), {
             loading: `Saving ${row.original.header}`,
             success: 'Done',
             error: 'Error',
-          });
+          })
         }}
       >
         <Label htmlFor={`${row.original.id}-target`} className="sr-only">
@@ -235,12 +241,12 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
     cell: ({ row }) => (
       <form
         onSubmit={(e) => {
-          e.preventDefault();
+          e.preventDefault()
           toast.promise(new Promise((resolve) => setTimeout(resolve, 1000)), {
             loading: `Saving ${row.original.header}`,
             success: 'Done',
             error: 'Error',
-          });
+          })
         }}
       >
         <Label htmlFor={`${row.original.id}-limit`} className="sr-only">
@@ -258,10 +264,10 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
     accessorKey: 'reviewer',
     header: 'Reviewer',
     cell: ({ row }) => {
-      const isAssigned = row.original.reviewer !== 'Assign reviewer';
+      const isAssigned = row.original.reviewer !== 'Assign reviewer'
 
       if (isAssigned) {
-        return row.original.reviewer;
+        return row.original.reviewer
       }
 
       return (
@@ -285,7 +291,7 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
             </SelectContent>
           </Select>
         </>
-      );
+      )
     },
   },
   {
@@ -312,12 +318,12 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
       </DropdownMenu>
     ),
   },
-];
+]
 
 function DraggableRow({ row }: { row: Row<z.infer<typeof schema>> }) {
   const { transform, transition, setNodeRef, isDragging } = useSortable({
     id: row.original.id,
-  });
+  })
 
   return (
     <TableRow
@@ -336,10 +342,10 @@ function DraggableRow({ row }: { row: Row<z.infer<typeof schema>> }) {
         </TableCell>
       ))}
     </TableRow>
-  );
+  )
 }
 
-const initalData: z.infer<typeof schema>[] = [
+const initalData: Array<z.infer<typeof schema>> = [
   {
     id: 1,
     header: 'Cover page',
@@ -952,32 +958,32 @@ const initalData: z.infer<typeof schema>[] = [
     limit: '29',
     reviewer: 'Assign reviewer',
   },
-];
+]
 
 export function DataTable() {
-  const [data, setData] = React.useState(() => initalData);
-  const [rowSelection, setRowSelection] = React.useState({});
+  const [data, setData] = React.useState(() => initalData)
+  const [rowSelection, setRowSelection] = React.useState({})
   const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({});
+    React.useState<VisibilityState>({})
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
-  );
-  const [sorting, setSorting] = React.useState<SortingState>([]);
+    [],
+  )
+  const [sorting, setSorting] = React.useState<SortingState>([])
   const [pagination, setPagination] = React.useState({
     pageIndex: 0,
     pageSize: 10,
-  });
-  const sortableId = React.useId();
+  })
+  const sortableId = React.useId()
   const sensors = useSensors(
     useSensor(MouseSensor, {}),
     useSensor(TouchSensor, {}),
-    useSensor(KeyboardSensor, {})
-  );
+    useSensor(KeyboardSensor, {}),
+  )
 
-  const dataIds = React.useMemo<UniqueIdentifier[]>(
+  const dataIds = React.useMemo<Array<UniqueIdentifier>>(
     () => data?.map(({ id }) => id) || [],
-    [data]
-  );
+    [data],
+  )
 
   const table = useReactTable({
     data,
@@ -1002,16 +1008,16 @@ export function DataTable() {
     getSortedRowModel: getSortedRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
-  });
+  })
 
   function handleDragEnd(event: DragEndEvent) {
-    const { active, over } = event;
+    const { active, over } = event
     if (active && over && active.id !== over.id) {
       setData((data) => {
-        const oldIndex = dataIds.indexOf(active.id);
-        const newIndex = dataIds.indexOf(over.id);
-        return arrayMove(data, oldIndex, newIndex);
-      });
+        const oldIndex = dataIds.indexOf(active.id)
+        const newIndex = dataIds.indexOf(over.id)
+        return arrayMove(data, oldIndex, newIndex)
+      })
     }
   }
 
@@ -1065,7 +1071,7 @@ export function DataTable() {
                 .filter(
                   (column) =>
                     typeof column.accessorFn !== 'undefined' &&
-                    column.getCanHide()
+                    column.getCanHide(),
                 )
                 .map((column) => {
                   return (
@@ -1079,7 +1085,7 @@ export function DataTable() {
                     >
                       {column.id}
                     </DropdownMenuCheckboxItem>
-                  );
+                  )
                 })}
             </DropdownMenuContent>
           </DropdownMenu>
@@ -1111,11 +1117,11 @@ export function DataTable() {
                           {header.isPlaceholder
                             ? null
                             : flexRender(
-                              header.column.columnDef.header,
-                              header.getContext()
-                            )}
+                                header.column.columnDef.header,
+                                header.getContext(),
+                              )}
                         </TableHead>
-                      );
+                      )
                     })}
                   </TableRow>
                 ))}
@@ -1157,7 +1163,7 @@ export function DataTable() {
               <Select
                 value={`${table.getState().pagination.pageSize}`}
                 onValueChange={(value) => {
-                  table.setPageSize(Number(value));
+                  table.setPageSize(Number(value))
                 }}
               >
                 <SelectTrigger size="sm" className="w-20" id="rows-per-page">
@@ -1238,7 +1244,7 @@ export function DataTable() {
         <div className="aspect-video w-full flex-1 rounded-lg border border-dashed"></div>
       </TabsContent>
     </Tabs>
-  );
+  )
 }
 
 const chartData = [
@@ -1248,7 +1254,7 @@ const chartData = [
   { month: 'April', desktop: 73, mobile: 190 },
   { month: 'May', desktop: 209, mobile: 130 },
   { month: 'June', desktop: 214, mobile: 140 },
-];
+]
 
 const chartConfig = {
   desktop: {
@@ -1259,10 +1265,10 @@ const chartConfig = {
     label: 'Mobile',
     color: 'var(--primary)',
   },
-} satisfies ChartConfig;
+} satisfies ChartConfig
 
 function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
-  const isMobile = useIsMobile();
+  const isMobile = useIsMobile()
 
   return (
     <Drawer direction={isMobile ? 'bottom' : 'right'}>
@@ -1417,5 +1423,5 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
         </DrawerFooter>
       </DrawerContent>
     </Drawer>
-  );
+  )
 }

@@ -1,34 +1,34 @@
-import * as React from 'react';
-import { Search, X } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
+import * as React from 'react'
+import { Search, X } from 'lucide-react'
+import { cn } from '@/lib/utils'
+import { Button } from '@/components/ui/button'
 
 type SearchInputProps = Omit<
   React.InputHTMLAttributes<HTMLInputElement>,
   'type'
->;
+>
 
 const SearchInput = React.forwardRef<HTMLInputElement, SearchInputProps>(
   ({ className, disabled, onChange, value, ...props }, ref) => {
-    const inputRef = React.useRef<HTMLInputElement>(null);
-    
-    React.useImperativeHandle(ref, () => inputRef.current!, []);
-    
+    const inputRef = React.useRef<HTMLInputElement>(null)
+
+    React.useImperativeHandle(ref, () => inputRef.current!, [])
+
     const handleClear = () => {
       if (onChange) {
         const syntheticEvent = {
           target: { value: '' },
           currentTarget: { value: '' },
-        } as React.ChangeEvent<HTMLInputElement>;
-        
-        onChange(syntheticEvent);
+        } as React.ChangeEvent<HTMLInputElement>
+
+        onChange(syntheticEvent)
       }
-      
+
       if (inputRef.current) {
-        inputRef.current.focus();
+        inputRef.current.focus()
       }
-    };
-    
+    }
+
     return (
       <div className={cn('relative rounded-md', className)}>
         <Button
@@ -60,9 +60,9 @@ const SearchInput = React.forwardRef<HTMLInputElement, SearchInputProps>(
           <X size={18} />
         </Button>
       </div>
-    );
-  }
-);
-SearchInput.displayName = 'SearchInput';
+    )
+  },
+)
+SearchInput.displayName = 'SearchInput'
 
-export { SearchInput };
+export { SearchInput }

@@ -1,4 +1,4 @@
-import { Client } from "@/db"
+import type { Client } from '@/db'
 
 export function getGenderLabel(
   gender: Client['personalInformation']['gender'],

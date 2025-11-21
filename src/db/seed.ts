@@ -1,18 +1,22 @@
 import 'dotenv/config'
-import { db } from './index'
-import { type ClientRow, ClientTable } from './schemas/client'
+import {  ClientTable } from './schemas/client'
 import {
-  type InsertPersonalInformationRow,
-  PersonalInformationTable,
+  
+  PersonalInformationTable
 } from './schemas/client/personal-information'
 import {
-  type InsertMedicalInformationRow,
-  MedicalInformationTable,
+  
+  MedicalInformationTable
 } from './schemas/client/medical-information'
 import {
-  BenefitsTable,
-  type InsertBenefitsRow,
+  BenefitsTable
+  
 } from './schemas/client/benefits'
+import { db } from './index'
+import type {ClientRow} from './schemas/client';
+import type {InsertPersonalInformationRow} from './schemas/client/personal-information';
+import type {InsertMedicalInformationRow} from './schemas/client/medical-information';
+import type {InsertBenefitsRow} from './schemas/client/benefits';
 
 type Client = Omit<ClientRow, 'id' | 'createdAt' | 'updatedAt'> & {
   personalInformation: Omit<InsertPersonalInformationRow, 'clientId'>
@@ -20,7 +24,7 @@ type Client = Omit<ClientRow, 'id' | 'createdAt' | 'updatedAt'> & {
   benefits?: Omit<InsertBenefitsRow, 'clientId'>
 }
 
-const seedData: Client[] = [
+const seedData: Array<Client> = [
   {
     status: 'active',
     personalInformation: {
@@ -821,14 +825,12 @@ async function seed() {
 
 seed()
   .then(() => {
-    // eslint-disable-next-line no-console
+     
     console.log('Database seeded successfully')
     process.exit(0)
   })
   .catch((error) => {
-    // eslint-disable-next-line no-console
+     
     console.error('Error seeding database', error)
     process.exit(1)
   })
-
-

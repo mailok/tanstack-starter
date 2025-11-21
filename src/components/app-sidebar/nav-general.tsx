@@ -1,12 +1,12 @@
-import { LayoutDashboard, PersonStanding, ListTodo, Users } from 'lucide-react';
-import { Link } from '@tanstack/react-router';
+import { LayoutDashboard, ListTodo, PersonStanding, Users } from 'lucide-react'
+import { Link } from '@tanstack/react-router'
 import {
   SidebarGroup,
   SidebarGroupLabel,
   SidebarMenu,
-  SidebarMenuItem,
   SidebarMenuButton,
-} from '../ui/sidebar';
+  SidebarMenuItem,
+} from '../ui/sidebar'
 
 export function NavGeneral() {
   return (

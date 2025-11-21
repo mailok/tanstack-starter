@@ -1,9 +1,13 @@
 import { getRouteApi, useRouter } from '@tanstack/react-router'
-import { updateSelectedTheme, type SelectedTheme } from '@/components/theme/theme-storage'
+import type {SelectedTheme} from '@/components/theme/theme-storage';
+import {
+  
+  updateSelectedTheme
+} from '@/components/theme/theme-storage'
 
 export function useTheme() {
   const router = useRouter()
-  const routeApi = getRouteApi("__root__")
+  const routeApi = getRouteApi('__root__')
   const { theme } = routeApi.useLoaderData()
 
   function setTheme(selectedTheme: SelectedTheme) {

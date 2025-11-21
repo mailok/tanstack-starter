@@ -1,3 +1,3 @@
 export const minutes = {
-    TEN: 600000,
+  TEN: 600000,
 }

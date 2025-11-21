@@ -1,10 +1,11 @@
-import { ChevronRight, Calendar, Clock } from 'lucide-react';
+import { Calendar, ChevronRight, Clock } from 'lucide-react'
 
+import { Link } from '@tanstack/react-router'
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from '@/components/ui/collapsible';
+} from '@/components/ui/collapsible'
 import {
   SidebarGroup,
   SidebarGroupLabel,
@@ -15,8 +16,7 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
-} from '@/components/ui/sidebar';
-import { Link } from '@tanstack/react-router';
+} from '@/components/ui/sidebar'
 
 export function NavSchedule() {
   return (

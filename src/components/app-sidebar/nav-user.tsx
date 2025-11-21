@@ -1,11 +1,11 @@
-import { LogOut } from 'lucide-react';
+import { LogOut } from 'lucide-react'
 
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from '@/components/ui/sidebar';
+} from '@/components/ui/sidebar'
 import avatarImage from '@/assets/avatar.jpg'
 
 export function NavUser() {
