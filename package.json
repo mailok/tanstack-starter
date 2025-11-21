@@ -68,6 +68,8 @@
   "devDependencies": {
     "@tanstack/devtools-vite": "^0.3.11",
     "@tanstack/eslint-config": "^0.3.0",
+    "@tanstack/eslint-plugin-query": "^5.91.2",
+    "@tanstack/eslint-plugin-router": "^1.139.0",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/react": "^16.2.0",
     "@types/node": "^22.10.2",
@@ -76,6 +78,7 @@
     "@vitejs/plugin-react": "^5.0.4",
     "babel-plugin-react-compiler": "^1.0.0",
     "drizzle-kit": "^0.31.7",
+    "eslint-plugin-react-hooks": "^7.0.1",
     "jsdom": "^27.0.0",
     "prettier": "^3.5.3",
     "shadcn": "^3.5.0",
