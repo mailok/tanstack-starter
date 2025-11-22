@@ -1,60 +1,62 @@
+import { queryOptions } from '@tanstack/react-query'
 import * as api from './-api'
 import type { ClientQuery } from './-schemas'
 
 export const clientKeys = {
   all: ['clients'] as const,
-  list: (query: ClientQuery) => [...clientKeys.all, query] as const,
+  lists: () => [...clientKeys.all, 'list'] as const,
+  list: (query: ClientQuery) => [...clientKeys.lists(), query] as const,
   insights: () => [...clientKeys.all, 'insights'] as const,
-  client: (id: string) => [...clientKeys.all, 'detail', id] as const,
+  details: () => [...clientKeys.all, 'detail'] as const,
+  detail: (id: string) => [...clientKeys.details(), id] as const,
   personalInformation: (id: string) =>
-    [...clientKeys.all, 'personal-information', id] as const,
+    [...clientKeys.detail(id), 'personal-information'] as const,
   medicalInformation: (id: string) =>
-    [...clientKeys.all, 'medical-information', id] as const,
-  benefits: (id: string) => [...clientKeys.all, 'benefits', id] as const,
-  header: (id: string) => [...clientKeys.all, 'header', id] as const,
+    [...clientKeys.detail(id), 'medical-information'] as const,
+  benefits: (id: string) => [...clientKeys.detail(id), 'benefits'] as const,
+  header: (id: string) => [...clientKeys.detail(id), 'header'] as const,
 }
 
-const insights = () => ({
-  queryKey: clientKeys.insights(),
-  queryFn: ({ signal: _ }: { signal: AbortSignal }) => api.getClientInsights(),
-  throwOnError: true,
-  staleTime: 1000 * 30, // 30 seconds
-})
-
-const filteredClients = (query: ClientQuery) => ({
-  queryKey: clientKeys.list(query),
-  queryFn: () => api.getClientsPage({ data: query }),
-  throwOnError: true,
-  staleTime: 1000 * 3, // 3 seconds
-})
-
-const headerInfo = (clientId: string) => ({
-  queryKey: clientKeys.header(clientId),
-  queryFn: () => api.getClientHeaderInfo({ data: clientId }),
-  throwOnError: true,
-})
-
-const personalInformation = (clientId: string) => ({
-  queryKey: clientKeys.personalInformation(clientId),
-  queryFn: () => api.getClientPersonalInformation({ data: clientId }),
-  throwOnError: true,
-})
-
-const medicalInformation = (clientId: string) => ({
-  queryKey: clientKeys.medicalInformation(clientId),
-  queryFn: () => api.getClientMedicalInformation({ data: clientId }),
-})
-
-const benefits = (clientId: string) => ({
-  queryKey: clientKeys.benefits(clientId),
-  queryFn: () => api.getClientBenefits({ data: clientId }),
-})
-
 export const clientQueries = {
-  insights,
-  filteredClients,
-  headerInfo,
-  personalInformation,
-  medicalInformation,
-  benefits,
+  insights: () =>
+    queryOptions({
+      queryKey: clientKeys.insights(),
+      queryFn: () => api.getClientInsights(),
+      throwOnError: true,
+      staleTime: 1000 * 30, // 30 seconds
+    }),
+
+  list: (query: ClientQuery) =>
+    queryOptions({
+      queryKey: clientKeys.list(query),
+      queryFn: () => api.getClientsPage({ data: query }),
+      throwOnError: true,
+      staleTime: 1000 * 3, // 3 seconds
+    }),
+
+  header: (clientId: string) =>
+    queryOptions({
+      queryKey: clientKeys.header(clientId),
+      queryFn: () => api.getClientHeaderInfo({ data: clientId }),
+      throwOnError: true,
+    }),
+
+  personalInformation: (clientId: string) =>
+    queryOptions({
+      queryKey: clientKeys.personalInformation(clientId),
+      queryFn: () => api.getClientPersonalInformation({ data: clientId }),
+      throwOnError: true,
+    }),
+
+  medicalInformation: (clientId: string) =>
+    queryOptions({
+      queryKey: clientKeys.medicalInformation(clientId),
+      queryFn: () => api.getClientMedicalInformation({ data: clientId }),
+    }),
+
+  benefits: (clientId: string) =>
+    queryOptions({
+      queryKey: clientKeys.benefits(clientId),
+      queryFn: () => api.getClientBenefits({ data: clientId }),
+    }),
 }

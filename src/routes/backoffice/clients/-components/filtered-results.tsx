@@ -54,7 +54,7 @@ function FilteredResultsContent() {
   const queryClient = useQueryClient()
 
   const { data } = useSuspenseQuery(
-    clientQueries.filteredClients({
+    clientQueries.list({
       page: search.page,
       name: search.name,
       status: search.status,

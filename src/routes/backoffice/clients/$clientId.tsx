@@ -21,7 +21,7 @@ function Crumb() {
     isLoading,
     isError,
   } = useQuery({
-    ...clientQueries.headerInfo(clientId),
+    ...clientQueries.header(clientId),
     throwOnError: false,
   })
 
@@ -58,7 +58,7 @@ export const Route = createFileRoute('/backoffice/clients/$clientId')({
     crumb: <Crumb />,
   },
   loader: ({ context: { queryClient }, params: { clientId } }) => {
-    queryClient.prefetchQuery(clientQueries.headerInfo(clientId))
+    queryClient.prefetchQuery(clientQueries.header(clientId))
   },
 })
 

@@ -29,7 +29,7 @@ export const Route = createFileRoute('/backoffice/clients/')({
           console.error('Error loading client insights')
         }),
       context.queryClient.prefetchQuery(
-        clientQueries.filteredClients({ page, name, status, size: 10 }),
+        clientQueries.list({ page, name, status, size: 10 }),
       ),
     ])
   },

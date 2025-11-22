@@ -23,7 +23,7 @@ export function HeaderInfo({ clientId }: Props) {
 }
 
 function HeaderInfoContent({ clientId }: Props) {
-  const { data: client } = useSuspenseQuery(clientQueries.headerInfo(clientId))
+  const { data: client } = useSuspenseQuery(clientQueries.header(clientId))
   return (
     <div className="flex flex-col items-center md:items-start gap-4 text-center md:text-left p-4 md:px-0">
       <Avatar className="h-20 w-20 ring-4 ring-background shadow-md group-hover:scale-105 transition-transform duration-300">

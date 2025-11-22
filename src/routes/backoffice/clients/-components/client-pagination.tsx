@@ -17,7 +17,7 @@ export function ClientsPagination() {
 function PaginationContent() {
   const [search, setClientSearch] = useClientSearch()
   const { data } = useSuspenseQuery(
-    clientQueries.filteredClients({
+    clientQueries.list({
       page: search.page,
       name: search.name,
       status: search.status,
