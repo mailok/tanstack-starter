@@ -1,146 +1,34 @@
 import { createServerFn } from '@tanstack/react-start'
-import { and, count, eq, ilike } from 'drizzle-orm'
 import * as z from 'zod'
 import { BaseClientSearchSchema } from './-schemas'
-import { ClientTable } from '@/db/schemas/client'
-import { db } from '@/db'
-import { PersonalInformationTable } from '@/db/schemas/client/personal-information'
-import { MedicalInformationTable } from '@/db/schemas/client/medical-information'
-import { BenefitsTable } from '@/db/schemas/client/benefits'
+import * as service from './-service'
 
-export const getClientInsights = createServerFn({ method: 'GET' }).handler(
-  async () => {
-    const [{ active, inactive, pending, total }] = await db
-      .select({
-        active: count(eq(ClientTable.status, 'active')),
-        inactive: count(eq(ClientTable.status, 'inactive')),
-        pending: count(eq(ClientTable.status, 'pending')),
-        total: count(),
-      })
-      .from(ClientTable)
-
-    return {
-      active,
-      inactive,
-      pending,
-      total,
-    } as const
-  },
+export const getClientInsights = createServerFn({ method: 'GET' }).handler(() =>
+  service.getInsights(),
 )
 
-export type GetClientsPageResponse = Awaited<ReturnType<typeof getClientsPage>>
+export type GetClientsPageResponse = Awaited<ReturnType<typeof service.findMany>>
 
 export const getClientsPage = createServerFn({ method: 'GET' })
   .inputValidator(BaseClientSearchSchema)
-  .handler(async ({ data }) => {
-    const { page, name, status, size } = data
-    const trimmedName = name.trim()
-
-    const whereClause = and(
-      eq(ClientTable.status, status),
-      trimmedName
-        ? ilike(PersonalInformationTable.name, `%${trimmedName}%`)
-        : undefined,
-    )
-
-    const offset = (page - 1) * size
-
-    const [clients, [{ total }]] = await Promise.all([
-      db
-        .select({
-          id: ClientTable.id,
-          status: ClientTable.status,
-          photo: PersonalInformationTable.photo,
-          name: PersonalInformationTable.name,
-          email: PersonalInformationTable.email,
-          phone: PersonalInformationTable.phone,
-          birthDate: PersonalInformationTable.birthDate,
-          age: PersonalInformationTable.age,
-          gender: PersonalInformationTable.gender,
-        })
-        .from(ClientTable)
-        .innerJoin(
-          PersonalInformationTable,
-          eq(PersonalInformationTable.clientId, ClientTable.id),
-        )
-        .where(whereClause)
-        .orderBy(ClientTable.createdAt)
-        .limit(size)
-        .offset(offset),
-      db
-        .select({ total: count() })
-        .from(ClientTable)
-        .innerJoin(
-          PersonalInformationTable,
-          eq(PersonalInformationTable.clientId, ClientTable.id),
-        )
-        .where(whereClause),
-    ])
-
-    return {
-      clients,
-      total,
-    }
-  })
+  .handler(async ({ data }) => service.findMany(data))
 
 export const getClientPersonalInformation = createServerFn({ method: 'GET' })
   .inputValidator(z.string())
-  .handler(async ({ data: clientId }) => {
-    // await sleep({ error: { random: true } })
-    const [personalInfo] = await db
-      .select()
-      .from(PersonalInformationTable)
-      .where(eq(PersonalInformationTable.clientId, clientId))
-
-    if (!personalInfo) {
-      throw new Error('Client personal information not found')
-    }
-
-    return personalInfo
-  })
+  .handler(async ({ data: clientId }) =>
+    service.getPersonalInformation(clientId),
+  )
 
 export const getClientMedicalInformation = createServerFn({ method: 'GET' })
   .inputValidator(z.string())
-  .handler(async ({ data: clientId }) => {
-    const [medicalInfo] = await db
-      .select()
-      .from(MedicalInformationTable)
-      .where(eq(MedicalInformationTable.clientId, clientId))
-
-    return medicalInfo ?? null
-  })
+  .handler(async ({ data: clientId }) =>
+    service.getMedicalInformation(clientId),
+  )
 
 export const getClientBenefits = createServerFn({ method: 'GET' })
   .inputValidator(z.string())
-  .handler(async ({ data: clientId }) => {
-    const [benefits] = await db
-      .select()
-      .from(BenefitsTable)
-      .where(eq(BenefitsTable.clientId, clientId))
-
-    return benefits ?? null
-  })
+  .handler(async ({ data: clientId }) => service.getBenefits(clientId))
 
 export const getClientHeaderInfo = createServerFn({ method: 'GET' })
   .inputValidator(z.string())
-  .handler(async ({ data: clientId }) => {
-    const [client] = await db
-      .select({
-        id: ClientTable.id,
-        status: ClientTable.status,
-        photo: PersonalInformationTable.photo,
-        name: PersonalInformationTable.name,
-      })
-      .from(ClientTable)
-      .innerJoin(
-        PersonalInformationTable,
-        eq(PersonalInformationTable.clientId, ClientTable.id),
-      )
-      .where(eq(ClientTable.id, clientId))
-
-    if (!client) {
-      throw new Error('Client not found')
-    }
-
-    return client
-  })
+  .handler(async ({ data: clientId }) => service.getHeaderInfo(clientId))
