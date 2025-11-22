@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import { useDebounce } from '@uidotdev/usehooks'
 import { LayoutGrid, Table2 } from 'lucide-react'
+import { useClientSearch } from '../-hooks/use-client-search'
+import type { ClientStatus } from '@/db/schemas/client'
 import { cn } from '@/lib/utils'
 import { SearchInput } from '@/components/search-input'
 import {
@@ -10,8 +12,6 @@ import {
 } from '@/components/ui/tooltip'
 
 import { PillGroup, PillGroupItem } from '@/components/ui/pill-group'
-import { ClientStatus } from '@/db/schemas/client'
-import { useClientSearch } from '../-hooks/use-client-search'
 
 export function StatusFilter() {
   const [search, setClientSearch] = useClientSearch()
@@ -32,7 +32,7 @@ export function StatusFilter() {
 
 export function SearchFilter() {
   const [search, setClientSearch] = useClientSearch()
-  const name = search.name ?? ''
+  const name = search.name
 
   const [localSearch, setLocalSearch] = useState(name)
   const debouncedSearchTerm = useDebounce(localSearch, 500)

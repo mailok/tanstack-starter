@@ -1,7 +1,7 @@
 import { createFileRoute, stripSearchParams } from '@tanstack/react-router'
 import { ClientSearchSchema, defaultClientSearch } from '../-schemas'
-import { clientQueries } from '@/routes/backoffice/clients/-queries'
 import { PersonalInformation } from './-components/personal-information'
+import { clientQueries } from '@/routes/backoffice/clients/-queries'
 
 export const Route = createFileRoute(
   '/backoffice/clients/$clientId/personal-info',

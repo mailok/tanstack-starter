@@ -7,6 +7,7 @@ import {
   ShieldPlus,
   User,
 } from 'lucide-react'
+import { Link } from '@tanstack/react-router'
 import {
   Sidebar,
   SidebarContent,
@@ -18,7 +19,6 @@ import {
   SidebarMenuItem,
   SidebarProvider,
 } from '@/components/ui/sidebar'
-import { Link } from '@tanstack/react-router'
 import { cn } from '@/lib/utils'
 
 type Tab = {
@@ -31,10 +31,10 @@ type Tab = {
 
 type Section = {
   title: string
-  items: readonly Tab[]
+  items: ReadonlyArray<Tab>
 }
 
-const sections: readonly Section[] = [
+const sections: ReadonlyArray<Section> = [
   {
     title: 'General',
     items: [

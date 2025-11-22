@@ -6,6 +6,7 @@ import { clientKeys, clientQueries } from '../-queries'
 import { getInitials } from '../-utils/get-initials'
 import { getGenderLabel } from '../-utils/get-gender-label'
 import { getStatusLabel } from '../-utils/get-status-label'
+import { useClientSearch } from '../-hooks/use-client-search'
 import { ClientCard } from './client-card'
 import type { GetClientsPageResponse } from '../-api'
 import { ErrorBoundary, useErrorBoundary } from '@/components/error-boundary'
@@ -31,7 +32,6 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from '@/components/ui/empty'
-import { useClientSearch } from '../-hooks/use-client-search'
 
 type Client = GetClientsPageResponse['clients'][number]
 

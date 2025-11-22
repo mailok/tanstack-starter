@@ -6,7 +6,6 @@ export function useBreadcrumbs(): Array<ReactNode> {
   return matches
     .filter(
       (match) =>
-        match.staticData &&
         typeof match.staticData === 'object' &&
         'crumb' in match.staticData,
     )

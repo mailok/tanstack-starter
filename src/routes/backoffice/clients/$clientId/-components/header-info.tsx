@@ -1,12 +1,12 @@
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { Suspense } from 'react'
+import { AlertCircle } from 'lucide-react'
 import { clientQueries } from '../../-queries'
+import { getInitials } from '../../-utils/get-initials'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { getInitials } from '../../-utils/get-initials'
 import { ErrorBoundary } from '@/components/error-boundary'
-import { AlertCircle } from 'lucide-react'
 
 type Props = {
   clientId: string

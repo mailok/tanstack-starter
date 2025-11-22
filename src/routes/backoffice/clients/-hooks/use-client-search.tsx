@@ -1,5 +1,4 @@
-import { useSearch } from '@tanstack/react-router'
-import { useRouter } from '@tanstack/react-router'
+import { useRouter, useSearch  } from '@tanstack/react-router'
 
 export function useClientSearch() {
   const search = useSearch({ from: '/backoffice/clients/' })

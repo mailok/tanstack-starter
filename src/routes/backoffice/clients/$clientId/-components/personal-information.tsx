@@ -1,10 +1,10 @@
+import { useSuspenseQuery } from '@tanstack/react-query'
+import { Suspense } from 'react'
+import { clientQueries } from '../../-queries'
+import { ClientDetailsError } from '../../-components/client-details-error'
 import { ErrorBoundary } from '@/components/error-boundary'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { clientQueries } from '../../-queries'
-import { useSuspenseQuery } from '@tanstack/react-query'
-import { Suspense } from 'react'
-import { ClientDetailsError } from '../../-components/client-details-error'
 
 type Props = {
   clientId: string
