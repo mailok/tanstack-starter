@@ -127,6 +127,7 @@ export function DetailsNav({ children, header }: Props) {
                       <SidebarMenuItem key={tab.value}>
                         <Link
                           to={tab.to}
+                          search={(prev) => prev}
                           disabled={tab.disabled}
                           activeOptions={{ exact: true, includeSearch: false }}
                           className="w-full"
