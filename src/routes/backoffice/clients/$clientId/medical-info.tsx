@@ -25,8 +25,9 @@ export const Route = createFileRoute(
   search: {
     middlewares: [stripSearchParams(defaultClientSearch)],
   },
-  loader: ({ context: { queryClient }, params: { clientId } }) =>
-    queryClient.ensureQueryData(clientQueries.medicalInformation(clientId)),
+  loader({ context: { queryClient }, params: { clientId } }) {
+    queryClient.prefetchQuery(clientQueries.medicalInformation(clientId))
+  },
   component: ClientMedicalInformation,
 })
 

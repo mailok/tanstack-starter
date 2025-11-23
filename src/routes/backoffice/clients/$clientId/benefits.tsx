@@ -22,8 +22,9 @@ export const Route = createFileRoute('/backoffice/clients/$clientId/benefits')({
   search: {
     middlewares: [stripSearchParams(defaultClientSearch)],
   },
-  loader: ({ context: { queryClient }, params: { clientId } }) =>
-    queryClient.ensureQueryData(clientQueries.benefits(clientId)),
+  loader({ context: { queryClient }, params: { clientId } }) {
+    queryClient.prefetchQuery(clientQueries.benefits(clientId))
+  },
   component: ClientBenefits,
 })
 

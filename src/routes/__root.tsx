@@ -51,11 +51,14 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 })
 
 function RootDocument({ children }: { children: React.ReactNode }) {
-  const { theme } = Route.useLoaderData()
+  const data = Route.useLoaderData()
   return (
     <html
       lang="en"
-      className={cn('size-full', theme.selected || theme.detected)}
+      className={cn(
+        'size-full',
+        data?.theme?.selected || data?.theme?.detected,
+      )}
     >
       <head>
         <HeadContent />

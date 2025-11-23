@@ -14,21 +14,21 @@ export const getClientsPage = createServerFn({ method: 'GET' })
   .handler(async ({ data }) => service.findMany(data))
 
 export const getClientPersonalInformation = createServerFn({ method: 'GET' })
-  .inputValidator(z.string())
+  .inputValidator(z.uuid())
   .handler(async ({ data: clientId }) =>
     service.getPersonalInformation(clientId),
   )
 
 export const getClientMedicalInformation = createServerFn({ method: 'GET' })
-  .inputValidator(z.string())
+  .inputValidator(z.uuid())
   .handler(async ({ data: clientId }) =>
     service.getMedicalInformation(clientId),
   )
 
 export const getClientBenefits = createServerFn({ method: 'GET' })
-  .inputValidator(z.string())
+  .inputValidator(z.uuid())
   .handler(async ({ data: clientId }) => service.getBenefits(clientId))
 
 export const getClientHeaderInfo = createServerFn({ method: 'GET' })
-  .inputValidator(z.string())
+  .inputValidator(z.uuid())
   .handler(async ({ data: clientId }) => service.getHeaderInfo(clientId))
