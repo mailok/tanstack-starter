@@ -5,10 +5,10 @@ import {
   stripSearchParams,
 } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
-import { clientQueries } from './-queries'
-import { ClientSearchSchema, defaultClientSearch } from './-schemas'
-import { HeaderInfo } from './$clientId/-components/header-info'
-import { DetailsNav } from './$clientId/-components/details-nav'
+import { clientQueries } from '../-queries'
+import { ClientSearchSchema, defaultClientSearch } from '../-schemas'
+import { HeaderInfo } from './-components/header-info'
+import { DetailsNav } from './-components/details-nav'
 import { Skeleton } from '@/components/ui/skeleton'
 import { BreadcrumbItem, BreadcrumbLink } from '@/components/ui/breadcrumb'
 

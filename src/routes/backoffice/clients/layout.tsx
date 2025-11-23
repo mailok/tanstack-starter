@@ -4,7 +4,7 @@ import {
   createFileRoute,
   stripSearchParams,
 } from '@tanstack/react-router'
-import { ClientSearchSchema, defaultClientSearch } from './clients/-schemas'
+import { ClientSearchSchema, defaultClientSearch } from './-schemas'
 import { BreadcrumbItem, BreadcrumbLink } from '@/components/ui/breadcrumb'
 
 export const Route = createFileRoute('/backoffice/clients')({

@@ -15,7 +15,12 @@ const config = defineConfig({
       projects: ['./tsconfig.json'],
     }),
     tailwindcss(),
-    tanstackStart(),
+    tanstackStart({
+      router: {
+        indexToken: 'page',
+        routeToken: 'layout',
+      },
+    }),
     viteReact({
        babel: {
         plugins: ['babel-plugin-react-compiler'],
