@@ -82,9 +82,6 @@ export async function getHeaderInfo(clientId: string) {
     )
     .where(eq(ClientTable.id, clientId))
 
-  if (!client) {
-    throw new Error('Client not found')
-  }
   return client
 }
 
@@ -93,10 +90,7 @@ export async function getPersonalInformation(clientId: string) {
     .select()
     .from(PersonalInformationTable)
     .where(eq(PersonalInformationTable.clientId, clientId))
-
-  if (!personalInfo) {
-    throw new Error('Client personal information not found')
-  }
+    
   return personalInfo
 }
 

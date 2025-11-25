@@ -63,12 +63,15 @@ function FilteredResultsContent() {
   )
 
   function viewClientDetails(client: Client) {
+    // const modifiedId = client.id.slice(0, -1) + '2'
+
     queryClient.setQueryData(clientKeys.header(client.id), {
       id: client.id,
       name: client.name,
       status: client.status,
       photo: client.photo,
     })
+
     navigate({ to: `/backoffice/clients/${client.id}/personal-info`, search })
   }
 

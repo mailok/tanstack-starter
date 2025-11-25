@@ -15,9 +15,15 @@ export const getClientsPage = createServerFn({ method: 'GET' })
 
 export const getClientPersonalInformation = createServerFn({ method: 'GET' })
   .inputValidator(z.uuid())
-  .handler(async ({ data: clientId }) =>
-    service.getPersonalInformation(clientId),
-  )
+  .handler(async ({ data: clientId }) => {
+    const personalInfo = await service.getPersonalInformation(clientId);
+
+    if (!personalInfo) {
+      throw new Error('Cannot personal information: Client not found')
+    }
+    
+    return personalInfo
+  });
 
 export const getClientMedicalInformation = createServerFn({ method: 'GET' })
   .inputValidator(z.uuid())
@@ -31,4 +37,12 @@ export const getClientBenefits = createServerFn({ method: 'GET' })
 
 export const getClientHeaderInfo = createServerFn({ method: 'GET' })
   .inputValidator(z.uuid())
-  .handler(async ({ data: clientId }) => service.getHeaderInfo(clientId))
+  .handler(async ({ data: clientId }) => {
+    const client = await service.getHeaderInfo(clientId)
+    
+    if (!client) {
+      throw new Error('Cannot get client information: Client not found')
+    }
+    
+    return client
+  })
