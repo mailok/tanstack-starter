@@ -22,13 +22,16 @@ export function ClientError({ title, description }: Props) {
       <div className="rounded-lg p-8 max-w-md">
         <Empty>
           <EmptyHeader>
-            <EmptyMedia variant="icon" className="bg-destructive/10">
-              <UserX className="size-6 text-destructive" />
+            <EmptyMedia
+              variant="icon"
+              className="bg-destructive/10 dark:bg-red-500/20"
+            >
+              <UserX className="size-6 text-destructive dark:text-red-400" />
             </EmptyMedia>
-            <EmptyTitle className="text-destructive text-lg font-semibold">
+            <EmptyTitle className="text-destructive dark:text-red-400 text-lg font-semibold">
               {title}
             </EmptyTitle>
-            <EmptyDescription className="text-destructive">
+            <EmptyDescription className="text-destructive/90 dark:text-red-300/90">
               {description}
             </EmptyDescription>
           </EmptyHeader>
