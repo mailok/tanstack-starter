@@ -12,6 +12,7 @@ import { DetailsNav } from './-components/details-nav'
 import { Skeleton } from '@/components/ui/skeleton'
 import { BreadcrumbItem, BreadcrumbLink } from '@/components/ui/breadcrumb'
 import { ClientGuard } from './-components/client-guard'
+import { minutes } from '@/lib/time'
 
 function Crumb() {
   const { clientId } = Route.useParams()
@@ -58,6 +59,7 @@ export const Route = createFileRoute('/backoffice/clients/$clientId')({
   loader: async ({ context: { queryClient }, params: { clientId } }) => {
     queryClient.prefetchQuery(clientQueries.header(clientId))
   },
+  staleTime: minutes.TEN,
 })
 
 function ClientLayout() {
