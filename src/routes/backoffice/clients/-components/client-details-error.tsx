@@ -1,22 +1,13 @@
 import { AlertTriangle } from 'lucide-react'
 import { useErrorBoundary } from '@/components/error-boundary'
 import { Button } from '@/components/ui/button'
-import { ErrorCodes } from '../-api'
 
 export function ClientDetailsError() {
   const { error, resetErrorBoundary } = useErrorBoundary()
 
-  let message =
+  const message =
     error?.message ||
     'Something went wrong while loading the client details. Please try again.'
-
-  if (error?.message.includes(ErrorCodes.clientNotFound)) {
-    message =
-      'The client you are looking for does not exist or has been removed.'
-  }
-  if (error?.message.includes(ErrorCodes.invalidClientId)) {
-    message = 'The client ID provided is not valid.'
-  }
 
   return (
     <div className="size-full flex items-center justify-center min-h-[200px]">

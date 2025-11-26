@@ -1,19 +1,18 @@
-import { createServerFn, json } from '@tanstack/react-start'
+import { createServerFn } from '@tanstack/react-start'
 import * as z from 'zod'
 import { BaseClientSearchSchema } from './-schemas'
 import * as service from './-service'
 import { tryPromise } from '@/lib/try-promise'
+import { setResponseStatus } from '@tanstack/react-start/server'
 
-export const ErrorCodes = {
-  clientNotFound: 'CLIENT_NOT_FOUND',
-  invalidClientId: 'INVALID_CLIENT_ID',
-}
 
 export const getClientInsights = createServerFn({ method: 'GET' }).handler(() =>
   service.getInsights(),
 )
 
 export type GetClientsPageResponse = Awaited<ReturnType<typeof service.findMany>>
+
+const ClientIdSchema = z.uuid("Invalid client ID")
 
 
 export const getClientsPage = createServerFn({ method: 'GET' })
@@ -23,10 +22,11 @@ export const getClientsPage = createServerFn({ method: 'GET' })
 export const getClientPersonalInformation = createServerFn({ method: 'GET' })
   .inputValidator(z.unknown())
   .handler(async ({ data }) => {
-    const { success, data: clientId } = z.uuid().safeParse(data)
+    const { success, error: zodError, data: clientId } = ClientIdSchema.safeParse(data)
 
     if (!success) {
-      throw json({ message: ErrorCodes.invalidClientId }, { status: 400 });
+      setResponseStatus(400)
+      throw new Error(z.prettifyError(zodError));
     }
 
     const { data: personalInfo, error } = await tryPromise(service.getPersonalInformation(clientId));
@@ -37,7 +37,8 @@ export const getClientPersonalInformation = createServerFn({ method: 'GET' })
     }
 
     if (!personalInfo) {
-     throw json({ message: ErrorCodes.clientNotFound }, { status: 400 });
+      setResponseStatus(400)
+     throw new Error("The client you are looking for does not exist or has been removed.");
     }
     
     return personalInfo
@@ -46,10 +47,11 @@ export const getClientPersonalInformation = createServerFn({ method: 'GET' })
 export const getClientMedicalInformation = createServerFn({ method: 'GET' })
   .inputValidator(z.unknown())
   .handler(async ({ data }) => {
-    const { success, data: clientId } = z.uuid().safeParse(data)
+    const { success, error: zodError, data: clientId } = ClientIdSchema.safeParse(data)
 
     if (!success) {
-      throw json({ message: ErrorCodes.invalidClientId }, { status: 400 });
+      setResponseStatus(400)
+      throw new Error(z.prettifyError(zodError));
     }
 
     const { data: medicalInfo, error } = await tryPromise(service.getMedicalInformation(clientId));
@@ -60,7 +62,7 @@ export const getClientMedicalInformation = createServerFn({ method: 'GET' })
     }
 
     if (!medicalInfo) {
-     throw json({ message: ErrorCodes.clientNotFound }, { status: 400 });
+     throw new Error("The client you are looking for does not exist or has been removed.");
     }
     
     return medicalInfo
@@ -69,10 +71,11 @@ export const getClientMedicalInformation = createServerFn({ method: 'GET' })
 export const getClientBenefits = createServerFn({ method: 'GET' })
   .inputValidator(z.unknown())
   .handler(async ({ data }) => {
-    const { success, data: clientId } = z.uuid().safeParse(data)
+    const { success, error: zodError, data: clientId } = ClientIdSchema.safeParse(data)
 
     if (!success) {
-      throw json({ message: ErrorCodes.invalidClientId }, { status: 400 });
+      setResponseStatus(400)
+      throw new Error(z.prettifyError(zodError));
     }
 
     const { data: benefits, error } = await tryPromise(service.getBenefits(clientId));
@@ -83,7 +86,7 @@ export const getClientBenefits = createServerFn({ method: 'GET' })
     }
 
     if (!benefits) {
-     throw json({ message: ErrorCodes.clientNotFound }, { status: 400 });
+     throw new Error("The client you are looking for does not exist or has been removed.");
     }
     
     return benefits

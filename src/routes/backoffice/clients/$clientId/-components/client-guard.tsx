@@ -1,8 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
-import { useMatchRoute } from '@tanstack/react-router'
 import { clientQueries } from '../../-queries'
 import { ClientError } from './client-error'
-import { ErrorCodes } from '../../-api'
+import { useClientRoute } from '../-hooks/use-client-route'
 
 type Props = {
   clientId: string
@@ -10,38 +9,25 @@ type Props = {
 }
 
 function useClientValidator(clientId: string) {
-  const matchRoute = useMatchRoute()
-
-  const isPersonalInfo = matchRoute({
-    to: '/backoffice/clients/$clientId/personal-info',
-    params: { clientId },
-  })
-  const isMedicalInfo = matchRoute({
-    to: '/backoffice/clients/$clientId/medical-info',
-    params: { clientId },
-  })
-  const isBenefits = matchRoute({
-    to: '/backoffice/clients/$clientId/benefits',
-    params: { clientId },
-  })
+  const { isPersonalInfo, isMedicalInfo, isBenefits } = useClientRoute(clientId)
 
   const personalInfo = useQuery({
     ...clientQueries.personalInformation(clientId),
     throwOnError: false,
     retry: 0,
-    enabled: !!isPersonalInfo,
+    enabled: isPersonalInfo,
   })
   const medicalInfo = useQuery({
     ...clientQueries.medicalInformation(clientId),
     throwOnError: false,
     retry: 0,
-    enabled: !!isMedicalInfo,
+    enabled: isMedicalInfo,
   })
   const benefits = useQuery({
     ...clientQueries.benefits(clientId),
     throwOnError: false,
     retry: 0,
-    enabled: !!isBenefits,
+    enabled: isBenefits,
   })
 
   if (personalInfo.isError) return { isError: true, error: personalInfo.error }
@@ -57,24 +43,22 @@ function useClientValidator(clientId: string) {
 
 export function ClientGuard({ clientId, children }: Props) {
   const { isError, error } = useClientValidator(clientId)
+  const { isPersonalInfo, isMedicalInfo, isBenefits } = useClientRoute(clientId)
 
   if (isError && error) {
-    if (error.message.includes(ErrorCodes.invalidClientId)) {
-      return (
-        <ClientError
-          title="Invalid Client ID"
-          description="The client ID provided is not valid."
-        />
-      )
-    }
-    if (error.message.includes(ErrorCodes.clientNotFound)) {
-      return (
-        <ClientError
-          title="Client Not Found"
-          description="The client you are looking for does not exist or has been removed."
-        />
-      )
-    }
+    const message =
+      error?.message ||
+      'Something went wrong while loading the client details. Please try again.'
+
+    const title = isPersonalInfo
+      ? 'Error loading personal information'
+      : isMedicalInfo
+        ? 'Error loading medical information'
+        : isBenefits
+          ? 'Error loading benefits'
+          : 'Error loading details'
+
+    return <ClientError title={title} description={message} />
   }
 
   return <>{children}</>
