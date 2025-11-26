@@ -17,6 +17,7 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from '@/components/ui/empty'
+import { minutes } from '@/lib/time'
 
 export const Route = createFileRoute(
   '/backoffice/clients/$clientId/medical-info',
@@ -29,6 +30,7 @@ export const Route = createFileRoute(
     queryClient.prefetchQuery(clientQueries.medicalInformation(clientId))
   },
   component: ClientMedicalInformation,
+  staleTime: minutes.TEN,
 })
 
 export function ClientMedicalInformation() {
