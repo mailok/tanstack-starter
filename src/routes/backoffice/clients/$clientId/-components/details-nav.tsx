@@ -104,9 +104,10 @@ const sections: ReadonlyArray<Section> = [
 type Props = {
   children: React.ReactNode
   header?: React.ReactNode
+  disabled?: boolean
 }
 
-export function DetailsNav({ children, header }: Props) {
+export function DetailsNav({ children, header, disabled = false }: Props) {
   return (
     <SidebarProvider className="min-h-0 flex-1 flex-row">
       {/* Unified Sidebar for Desktop and Mobile */}
@@ -123,40 +124,47 @@ export function DetailsNav({ children, header }: Props) {
               <SidebarGroup key={section.title} className="p-0">
                 <SidebarGroupContent>
                   <SidebarMenu>
-                    {section.items.map((tab) => (
-                      <SidebarMenuItem key={tab.value}>
-                        <Link
-                          to={tab.to}
-                          search={(prev) => prev}
-                          disabled={tab.disabled}
-                          activeOptions={{ exact: true, includeSearch: false }}
-                          className="w-full"
-                        >
-                          {({ isActive }) => (
-                            <SidebarMenuButton
-                              isActive={isActive}
-                              asChild
-                              disabled={tab.disabled}
-                              className={cn(
-                                'w-full justify-center md:justify-start h-10 md:h-auto p-2',
-                                tab.disabled && 'opacity-50',
-                              )}
-                              tooltip={tab.name}
-                            >
-                              <span className="flex items-center gap-2">
-                                {/* Icon: Visible on mobile, hidden on desktop */}
-                                <tab.icon className="size-5 md:hidden" />
+                    {section.items.map((tab) => {
+                      const isTabDisabled = tab.disabled || disabled
+                      return (
+                        <SidebarMenuItem key={tab.value}>
+                          <Link
+                            to={tab.to}
+                            search={(prev) => prev}
+                            disabled={isTabDisabled}
+                            activeOptions={{
+                              exact: true,
+                              includeSearch: false,
+                            }}
+                            className="w-full"
+                          >
+                            {({ isActive }) => (
+                              <SidebarMenuButton
+                                isActive={isActive}
+                                asChild
+                                disabled={isTabDisabled}
+                                className={cn(
+                                  'w-full justify-center md:justify-start h-10 md:h-auto p-2',
+                                  isTabDisabled &&
+                                    'opacity-50 pointer-events-none',
+                                )}
+                                tooltip={tab.name}
+                              >
+                                <span className="flex items-center gap-2">
+                                  {/* Icon: Visible on mobile, hidden on desktop */}
+                                  <tab.icon className="size-5 md:hidden" />
 
-                                {/* Text: Hidden on mobile, visible on desktop */}
-                                <span className="hidden md:inline">
-                                  {tab.name}
+                                  {/* Text: Hidden on mobile, visible on desktop */}
+                                  <span className="hidden md:inline">
+                                    {tab.name}
+                                  </span>
                                 </span>
-                              </span>
-                            </SidebarMenuButton>
-                          )}
-                        </Link>
-                      </SidebarMenuItem>
-                    ))}
+                              </SidebarMenuButton>
+                            )}
+                          </Link>
+                        </SidebarMenuItem>
+                      )
+                    })}
                   </SidebarMenu>
                 </SidebarGroupContent>
               </SidebarGroup>

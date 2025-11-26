@@ -2,6 +2,7 @@ import { createServerFn } from '@tanstack/react-start'
 import * as z from 'zod'
 import { BaseClientSearchSchema } from './-schemas'
 import * as service from './-service'
+import { CLIENT_ERROR_CODES } from './-constants'
 
 export const getClientInsights = createServerFn({ method: 'GET' }).handler(() =>
   service.getInsights(),
@@ -45,4 +46,24 @@ export const getClientHeaderInfo = createServerFn({ method: 'GET' })
     }
     
     return client
+  })
+
+
+
+export const checkClientExists = createServerFn({ method: 'GET' })
+  .inputValidator(z.string())
+  .handler(async ({ data: clientId }) => {
+    const result = z.uuid().safeParse(clientId)
+
+    if (!result.success) {
+      throw new Error(CLIENT_ERROR_CODES.INVALID_CLIENT_ID)
+    }
+
+    const exists = await service.checkClientExists(clientId)
+
+    if (!exists) {
+      throw new Error(CLIENT_ERROR_CODES.CLIENT_NOT_FOUND)
+    }
+
+    return exists
   })

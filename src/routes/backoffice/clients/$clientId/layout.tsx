@@ -11,6 +11,7 @@ import { HeaderInfo } from './-components/header-info'
 import { DetailsNav } from './-components/details-nav'
 import { Skeleton } from '@/components/ui/skeleton'
 import { BreadcrumbItem, BreadcrumbLink } from '@/components/ui/breadcrumb'
+import { ClientGuard } from './-components/client-guard'
 
 function Crumb() {
   const { clientId } = Route.useParams()
@@ -33,12 +34,8 @@ function Crumb() {
           params={{ clientId }}
           search={search}
         >
-          {isLoading ? (
+          {isLoading || isError ? (
             <Skeleton className="h-4 w-24" />
-          ) : isError ? (
-            <span className="h-4 w-24 text-destructive">
-              Can't load client info
-            </span>
           ) : (
             client?.name || `Client ${clientId}`
           )}
@@ -57,7 +54,7 @@ export const Route = createFileRoute('/backoffice/clients/$clientId')({
   staticData: {
     crumb: <Crumb />,
   },
-  loader: ({ context: { queryClient }, params: { clientId } }) => {
+  loader: async ({ context: { queryClient }, params: { clientId } }) => {
     queryClient.prefetchQuery(clientQueries.header(clientId))
   },
 })
@@ -66,10 +63,12 @@ function ClientLayout() {
   const { clientId } = Route.useParams()
 
   return (
-    <div className="flex flex-col gap-6 p-6 h-full">
-      <DetailsNav header={<HeaderInfo clientId={clientId} />}>
-        <Outlet />
-      </DetailsNav>
-    </div>
+    <ClientGuard clientId={clientId}>
+      <div className="flex flex-col gap-6 p-6 h-full">
+        <DetailsNav header={<HeaderInfo clientId={clientId} />}>
+          <Outlet />
+        </DetailsNav>
+      </div>
+    </ClientGuard>
   )
 }

@@ -111,3 +111,12 @@ export async function getBenefits(clientId: string) {
 
   return benefits ?? null
 }
+
+export async function checkClientExists(clientId: string) {
+  const [client] = await db
+    .select({ id: ClientTable.id })
+    .from(ClientTable)
+    .where(eq(ClientTable.id, clientId))
+
+  return !!client
+}

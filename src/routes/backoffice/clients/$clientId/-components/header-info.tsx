@@ -54,7 +54,7 @@ function HeaderInfoContent({ clientId }: Props) {
   )
 }
 
-function HeaderInfoSkeleton() {
+export function HeaderInfoSkeleton() {
   return (
     <div className="flex flex-col items-center md:items-start gap-4 text-center md:text-left p-4 md:px-0">
       <Skeleton className="h-20 w-20 rounded-full" />

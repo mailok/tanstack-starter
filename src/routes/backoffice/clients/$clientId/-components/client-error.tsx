@@ -11,7 +11,12 @@ import {
 import { Button } from '@/components/ui/button'
 import { defaultClientSearch } from '../../-schemas'
 
-export function ClientNotFound() {
+type Props = {
+  title: string
+  description: string
+}
+
+export function ClientError({ title, description }: Props) {
   return (
     <div className="flex flex-col items-center justify-center h-full p-6">
       <Empty>
@@ -19,14 +24,15 @@ export function ClientNotFound() {
           <EmptyMedia variant="icon">
             <UserX className="size-6" />
           </EmptyMedia>
-          <EmptyTitle>Client Not Found</EmptyTitle>
-          <EmptyDescription>
-            The client you are looking for does not exist or has been removed.
-          </EmptyDescription>
+          <EmptyTitle>{title}</EmptyTitle>
+          <EmptyDescription>{description}</EmptyDescription>
         </EmptyHeader>
         <EmptyContent>
           <Button asChild>
-            <Link to="/backoffice/clients" search={defaultClientSearch}>
+            <Link
+              to="/backoffice/clients"
+              search={(prev) => ({ ...defaultClientSearch, ...prev })}
+            >
               Go to Clients List
             </Link>
           </Button>

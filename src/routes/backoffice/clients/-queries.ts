@@ -15,6 +15,7 @@ export const clientKeys = {
     [...clientKeys.detail(id), 'medical-information'] as const,
   benefits: (id: string) => [...clientKeys.detail(id), 'benefits'] as const,
   header: (id: string) => [...clientKeys.detail(id), 'header'] as const,
+  checkClientExists: (id: string) => ['check-client-exists', id] as const,
 }
 
 export const clientQueries = {
@@ -58,5 +59,12 @@ export const clientQueries = {
     queryOptions({
       queryKey: clientKeys.benefits(clientId),
       queryFn: () => api.getClientBenefits({ data: clientId }),
+    }),
+
+  checkClientExists: (clientId: string) =>
+    queryOptions({
+      queryKey: clientKeys.checkClientExists(clientId),
+      queryFn: () => api.checkClientExists({ data: clientId }),
+      retry: 0,
     }),
 }
