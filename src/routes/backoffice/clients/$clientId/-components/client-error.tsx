@@ -36,7 +36,7 @@ export function ClientError({ title, description }: Props) {
             </EmptyDescription>
           </EmptyHeader>
           <EmptyContent>
-            <Button asChild>
+            <Button asChild variant="outline" size="sm">
               <Link
                 to="/backoffice/clients"
                 search={(prev) => ({ ...defaultClientSearch, ...prev })}

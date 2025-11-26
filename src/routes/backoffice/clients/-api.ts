@@ -26,7 +26,7 @@ export const getClientPersonalInformation = createServerFn({ method: 'GET' })
     const { success, data: clientId } = z.uuid().safeParse(data)
 
     if (!success) {
-      throw json({ errorCode: ErrorCodes.invalidClientId }, { status: 400 });
+      throw json({ message: ErrorCodes.invalidClientId }, { status: 400 });
     }
 
     const { data: personalInfo, error } = await tryPromise(service.getPersonalInformation(clientId));
@@ -49,7 +49,7 @@ export const getClientMedicalInformation = createServerFn({ method: 'GET' })
     const { success, data: clientId } = z.uuid().safeParse(data)
 
     if (!success) {
-      throw json({ errorCode: ErrorCodes.invalidClientId }, { status: 400 });
+      throw json({ message: ErrorCodes.invalidClientId }, { status: 400 });
     }
 
     const { data: medicalInfo, error } = await tryPromise(service.getMedicalInformation(clientId));
@@ -72,7 +72,7 @@ export const getClientBenefits = createServerFn({ method: 'GET' })
     const { success, data: clientId } = z.uuid().safeParse(data)
 
     if (!success) {
-      throw json({ errorCode: ErrorCodes.invalidClientId }, { status: 400 });
+      throw json({ message: ErrorCodes.invalidClientId }, { status: 400 });
     }
 
     const { data: benefits, error } = await tryPromise(service.getBenefits(clientId));
