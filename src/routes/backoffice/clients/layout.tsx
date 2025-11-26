@@ -18,6 +18,10 @@ export const Route = createFileRoute('/backoffice/clients')({
   },
 })
 
+function ClientsLayout() {
+  return <Outlet />
+}
+
 function Crumb() {
   const search = Route.useSearch()
   return (
@@ -29,8 +33,4 @@ function Crumb() {
       </BreadcrumbLink>
     </BreadcrumbItem>
   )
-}
-
-function ClientsLayout() {
-  return <Outlet />
 }

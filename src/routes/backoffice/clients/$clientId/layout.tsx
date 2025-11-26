@@ -14,6 +14,35 @@ import { BreadcrumbItem, BreadcrumbLink } from '@/components/ui/breadcrumb'
 import { ClientGuard } from './-components/client-guard'
 import { minutes } from '@/lib/time'
 
+export const Route = createFileRoute('/backoffice/clients/$clientId')({
+  component: ClientLayout,
+  validateSearch: ClientSearchSchema,
+  search: {
+    middlewares: [stripSearchParams(defaultClientSearch)],
+  },
+  staticData: {
+    crumb: <Crumb />,
+  },
+  loader: async ({ context: { queryClient }, params: { clientId } }) => {
+    queryClient.prefetchQuery(clientQueries.header(clientId))
+  },
+  staleTime: minutes.TEN,
+})
+
+function ClientLayout() {
+  const { clientId } = Route.useParams()
+
+  return (
+    <ClientGuard clientId={clientId}>
+      <div className="flex flex-col gap-6 p-6 h-full">
+        <DetailsNav header={<HeaderInfo clientId={clientId} />}>
+          <Outlet />
+        </DetailsNav>
+      </div>
+    </ClientGuard>
+  )
+}
+
 function Crumb() {
   const { clientId } = Route.useParams()
   const search = Route.useSearch()
@@ -44,34 +73,5 @@ function Crumb() {
         </Link>
       </BreadcrumbLink>
     </BreadcrumbItem>
-  )
-}
-
-export const Route = createFileRoute('/backoffice/clients/$clientId')({
-  component: ClientLayout,
-  validateSearch: ClientSearchSchema,
-  search: {
-    middlewares: [stripSearchParams(defaultClientSearch)],
-  },
-  staticData: {
-    crumb: <Crumb />,
-  },
-  loader: async ({ context: { queryClient }, params: { clientId } }) => {
-    queryClient.prefetchQuery(clientQueries.header(clientId))
-  },
-  staleTime: minutes.TEN,
-})
-
-function ClientLayout() {
-  const { clientId } = Route.useParams()
-
-  return (
-    <ClientGuard clientId={clientId}>
-      <div className="flex flex-col gap-6 p-6 h-full">
-        <DetailsNav header={<HeaderInfo clientId={clientId} />}>
-          <Outlet />
-        </DetailsNav>
-      </div>
-    </ClientGuard>
   )
 }
