@@ -23,7 +23,7 @@ function Crumb() {
   return (
     <BreadcrumbItem className="hidden md:block">
       <BreadcrumbLink asChild>
-        <Link to="/backoffice/clients" search={search}>
+        <Link to="/backoffice/clients" search={search} preload={false}>
           Clients
         </Link>
       </BreadcrumbLink>

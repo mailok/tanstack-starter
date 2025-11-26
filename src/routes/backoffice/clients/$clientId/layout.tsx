@@ -33,6 +33,7 @@ function Crumb() {
           to="/backoffice/clients/$clientId/personal-info"
           params={{ clientId }}
           search={search}
+          preload={false}
         >
           {isLoading || isError ? (
             <Skeleton className="h-4 w-24" />

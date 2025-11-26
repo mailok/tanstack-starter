@@ -1,4 +1,4 @@
-import { createServerFn } from '@tanstack/react-start'
+import { createServerFn, json } from '@tanstack/react-start'
 import * as z from 'zod'
 import { BaseClientSearchSchema } from './-schemas'
 import * as service from './-service'
@@ -51,18 +51,19 @@ export const getClientHeaderInfo = createServerFn({ method: 'GET' })
 
 
 export const checkClientExists = createServerFn({ method: 'GET' })
-  .inputValidator(z.string())
-  .handler(async ({ data: clientId }) => {
-    const result = z.uuid().safeParse(clientId)
+  .inputValidator(z.unknown())
+  .handler(async ({ data }) => {
+    const { error, data: clientId } = z.uuid().safeParse(data)
 
-    if (!result.success) {
-      throw new Error(CLIENT_ERROR_CODES.INVALID_CLIENT_ID)
+    if (error) {
+      throw json({ message: CLIENT_ERROR_CODES.INVALID_CLIENT_ID }, { status: 400 });
     }
 
     const exists = await service.checkClientExists(clientId)
 
     if (!exists) {
-      throw new Error(CLIENT_ERROR_CODES.CLIENT_NOT_FOUND)
+      // Using 400 because 404 is not working properly in the framework. Issues have been reported.
+      throw json({ message: CLIENT_ERROR_CODES.CLIENT_NOT_FOUND }, { status: 400 });
     }
 
     return exists
