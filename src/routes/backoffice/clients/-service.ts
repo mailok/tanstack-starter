@@ -95,19 +95,33 @@ export async function getPersonalInformation(clientId: string) {
 }
 
 export async function getMedicalInformation(clientId: string) {
-  const [medicalInfo] = await db
-    .select()
-    .from(MedicalInformationTable)
-    .where(eq(MedicalInformationTable.clientId, clientId))
+  const [result] = await db
+    .select({
+      clientId: ClientTable.id,
+      medicalInfo: MedicalInformationTable,
+    })
+    .from(ClientTable)
+    .leftJoin(
+      MedicalInformationTable,
+      eq(MedicalInformationTable.clientId, ClientTable.id),
+    )
+    .where(eq(ClientTable.id, clientId))
 
-  return medicalInfo ?? null
+  return result
 }
 
 export async function getBenefits(clientId: string) {
-  const [benefits] = await db
-    .select()
-    .from(BenefitsTable)
-    .where(eq(BenefitsTable.clientId, clientId))
+  const [result] = await db
+    .select({
+      clientId: ClientTable.id,
+      benefits: BenefitsTable,
+    })
+    .from(ClientTable)
+    .leftJoin(
+      BenefitsTable,
+      eq(BenefitsTable.clientId, ClientTable.id),
+    )
+    .where(eq(ClientTable.id, clientId))
 
-  return benefits ?? null
+  return result
 }

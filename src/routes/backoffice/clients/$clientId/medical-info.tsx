@@ -46,11 +46,11 @@ export function ClientMedicalInformation() {
 }
 
 function ClientMedicalInformationContent({ clientId }: { clientId: string }) {
-  const { data: medical } = useSuspenseQuery(
+  const { data: medicalInfo } = useSuspenseQuery(
     clientQueries.medicalInformation(clientId),
   )
 
-  if (!medical) {
+  if (!medicalInfo) {
     return (
       <Empty>
         <EmptyContent>
@@ -81,14 +81,14 @@ function ClientMedicalInformationContent({ clientId }: { clientId: string }) {
                 Blood Type
               </p>
               <p className="text-lg font-semibold">
-                {medical.bloodType || 'N/A'}
+                {medicalInfo.bloodType || 'N/A'}
               </p>
             </div>
             <div>
               <p className="text-sm font-medium text-muted-foreground">
                 Last Checkup
               </p>
-              <p>{medical.lastCheckup || 'N/A'}</p>
+              <p>{medicalInfo.lastCheckup || 'N/A'}</p>
             </div>
           </div>
 
@@ -97,7 +97,7 @@ function ClientMedicalInformationContent({ clientId }: { clientId: string }) {
               Allergies
             </p>
             <div className="flex flex-wrap gap-2">
-              {medical.allergies?.map((allergy) => (
+              {medicalInfo.allergies?.map((allergy) => (
                 <Badge key={allergy} variant="destructive">
                   {allergy}
                 </Badge>
@@ -114,7 +114,7 @@ function ClientMedicalInformationContent({ clientId }: { clientId: string }) {
               Chronic Conditions
             </p>
             <div className="flex flex-wrap gap-2">
-              {medical.chronicConditions?.map((condition) => (
+              {medicalInfo.chronicConditions?.map((condition) => (
                 <Badge key={condition} variant="secondary">
                   {condition}
                 </Badge>
@@ -135,17 +135,17 @@ function ClientMedicalInformationContent({ clientId }: { clientId: string }) {
         <CardContent className="space-y-4">
           <div>
             <p className="text-sm font-medium text-muted-foreground">Name</p>
-            <p>{medical.emergencyContactName || 'N/A'}</p>
+            <p>{medicalInfo.emergencyContactName || 'N/A'}</p>
           </div>
           <div>
             <p className="text-sm font-medium text-muted-foreground">
               Relationship
             </p>
-            <p>{medical.emergencyContactRelationship || 'N/A'}</p>
+            <p>{medicalInfo.emergencyContactRelationship || 'N/A'}</p>
           </div>
           <div>
             <p className="text-sm font-medium text-muted-foreground">Phone</p>
-            <p>{medical.emergencyContactPhone || 'N/A'}</p>
+            <p>{medicalInfo.emergencyContactPhone || 'N/A'}</p>
           </div>
         </CardContent>
       </Card>

@@ -13,6 +13,7 @@ export const getClientInsights = createServerFn({ method: 'GET' }).handler(() =>
 export type GetClientsPageResponse = Awaited<ReturnType<typeof service.findMany>>
 
 const ClientIdSchema = z.uuid("Invalid client ID")
+const DEFAULT_NOT_FOUND_ERROR = "The client you are looking for does not exist or has been removed."
 
 
 export const getClientsPage = createServerFn({ method: 'GET' })
@@ -38,7 +39,7 @@ export const getClientPersonalInformation = createServerFn({ method: 'GET' })
 
     if (!personalInfo) {
       setResponseStatus(400)
-     throw new Error("The client you are looking for does not exist or has been removed.");
+     throw new Error(DEFAULT_NOT_FOUND_ERROR);
     }
     
     return personalInfo
@@ -54,18 +55,19 @@ export const getClientMedicalInformation = createServerFn({ method: 'GET' })
       throw new Error(z.prettifyError(zodError));
     }
 
-    const { data: medicalInfo, error } = await tryPromise(service.getMedicalInformation(clientId));
+    const { data: result, error } = await tryPromise(service.getMedicalInformation(clientId));
 
     if (error) {
       // TODO: Log error
       throw new Error("Cannot get client medical information. Please try again later.");
     }
 
-    if (!medicalInfo) {
-     throw new Error("The client you are looking for does not exist or has been removed.");
+    if (!result) {
+      setResponseStatus(400)
+      throw new Error(DEFAULT_NOT_FOUND_ERROR);
     }
     
-    return medicalInfo
+    return result.medicalInfo
   })
 
 export const getClientBenefits = createServerFn({ method: 'GET' })
@@ -78,18 +80,19 @@ export const getClientBenefits = createServerFn({ method: 'GET' })
       throw new Error(z.prettifyError(zodError));
     }
 
-    const { data: benefits, error } = await tryPromise(service.getBenefits(clientId));
+    const { data: result, error } = await tryPromise(service.getBenefits(clientId));
 
     if (error) {
       // TODO: Log error
       throw new Error("Cannot get client benefits. Please try again later.");
     }
 
-    if (!benefits) {
-     throw new Error("The client you are looking for does not exist or has been removed.");
+    if (!result) {
+      setResponseStatus(400)
+      throw new Error(DEFAULT_NOT_FOUND_ERROR);
     }
     
-    return benefits
+    return result.benefits
   })
 
 export const getClientHeaderInfo = createServerFn({ method: 'GET' })
