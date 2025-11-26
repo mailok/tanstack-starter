@@ -1,6 +1,5 @@
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { Suspense } from 'react'
-import { AlertCircle } from 'lucide-react'
 import { clientQueries } from '../../-queries'
 import { getInitials } from '../../-utils/get-initials'
 import { Badge } from '@/components/ui/badge'
@@ -69,13 +68,10 @@ export function HeaderInfoSkeleton() {
 function HeaderInfoError() {
   return (
     <div className="flex flex-col items-center md:items-start gap-4 text-center md:text-left p-4 md:px-0">
-      <div className="h-16 w-16 rounded-full bg-destructive/10 flex items-center justify-center ring-4 ring-background">
-        <AlertCircle className="h-10 w-10 text-destructive" />
-      </div>
-      <div className="flex flex-col gap-2 w-full items-center md:items-start">
-        <h1 className="text-lg tracking-tight leading-tight text-destructive">
-          Can't load client info
-        </h1>
+      <Skeleton className="h-20 w-20 rounded-full bg-destructive/[0.08]" />
+      <div className="flex flex-col gap-2 items-center md:items-start w-full">
+        <Skeleton className="h-6 w-32 bg-destructive/[0.08]" />
+        <Skeleton className="h-5 w-16 rounded-full bg-destructive/[0.08]" />
       </div>
     </div>
   )

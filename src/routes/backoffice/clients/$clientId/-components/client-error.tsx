@@ -19,25 +19,32 @@ type Props = {
 export function ClientError({ title, description }: Props) {
   return (
     <div className="flex flex-col items-center justify-center h-full p-6">
-      <Empty>
-        <EmptyHeader>
-          <EmptyMedia variant="icon">
-            <UserX className="size-6" />
-          </EmptyMedia>
-          <EmptyTitle>{title}</EmptyTitle>
-          <EmptyDescription>{description}</EmptyDescription>
-        </EmptyHeader>
-        <EmptyContent>
-          <Button asChild>
-            <Link
-              to="/backoffice/clients"
-              search={(prev) => ({ ...defaultClientSearch, ...prev })}
-            >
-              Go to Clients List
-            </Link>
-          </Button>
-        </EmptyContent>
-      </Empty>
+      <div className="rounded-lg p-8 max-w-md">
+        <Empty>
+          <EmptyHeader>
+            <EmptyMedia variant="icon" className="bg-destructive/10">
+              <UserX className="size-6 text-destructive" />
+            </EmptyMedia>
+            <EmptyTitle className="text-destructive text-lg font-semibold">
+              {title}
+            </EmptyTitle>
+            <EmptyDescription className="text-destructive">
+              {description}
+            </EmptyDescription>
+          </EmptyHeader>
+          <EmptyContent>
+            <Button asChild>
+              <Link
+                to="/backoffice/clients"
+                search={(prev) => ({ ...defaultClientSearch, ...prev })}
+                preload={false}
+              >
+                Go to Clients List
+              </Link>
+            </Button>
+          </EmptyContent>
+        </Empty>
+      </div>
     </div>
   )
 }

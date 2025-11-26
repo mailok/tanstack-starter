@@ -66,7 +66,9 @@ function Crumb() {
           preload={false}
         >
           {isLoading || isError ? (
-            <Skeleton className="h-4 w-24" />
+            <Skeleton
+              className={`h-4 w-24 ${isError ? 'bg-destructive/[0.08]' : ''}`}
+            />
           ) : (
             client?.name || `Client ${clientId}`
           )}

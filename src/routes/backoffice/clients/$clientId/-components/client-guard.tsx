@@ -1,25 +1,65 @@
 import { useQuery } from '@tanstack/react-query'
+import { useMatchRoute } from '@tanstack/react-router'
 import { clientQueries } from '../../-queries'
 import { ClientError } from './client-error'
-import { ClientLayoutPending } from './client-layout-pending'
-import { CLIENT_ERROR_CODES } from '../../-constants'
+import { ErrorCodes } from '../../-api'
 
 type Props = {
   clientId: string
   children: React.ReactNode
 }
 
+function useClientValidator(clientId: string) {
+  const matchRoute = useMatchRoute()
+
+  const isPersonalInfo = matchRoute({
+    to: '/backoffice/clients/$clientId/personal-info',
+    params: { clientId },
+  })
+  const isMedicalInfo = matchRoute({
+    to: '/backoffice/clients/$clientId/medical-info',
+    params: { clientId },
+  })
+  const isBenefits = matchRoute({
+    to: '/backoffice/clients/$clientId/benefits',
+    params: { clientId },
+  })
+
+  const personalInfo = useQuery({
+    ...clientQueries.personalInformation(clientId),
+    throwOnError: false,
+    retry: 0,
+    enabled: !!isPersonalInfo,
+  })
+  const medicalInfo = useQuery({
+    ...clientQueries.medicalInformation(clientId),
+    throwOnError: false,
+    retry: 0,
+    enabled: !!isMedicalInfo,
+  })
+  const benefits = useQuery({
+    ...clientQueries.benefits(clientId),
+    throwOnError: false,
+    retry: 0,
+    enabled: !!isBenefits,
+  })
+
+  if (personalInfo.isError) return { isError: true, error: personalInfo.error }
+  if (medicalInfo.isError) return { isError: true, error: medicalInfo.error }
+  if (benefits.isError) return { isError: true, error: benefits.error }
+
+  const isError =
+    personalInfo.isError || medicalInfo.isError || benefits.isError
+  const error = personalInfo.error || medicalInfo.error || benefits.error
+
+  return { isError, error }
+}
+
 export function ClientGuard({ clientId, children }: Props) {
-  const { isLoading, isError, error } = useQuery(
-    clientQueries.checkClientExists(clientId),
-  )
+  const { isError, error } = useClientValidator(clientId)
 
-  if (isLoading) {
-    return <ClientLayoutPending />
-  }
-
-  if (isError) {
-    if (error.message.includes(CLIENT_ERROR_CODES.INVALID_CLIENT_ID)) {
+  if (isError && error) {
+    if (error.message.includes(ErrorCodes.invalidClientId)) {
       return (
         <ClientError
           title="Invalid Client ID"
@@ -27,7 +67,7 @@ export function ClientGuard({ clientId, children }: Props) {
         />
       )
     }
-    if (error.message.includes(CLIENT_ERROR_CODES.CLIENT_NOT_FOUND)) {
+    if (error.message.includes(ErrorCodes.clientNotFound)) {
       return (
         <ClientError
           title="Client Not Found"
@@ -35,12 +75,6 @@ export function ClientGuard({ clientId, children }: Props) {
         />
       )
     }
-    return (
-      <ClientError
-        title="Something went wrong"
-        description="We were unable to load the client information. Please try again later."
-      />
-    )
   }
 
   return <>{children}</>

@@ -2,7 +2,12 @@ import { createServerFn, json } from '@tanstack/react-start'
 import * as z from 'zod'
 import { BaseClientSearchSchema } from './-schemas'
 import * as service from './-service'
-import { CLIENT_ERROR_CODES } from './-constants'
+import { tryPromise } from '@/lib/try-promise'
+
+export const ErrorCodes = {
+  clientNotFound: 'CLIENT_NOT_FOUND',
+  invalidClientId: 'INVALID_CLIENT_ID',
+}
 
 export const getClientInsights = createServerFn({ method: 'GET' }).handler(() =>
   service.getInsights(),
@@ -10,61 +15,89 @@ export const getClientInsights = createServerFn({ method: 'GET' }).handler(() =>
 
 export type GetClientsPageResponse = Awaited<ReturnType<typeof service.findMany>>
 
+
 export const getClientsPage = createServerFn({ method: 'GET' })
   .inputValidator(BaseClientSearchSchema)
   .handler(async ({ data }) => service.findMany(data))
 
 export const getClientPersonalInformation = createServerFn({ method: 'GET' })
-  .inputValidator(z.uuid())
-  .handler(async ({ data: clientId }) => {
-    const personalInfo = await service.getPersonalInformation(clientId);
+  .inputValidator(z.unknown())
+  .handler(async ({ data }) => {
+    const { success, data: clientId } = z.uuid().safeParse(data)
+
+    if (!success) {
+      throw json({ errorCode: ErrorCodes.invalidClientId }, { status: 400 });
+    }
+
+    const { data: personalInfo, error } = await tryPromise(service.getPersonalInformation(clientId));
+
+    if (error) {
+      // TODO: Log error
+      throw new Error("Cannot get client personal information. Please try again later.");
+    }
 
     if (!personalInfo) {
-      throw new Error('Cannot personal information: Client not found')
+     throw json({ message: ErrorCodes.clientNotFound }, { status: 400 });
     }
     
     return personalInfo
   });
 
 export const getClientMedicalInformation = createServerFn({ method: 'GET' })
-  .inputValidator(z.uuid())
-  .handler(async ({ data: clientId }) =>
-    service.getMedicalInformation(clientId),
-  )
+  .inputValidator(z.unknown())
+  .handler(async ({ data }) => {
+    const { success, data: clientId } = z.uuid().safeParse(data)
+
+    if (!success) {
+      throw json({ errorCode: ErrorCodes.invalidClientId }, { status: 400 });
+    }
+
+    const { data: medicalInfo, error } = await tryPromise(service.getMedicalInformation(clientId));
+
+    if (error) {
+      // TODO: Log error
+      throw new Error("Cannot get client medical information. Please try again later.");
+    }
+
+    if (!medicalInfo) {
+     throw json({ message: ErrorCodes.clientNotFound }, { status: 400 });
+    }
+    
+    return medicalInfo
+  })
 
 export const getClientBenefits = createServerFn({ method: 'GET' })
-  .inputValidator(z.uuid())
-  .handler(async ({ data: clientId }) => service.getBenefits(clientId))
+  .inputValidator(z.unknown())
+  .handler(async ({ data }) => {
+    const { success, data: clientId } = z.uuid().safeParse(data)
+
+    if (!success) {
+      throw json({ errorCode: ErrorCodes.invalidClientId }, { status: 400 });
+    }
+
+    const { data: benefits, error } = await tryPromise(service.getBenefits(clientId));
+
+    if (error) {
+      // TODO: Log error
+      throw new Error("Cannot get client benefits. Please try again later.");
+    }
+
+    if (!benefits) {
+     throw json({ message: ErrorCodes.clientNotFound }, { status: 400 });
+    }
+    
+    return benefits
+  })
 
 export const getClientHeaderInfo = createServerFn({ method: 'GET' })
   .inputValidator(z.uuid())
   .handler(async ({ data: clientId }) => {
-    const client = await service.getHeaderInfo(clientId)
+    const { data: client, error } = await tryPromise(service.getHeaderInfo(clientId))
     
-    if (!client) {
-      throw new Error('Cannot get client information: Client not found')
+    if (error) {
+      // TODO: Log error
+      throw new Error("Cannot get client header information. Please try again later.");
     }
     
     return client
-  })
-
-
-
-export const checkClientExists = createServerFn({ method: 'GET' })
-  .inputValidator(z.unknown())
-  .handler(async ({ data }) => {
-    const { error, data: clientId } = z.uuid().safeParse(data)
-
-    if (error) {
-      throw json({ message: CLIENT_ERROR_CODES.INVALID_CLIENT_ID }, { status: 400 });
-    }
-
-    const exists = await service.checkClientExists(clientId)
-
-    if (!exists) {
-      // Using 400 because 404 is not working properly in the framework. Issues have been reported.
-      throw json({ message: CLIENT_ERROR_CODES.CLIENT_NOT_FOUND }, { status: 400 });
-    }
-
-    return exists
   })
