@@ -1,4 +1,5 @@
 import * as z from "zod"
+import { setResponseStatus } from '@tanstack/react-start/server'
 
 export const zodValidator = <T>(schema: z.ZodSchema<T>) => {
   return (data: unknown): T => {
@@ -9,6 +10,7 @@ export const zodValidator = <T>(schema: z.ZodSchema<T>) => {
     } = schema.safeParse(data)
 
     if (!success) {
+      setResponseStatus(400)
       throw new Error(z.prettifyError(zodError))
     }
 
