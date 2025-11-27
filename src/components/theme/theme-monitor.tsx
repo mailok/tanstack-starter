@@ -23,10 +23,21 @@ export function ThemeMonitor() {
             console.log('Theme script is running');
             const allCookies = (document.cookie || "").split(";");
             const themeCookie = allCookies.find((cookie) => cookie.trim().startsWith("theme="));
+            const themeDetected = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
             if (!themeCookie && navigator.cookieEnabled) {
-              const themeDetected = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
               document.cookie = 'theme=' + JSON.stringify({ detected: themeDetected, selected: "" }) + ';path=/';
               window.location.reload();
+            } else if (themeCookie && navigator.cookieEnabled) {
+              try {
+                const cookieValue = decodeURIComponent(themeCookie.trim().substring(6));
+                const themeData = JSON.parse(cookieValue);
+                if (themeData.detected !== themeDetected) {
+                  themeData.detected = themeDetected;
+                  document.cookie = 'theme=' + JSON.stringify(themeData) + ';path=/';
+                }
+              } catch (e) {
+                console.error('Error parsing theme cookie:', e);
+              }
             }
 			`,
       }}
