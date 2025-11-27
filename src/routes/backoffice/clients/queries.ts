@@ -1,6 +1,6 @@
 import { queryOptions } from '@tanstack/react-query'
-import * as api from './-api'
-import type { ClientQuery } from './-schemas'
+import * as api from './api'
+import type { ClientQuery } from './schemas'
 
 export const clientKeys = {
   all: ['clients'] as const,

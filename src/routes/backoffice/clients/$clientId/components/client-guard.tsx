@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
-import { clientQueries } from '../../-queries'
+import { clientQueries } from '../../queries'
 import { ClientError } from './client-error'
-import { useClientRoute } from '../-hooks/use-client-route'
+import { useClientRoute } from '../hooks/use-client-route'
 
 type Props = {
   clientId: string

@@ -2,9 +2,9 @@ import { createFileRoute, stripSearchParams } from '@tanstack/react-router'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { Suspense } from 'react'
 import { Check, FileX, X } from 'lucide-react'
-import { ClientDetailsError } from '../-components/client-details-error'
-import { ClientSearchSchema, defaultClientSearch } from '../-schemas'
-import { clientQueries } from '@/routes/backoffice/clients/-queries'
+import { ClientDetailsError } from '../components/client-details-error'
+import { ClientSearchSchema, defaultClientSearch } from '../schemas'
+import { clientQueries } from '@/routes/backoffice/clients/queries'
 import { ErrorBoundary } from '@/components/error-boundary'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -18,17 +18,19 @@ import {
 } from '@/components/ui/empty'
 import { minutes } from '@/lib/time'
 
-export const Route = createFileRoute('/backoffice/clients/$clientId/benefits')({
-  validateSearch: ClientSearchSchema,
-  search: {
-    middlewares: [stripSearchParams(defaultClientSearch)],
+export const Route = createFileRoute('/backoffice/clients/$clientId/benefits/')(
+  {
+    validateSearch: ClientSearchSchema,
+    search: {
+      middlewares: [stripSearchParams(defaultClientSearch)],
+    },
+    loader({ context: { queryClient }, params: { clientId } }) {
+      queryClient.prefetchQuery(clientQueries.benefits(clientId))
+    },
+    component: ClientBenefits,
+    staleTime: minutes.TEN,
   },
-  loader({ context: { queryClient }, params: { clientId } }) {
-    queryClient.prefetchQuery(clientQueries.benefits(clientId))
-  },
-  component: ClientBenefits,
-  staleTime: minutes.TEN,
-})
+)
 
 export function ClientBenefits() {
   const { clientId } = Route.useParams()

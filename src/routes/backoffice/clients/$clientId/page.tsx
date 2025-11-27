@@ -1,5 +1,5 @@
 import { createFileRoute, redirect } from '@tanstack/react-router'
-import { defaultClientSearch } from '../-schemas'
+import { defaultClientSearch } from '../schemas'
 
 export const Route = createFileRoute('/backoffice/clients/$clientId/')({
   beforeLoad: ({ params }) => {

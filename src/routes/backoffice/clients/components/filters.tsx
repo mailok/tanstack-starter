@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useDebounce } from '@uidotdev/usehooks'
 import { LayoutGrid, Table2 } from 'lucide-react'
-import { useClientSearch } from '../-hooks/use-client-search'
+import { useClientSearch } from '../hooks/use-client-search'
 import type { ClientStatus } from '@/db/schemas/client'
 import { cn } from '@/lib/utils'
 import { SearchInput } from '@/components/search-input'

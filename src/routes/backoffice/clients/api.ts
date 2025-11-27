@@ -1,8 +1,8 @@
 import { createServerFn } from '@tanstack/react-start'
 import * as z from 'zod'
 import { setResponseStatus } from '@tanstack/react-start/server'
-import { BaseClientSearchSchema } from './-schemas'
-import * as service from './-service'
+import { BaseClientSearchSchema } from './schemas'
+import * as service from './service'
 import { tryPromise } from '@/lib/try-promise'
 import { zodValidator } from '@/lib/zod-validator'
 

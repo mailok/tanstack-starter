@@ -3,12 +3,12 @@ import {
   SearchFilter,
   StatusFilter,
   ViewModeToggle,
-} from './-components/filters'
-import { ClientSearchSchema, defaultClientSearch } from './-schemas'
-import { FilteredResults } from './-components/filtered-results'
-import { clientQueries } from './-queries'
-import { Insights, InsightsSkeleton } from './-components/insights'
-import { ClientsPagination } from './-components/client-pagination'
+} from './components/filters'
+import { ClientSearchSchema, defaultClientSearch } from './schemas'
+import { FilteredResults } from './components/filtered-results'
+import { clientQueries } from './queries'
+import { Insights, InsightsSkeleton } from './components/insights'
+import { ClientsPagination } from './components/client-pagination'
 import { minutes } from '@/lib/time'
 
 export const Route = createFileRoute('/backoffice/clients/')({

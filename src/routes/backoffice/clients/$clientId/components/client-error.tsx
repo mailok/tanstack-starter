@@ -9,7 +9,7 @@ import {
   EmptyTitle,
 } from '@/components/ui/empty'
 import { Button } from '@/components/ui/button'
-import { defaultClientSearch } from '../../-schemas'
+import { defaultClientSearch } from '../../schemas'
 
 type Props = {
   title: string

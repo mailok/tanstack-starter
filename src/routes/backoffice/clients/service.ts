@@ -1,5 +1,5 @@
 import { and, count, eq, ilike } from 'drizzle-orm'
-import type { ClientQuery } from './-schemas'
+import type { ClientQuery } from './schemas'
 import { ClientTable } from '@/db/schemas/client'
 import { db } from '@/db'
 import { PersonalInformationTable } from '@/db/schemas/client/personal-information'

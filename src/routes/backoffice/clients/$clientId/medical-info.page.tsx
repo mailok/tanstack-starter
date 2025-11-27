@@ -2,9 +2,9 @@ import { createFileRoute, stripSearchParams } from '@tanstack/react-router'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { Suspense } from 'react'
 import { FileX } from 'lucide-react'
-import { ClientDetailsError } from '../-components/client-details-error'
-import { ClientSearchSchema, defaultClientSearch } from '../-schemas'
-import { clientQueries } from '@/routes/backoffice/clients/-queries'
+import { ClientDetailsError } from '../components/client-details-error'
+import { ClientSearchSchema, defaultClientSearch } from '../schemas'
+import { clientQueries } from '@/routes/backoffice/clients/queries'
 import { ErrorBoundary } from '@/components/error-boundary'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -20,7 +20,7 @@ import {
 import { minutes } from '@/lib/time'
 
 export const Route = createFileRoute(
-  '/backoffice/clients/$clientId/medical-info',
+  '/backoffice/clients/$clientId/medical-info/',
 )({
   validateSearch: ClientSearchSchema,
   search: {

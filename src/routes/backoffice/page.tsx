@@ -1,7 +1,7 @@
 import { Link, createFileRoute } from '@tanstack/react-router'
-import { DataTable } from './-components/data-table'
-import { ChartAreaInteractive } from './-components/chart-area-interactive'
-import { SectionCards } from './-components/section-cards'
+import { DataTable } from './components/data-table'
+import { ChartAreaInteractive } from './components/chart-area-interactive'
+import { SectionCards } from './components/section-cards'
 import { BreadcrumbItem, BreadcrumbLink } from '@/components/ui/breadcrumb'
 
 function Crumb() {

@@ -1,7 +1,7 @@
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { Suspense } from 'react'
-import { useClientSearch } from '../-hooks/use-client-search'
-import { clientQueries } from '../-queries'
+import { useClientSearch } from '../hooks/use-client-search'
+import { clientQueries } from '../queries'
 import { AppPagination } from '@/components/app-pagination'
 
 const DEFAULT_SIZE = 10

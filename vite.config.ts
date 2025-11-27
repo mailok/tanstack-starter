@@ -19,6 +19,7 @@ const config = defineConfig({
       router: {
         indexToken: 'page',
         routeToken: 'layout',
+        routeFileIgnorePattern: '^(?!.*\\.page\\.tsx$|(.*/)?page\\.tsx$|(.*/)?layout\\.tsx$|(.*/)?__root\\.tsx$).*\\.(tsx|ts|js|jsx)$',
       },
     }),
     viteReact({
