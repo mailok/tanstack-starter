@@ -42,7 +42,6 @@ export async function findMany(query: ClientQuery) {
         email: PersonalInformationTable.email,
         phone: PersonalInformationTable.phone,
         birthDate: PersonalInformationTable.birthDate,
-        age: PersonalInformationTable.age,
         gender: PersonalInformationTable.gender,
       })
       .from(ClientTable)

@@ -1,3 +1,4 @@
+import { differenceInYears } from 'date-fns'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { Suspense } from 'react'
 import { clientQueries } from '../../queries'
@@ -60,7 +61,10 @@ function PersonalInformationContent({ clientId }: Props) {
               </div>
               <div>
                 <p className="text-sm font-medium text-muted-foreground">Age</p>
-                <p>{client.age} years</p>
+                <p>
+                  {differenceInYears(new Date(), new Date(client.birthDate))}{' '}
+                  years
+                </p>
               </div>
             </div>
           </div>
