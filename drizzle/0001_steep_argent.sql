@@ -1,0 +1,1 @@
+ALTER TABLE "client_personal_informations" DROP COLUMN "age";

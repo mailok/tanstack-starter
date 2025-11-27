@@ -1,0 +1,347 @@
+{
+  "id": "bdd05273-c646-4bc7-ac73-348f5407b304",
+  "prevId": "bec219fa-8bef-4fb9-af27-39dfb248cff2",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.client_benefits": {
+      "name": "client_benefits",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "clientId": {
+          "name": "clientId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "insuranceProvider": {
+          "name": "insuranceProvider",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "policyNumber": {
+          "name": "policyNumber",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "coverageType": {
+          "name": "coverageType",
+          "type": "coverageType",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "deductible": {
+          "name": "deductible",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "copay": {
+          "name": "copay",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "annualLimit": {
+          "name": "annualLimit",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "dentalCoverage": {
+          "name": "dentalCoverage",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "visionCoverage": {
+          "name": "visionCoverage",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "mentalHealthCoverage": {
+          "name": "mentalHealthCoverage",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "client_benefits_clientId_clients_id_fk": {
+          "name": "client_benefits_clientId_clients_id_fk",
+          "tableFrom": "client_benefits",
+          "tableTo": "clients",
+          "columnsFrom": [
+            "clientId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.clients": {
+      "name": "clients",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "status": {
+          "name": "status",
+          "type": "clientStatus",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.client_medical_informations": {
+      "name": "client_medical_informations",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "clientId": {
+          "name": "clientId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "bloodType": {
+          "name": "bloodType",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "allergies": {
+          "name": "allergies",
+          "type": "text[]",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "chronicConditions": {
+          "name": "chronicConditions",
+          "type": "text[]",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "medications": {
+          "name": "medications",
+          "type": "text[]",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "lastCheckup": {
+          "name": "lastCheckup",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "emergencyContactName": {
+          "name": "emergencyContactName",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "emergencyContactPhone": {
+          "name": "emergencyContactPhone",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "emergencyContactRelationship": {
+          "name": "emergencyContactRelationship",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "client_medical_informations_clientId_clients_id_fk": {
+          "name": "client_medical_informations_clientId_clients_id_fk",
+          "tableFrom": "client_medical_informations",
+          "tableTo": "clients",
+          "columnsFrom": [
+            "clientId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.client_personal_informations": {
+      "name": "client_personal_informations",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "clientId": {
+          "name": "clientId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "photo": {
+          "name": "photo",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "email": {
+          "name": "email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "phone": {
+          "name": "phone",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "birthDate": {
+          "name": "birthDate",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "gender": {
+          "name": "gender",
+          "type": "gender",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "client_personal_informations_clientId_clients_id_fk": {
+          "name": "client_personal_informations_clientId_clients_id_fk",
+          "tableFrom": "client_personal_informations",
+          "tableTo": "clients",
+          "columnsFrom": [
+            "clientId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {
+    "public.coverageType": {
+      "name": "coverageType",
+      "schema": "public",
+      "values": [
+        "Basic",
+        "Standard",
+        "Premium"
+      ]
+    },
+    "public.clientStatus": {
+      "name": "clientStatus",
+      "schema": "public",
+      "values": [
+        "active",
+        "pending",
+        "inactive"
+      ]
+    },
+    "public.gender": {
+      "name": "gender",
+      "schema": "public",
+      "values": [
+        "male",
+        "female"
+      ]
+    }
+  },
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}

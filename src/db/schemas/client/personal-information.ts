@@ -1,4 +1,4 @@
-import { integer, pgEnum, pgTable, text, uuid } from 'drizzle-orm/pg-core'
+import { pgEnum, pgTable, text, uuid } from 'drizzle-orm/pg-core'
 import { ClientTable } from '.'
 
 export const GenderEnum = pgEnum('gender', ['male', 'female'])
@@ -16,7 +16,6 @@ export const PersonalInformationTable = pgTable(
     email: text().notNull(),
     phone: text().notNull(),
     birthDate: text().notNull(),
-    age: integer().notNull(),
     gender: GenderEnum().notNull(),
   },
 )
