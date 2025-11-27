@@ -34,7 +34,6 @@ const seedData: Array<Client> = [
       email: 'juan.rodriguez@email.com',
       phone: '+1 (555) 123-4567',
       birthDate: '1985-03-15',
-      age: 39,
       gender: 'male',
     },
     medicalInformation: {
@@ -67,7 +66,6 @@ const seedData: Array<Client> = [
       email: 'maria.gonzalez@email.com',
       phone: '+1 (555) 234-5678',
       birthDate: '1990-07-22',
-      age: 34,
       gender: 'female',
     },
   },
@@ -80,7 +78,6 @@ const seedData: Array<Client> = [
       email: 'roberto.silva@email.com',
       phone: '+1 (555) 345-6789',
       birthDate: '1978-11-08',
-      age: 45,
       gender: 'male',
     },
     medicalInformation: {
@@ -114,7 +111,6 @@ const seedData: Array<Client> = [
       email: 'ana.morales@email.com',
       phone: '+1 (555) 456-7890',
       birthDate: '1992-05-30',
-      age: 32,
       gender: 'female',
     },
     medicalInformation: {
@@ -148,7 +144,6 @@ const seedData: Array<Client> = [
       email: 'carlos.vega@email.com',
       phone: '+1 (555) 567-8901',
       birthDate: '1987-09-12',
-      age: 37,
       gender: 'male',
     },
     medicalInformation: {
@@ -182,7 +177,6 @@ const seedData: Array<Client> = [
       email: 'sofia.hernandez@email.com',
       phone: '+1 (555) 678-9012',
       birthDate: '1995-12-03',
-      age: 29,
       gender: 'female',
     },
   },
@@ -195,7 +189,6 @@ const seedData: Array<Client> = [
       email: 'lucia.ramirez@email.com',
       phone: '+1 (555) 789-0123',
       birthDate: '1988-04-18',
-      age: 36,
       gender: 'female',
     },
     medicalInformation: {
@@ -229,7 +222,6 @@ const seedData: Array<Client> = [
       email: 'miguel.torres@email.com',
       phone: '+1 (555) 890-1234',
       birthDate: '1982-10-25',
-      age: 41,
       gender: 'male',
     },
     medicalInformation: {
@@ -263,7 +255,6 @@ const seedData: Array<Client> = [
       email: 'paula.fernandez@email.com',
       phone: '+1 (555) 901-2345',
       birthDate: '1993-02-11',
-      age: 31,
       gender: 'female',
     },
   },
@@ -276,7 +267,6 @@ const seedData: Array<Client> = [
       email: 'javier.castillo@email.com',
       phone: '+1 (555) 012-3456',
       birthDate: '1980-06-09',
-      age: 44,
       gender: 'male',
     },
     medicalInformation: {
@@ -310,7 +300,6 @@ const seedData: Array<Client> = [
       email: 'valeria.soto@email.com',
       phone: '+1 (555) 123-6789',
       birthDate: '1997-08-21',
-      age: 26,
       gender: 'female',
     },
     medicalInformation: {
@@ -343,7 +332,6 @@ const seedData: Array<Client> = [
       email: 'andres.perez@email.com',
       phone: '+1 (555) 234-7890',
       birthDate: '1984-01-27',
-      age: 40,
       gender: 'male',
     },
     medicalInformation: {
@@ -377,7 +365,6 @@ const seedData: Array<Client> = [
       email: 'gabriela.ruiz@email.com',
       phone: '+1 (555) 345-8901',
       birthDate: '1991-11-14',
-      age: 32,
       gender: 'female',
     },
   },
@@ -390,7 +377,6 @@ const seedData: Array<Client> = [
       email: 'tomas.herrera@email.com',
       phone: '+1 (555) 456-9012',
       birthDate: '1989-05-05',
-      age: 35,
       gender: 'male',
     },
     medicalInformation: {
@@ -424,7 +410,6 @@ const seedData: Array<Client> = [
       email: 'diego.mendoza@email.com',
       phone: '+1 (555) 567-0123',
       birthDate: '1986-03-18',
-      age: 38,
       gender: 'male',
     },
     medicalInformation: {
@@ -458,7 +443,6 @@ const seedData: Array<Client> = [
       email: 'carmen.jimenez@email.com',
       phone: '+1 (555) 678-1234',
       birthDate: '1994-09-25',
-      age: 29,
       gender: 'female',
     },
     medicalInformation: {
@@ -492,7 +476,6 @@ const seedData: Array<Client> = [
       email: 'fernando.castro@email.com',
       phone: '+1 (555) 789-2345',
       birthDate: '1983-12-07',
-      age: 40,
       gender: 'male',
     },
     medicalInformation: {
@@ -526,7 +509,6 @@ const seedData: Array<Client> = [
       email: 'alejandra.vargas@email.com',
       phone: '+1 (555) 890-3456',
       birthDate: '1996-06-14',
-      age: 27,
       gender: 'female',
     },
     medicalInformation: {
@@ -560,7 +542,6 @@ const seedData: Array<Client> = [
       email: 'ricardo.delgado@email.com',
       phone: '+1 (555) 901-4567',
       birthDate: '1990-01-29',
-      age: 34,
       gender: 'male',
     },
     medicalInformation: {
@@ -594,7 +575,6 @@ const seedData: Array<Client> = [
       email: 'isabella.romero@email.com',
       phone: '+1 (555) 012-5678',
       birthDate: '1992-08-11',
-      age: 31,
       gender: 'female',
     },
     medicalInformation: {
@@ -628,7 +608,6 @@ const seedData: Array<Client> = [
       email: 'sebastian.ortega@email.com',
       phone: '+1 (555) 123-6789',
       birthDate: '1988-11-03',
-      age: 35,
       gender: 'male',
     },
     medicalInformation: {
@@ -662,7 +641,6 @@ const seedData: Array<Client> = [
       email: 'natalia.espinoza@email.com',
       phone: '+1 (555) 234-7890',
       birthDate: '1995-04-16',
-      age: 28,
       gender: 'female',
     },
     medicalInformation: {
@@ -696,7 +674,6 @@ const seedData: Array<Client> = [
       email: 'emilio.navarro@email.com',
       phone: '+1 (555) 345-8901',
       birthDate: '1981-07-28',
-      age: 42,
       gender: 'male',
     },
     medicalInformation: {
@@ -730,7 +707,6 @@ const seedData: Array<Client> = [
       email: 'camila.restrepo@email.com',
       phone: '+1 (555) 456-9012',
       birthDate: '1993-10-12',
-      age: 30,
       gender: 'female',
     },
     medicalInformation: {
@@ -764,7 +740,6 @@ const seedData: Array<Client> = [
       email: 'oscar.gutierrez@email.com',
       phone: '+1 (555) 567-0123',
       birthDate: '1987-02-22',
-      age: 37,
       gender: 'male',
     },
     medicalInformation: {
