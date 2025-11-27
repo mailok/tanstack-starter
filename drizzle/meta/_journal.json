@@ -15,6 +15,13 @@
       "when": 1764256645624,
       "tag": "0001_steep_argent",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1764256846572,
+      "tag": "0002_square_polaris",
+      "breakpoints": true
     }
   ]
 }

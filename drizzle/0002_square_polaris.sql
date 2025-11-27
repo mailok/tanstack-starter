@@ -1,0 +1,1 @@
+ALTER TABLE "client_personal_informations" ALTER COLUMN "birthDate" SET DATA TYPE date USING "birthDate"::date;
