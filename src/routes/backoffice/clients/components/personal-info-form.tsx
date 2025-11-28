@@ -5,7 +5,6 @@ import {
   Field,
   FieldContent,
   FieldError,
-  FieldGroup,
   FieldLabel,
 } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
@@ -21,6 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import AvatarUpload from '@/components/file-upload/avatar-upload'
 
 const personalInfoSchema = z.object({
   name: z.string().min(1, 'Name is required'),
@@ -67,68 +67,26 @@ export function PersonalInfoForm() {
         e.stopPropagation()
         form.handleSubmit()
       }}
-      className="space-y-8 min-w-96"
+      className="flex flex-col md:flex-row gap-8 w-full max-w-5xl mx-auto"
     >
-      <FieldGroup>
-        <form.Field
-          name="name"
-          validators={{
-            onChange: ({ value }) => {
-              const result = personalInfoSchema.shape.name.safeParse(value)
-              return result.success
-                ? undefined
-                : { message: result.error.issues[0].message }
-            },
-          }}
-          children={(field) => (
-            <Field>
-              <FieldLabel>Name</FieldLabel>
-              <FieldContent>
-                <Input
-                  name={field.name}
-                  value={field.state.value}
-                  onBlur={field.handleBlur}
-                  onChange={(e) => field.handleChange(e.target.value)}
-                />
-              </FieldContent>
-              <FieldError errors={field.state.meta.errors} />
-            </Field>
-          )}
-        />
+      <div className="w-full md:w-64 flex-shrink-0 flex flex-col items-center space-y-4">
+        <div className="relative">
+          <AvatarUpload
+            onFileChange={(file) => {
+              console.log(file)
+              // form.setFieldValue('photo', file?.url || '')
+            }}
+          />
+        </div>
+      </div>
 
-        <form.Field
-          name="photo"
-          validators={{
-            onChange: ({ value }) => {
-              const result = personalInfoSchema.shape.photo.safeParse(value)
-              return result.success
-                ? undefined
-                : { message: result.error.issues[0].message }
-            },
-          }}
-          children={(field) => (
-            <Field>
-              <FieldLabel>Photo URL</FieldLabel>
-              <FieldContent>
-                <Input
-                  name={field.name}
-                  value={field.state.value}
-                  onBlur={field.handleBlur}
-                  onChange={(e) => field.handleChange(e.target.value)}
-                  placeholder="https://example.com/photo.jpg"
-                />
-              </FieldContent>
-              <FieldError errors={field.state.meta.errors} />
-            </Field>
-          )}
-        />
-
-        <div className="grid grid-cols-2 gap-4">
+      <div className="flex-1 space-y-8">
+        <div className="grid gap-6">
           <form.Field
-            name="email"
+            name="name"
             validators={{
               onChange: ({ value }) => {
-                const result = personalInfoSchema.shape.email.safeParse(value)
+                const result = personalInfoSchema.shape.name.safeParse(value)
                 return result.success
                   ? undefined
                   : { message: result.error.issues[0].message }
@@ -136,117 +94,148 @@ export function PersonalInfoForm() {
             }}
             children={(field) => (
               <Field>
-                <FieldLabel>Email</FieldLabel>
+                <FieldLabel>Name</FieldLabel>
                 <FieldContent>
-                  <InputGroup>
-                    <InputGroupAddon>@</InputGroupAddon>
-                    <InputGroupInput
+                  <Input
+                    name={field.name}
+                    value={field.state.value}
+                    onBlur={field.handleBlur}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                  />
+                </FieldContent>
+                <FieldError errors={field.state.meta.errors} />
+              </Field>
+            )}
+          />
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <form.Field
+              name="email"
+              validators={{
+                onChange: ({ value }) => {
+                  const result = personalInfoSchema.shape.email.safeParse(value)
+                  return result.success
+                    ? undefined
+                    : { message: result.error.issues[0].message }
+                },
+              }}
+              children={(field) => (
+                <Field>
+                  <FieldLabel>Email</FieldLabel>
+                  <FieldContent>
+                    <Input
+                      type="email"
                       name={field.name}
                       value={field.state.value}
                       onBlur={field.handleBlur}
                       onChange={(e) => field.handleChange(e.target.value)}
                     />
-                  </InputGroup>
-                </FieldContent>
-                <FieldError errors={field.state.meta.errors} />
-              </Field>
-            )}
-          />
+                  </FieldContent>
+                  <FieldError errors={field.state.meta.errors} />
+                </Field>
+              )}
+            />
 
-          <form.Field
-            name="phone"
-            validators={{
-              onChange: ({ value }) => {
-                const result = personalInfoSchema.shape.phone.safeParse(value)
-                return result.success
-                  ? undefined
-                  : { message: result.error.issues[0].message }
-              },
-            }}
-            children={(field) => (
-              <Field>
-                <FieldLabel>Phone</FieldLabel>
-                <FieldContent>
-                  <Input
-                    name={field.name}
-                    value={field.state.value}
-                    onBlur={field.handleBlur}
-                    onChange={(e) => field.handleChange(e.target.value)}
-                    type="tel"
-                  />
-                </FieldContent>
-                <FieldError errors={field.state.meta.errors} />
-              </Field>
-            )}
-          />
+            <form.Field
+              name="phone"
+              validators={{
+                onChange: ({ value }) => {
+                  const result = personalInfoSchema.shape.phone.safeParse(value)
+                  return result.success
+                    ? undefined
+                    : { message: result.error.issues[0].message }
+                },
+              }}
+              children={(field) => (
+                <Field>
+                  <FieldLabel>Phone</FieldLabel>
+                  <FieldContent>
+                    <Input
+                      name={field.name}
+                      value={field.state.value}
+                      onBlur={field.handleBlur}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                      type="tel"
+                    />
+                  </FieldContent>
+                  <FieldError errors={field.state.meta.errors} />
+                </Field>
+              )}
+            />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <form.Field
+              name="birthDate"
+              validators={{
+                onChange: ({ value }) => {
+                  const result =
+                    personalInfoSchema.shape.birthDate.safeParse(value)
+                  return result.success
+                    ? undefined
+                    : { message: result.error.issues[0].message }
+                },
+              }}
+              children={(field) => (
+                <Field>
+                  <FieldLabel>Birth Date</FieldLabel>
+                  <FieldContent>
+                    <Input
+                      name={field.name}
+                      value={field.state.value}
+                      onBlur={field.handleBlur}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                      type="date"
+                    />
+                  </FieldContent>
+                  <FieldError errors={field.state.meta.errors} />
+                </Field>
+              )}
+            />
+
+            <form.Field
+              name="gender"
+              validators={{
+                onChange: ({ value }) => {
+                  const result =
+                    personalInfoSchema.shape.gender.safeParse(value)
+                  return result.success
+                    ? undefined
+                    : { message: result.error.issues[0].message }
+                },
+              }}
+              children={(field) => (
+                <Field>
+                  <FieldLabel>Gender</FieldLabel>
+                  <FieldContent>
+                    <Select
+                      value={field.state.value}
+                      onValueChange={(val) =>
+                        field.handleChange(val as 'male' | 'female')
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select gender" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="male">Male</SelectItem>
+                        <SelectItem value="female">Female</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </FieldContent>
+                  <FieldError errors={field.state.meta.errors} />
+                </Field>
+              )}
+            />
+          </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
-          <form.Field
-            name="birthDate"
-            validators={{
-              onChange: ({ value }) => {
-                const result =
-                  personalInfoSchema.shape.birthDate.safeParse(value)
-                return result.success
-                  ? undefined
-                  : { message: result.error.issues[0].message }
-              },
-            }}
-            children={(field) => (
-              <Field>
-                <FieldLabel>Birth Date</FieldLabel>
-                <FieldContent>
-                  <Input
-                    name={field.name}
-                    value={field.state.value}
-                    onBlur={field.handleBlur}
-                    onChange={(e) => field.handleChange(e.target.value)}
-                    type="date"
-                  />
-                </FieldContent>
-                <FieldError errors={field.state.meta.errors} />
-              </Field>
-            )}
-          />
-
-          <form.Field
-            name="gender"
-            validators={{
-              onChange: ({ value }) => {
-                const result = personalInfoSchema.shape.gender.safeParse(value)
-                return result.success
-                  ? undefined
-                  : { message: result.error.issues[0].message }
-              },
-            }}
-            children={(field) => (
-              <Field>
-                <FieldLabel>Gender</FieldLabel>
-                <FieldContent>
-                  <Select
-                    value={field.state.value}
-                    onValueChange={(val) =>
-                      field.handleChange(val as 'male' | 'female')
-                    }
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select gender" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="male">Male</SelectItem>
-                      <SelectItem value="female">Female</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </FieldContent>
-                <FieldError errors={field.state.meta.errors} />
-              </Field>
-            )}
-          />
+        <div className="flex justify-end pt-4">
+          <Button type="submit" size="lg">
+            Save Changes
+          </Button>
         </div>
-      </FieldGroup>
-
-      <Button type="submit">Submit</Button>
+      </div>
     </form>
   )
 }
