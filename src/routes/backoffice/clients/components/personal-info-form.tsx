@@ -19,8 +19,8 @@ import AvatarUpload from '@/components/file-upload/avatar-upload'
 
 const personalInfoSchema = z.object({
   name: z.string().min(1, 'Name is required'),
-  photo: z.string().url('Must be a valid URL'),
-  email: z.string().email('Invalid email address'),
+  photo: z.url('Must be a valid URL'),
+  email: z.email('Invalid email address'),
   phone: z.string().min(1, 'Phone is required'),
   birthDate: z.string().min(1, 'Birth date is required'),
   gender: z.enum(['male', 'female']),
