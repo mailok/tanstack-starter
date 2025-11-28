@@ -26,7 +26,7 @@ const personalInfoSchema = z.object({
   gender: z.enum(['male', 'female']),
 })
 
-export function PersonalInfoForm() {
+export function PersonalInfoForm({ id }: { id?: string }) {
   const form = useForm({
     defaultValues: {
       name: '',
@@ -57,6 +57,7 @@ export function PersonalInfoForm() {
 
   return (
     <form
+      id={id}
       onSubmit={(e) => {
         e.preventDefault()
         e.stopPropagation()
@@ -225,11 +226,13 @@ export function PersonalInfoForm() {
           </div>
         </div>
 
-        <div className="flex justify-end pt-4">
-          <Button type="submit" size="lg">
-            Save Changes
-          </Button>
-        </div>
+        {!id && (
+          <div className="flex justify-end pt-4">
+            <Button type="submit" size="lg">
+              Save Changes
+            </Button>
+          </div>
+        )}
       </div>
     </form>
   )
