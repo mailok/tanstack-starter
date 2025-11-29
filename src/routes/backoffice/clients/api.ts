@@ -3,8 +3,8 @@ import * as z from 'zod'
 import { setResponseStatus } from '@tanstack/react-start/server'
 import { BaseClientSearchSchema } from './schemas'
 import * as service from './service'
-import { tryPromise } from '@/lib/try-promise'
 import { zodValidator } from '@/lib/zod-validator'
+import { until } from 'until-async'
 
 export const getClientInsights = createServerFn({ method: 'GET' }).handler(() =>
   service.getInsights(),
@@ -25,9 +25,7 @@ export const getClientsPage = createServerFn({ method: 'GET' })
 export const getClientPersonalInformation = createServerFn({ method: 'GET' })
   .inputValidator(zodValidator(ClientIdSchema))
   .handler(async ({ data: clientId }) => {
-    const { data: personalInfo, error } = await tryPromise(
-      service.getPersonalInformation(clientId),
-    )
+    const [error,personalInfo] = await until(() =>service.getPersonalInformation(clientId))
 
     if (error) {
       // TODO: Log error
@@ -47,9 +45,7 @@ export const getClientPersonalInformation = createServerFn({ method: 'GET' })
 export const getClientMedicalInformation = createServerFn({ method: 'GET' })
   .inputValidator(zodValidator(ClientIdSchema))
   .handler(async ({ data: clientId }) => {
-    const { data: result, error } = await tryPromise(
-      service.getMedicalInformation(clientId),
-    )
+    const [error,result] = await until(() =>service.getMedicalInformation(clientId))
 
     if (error) {
       // TODO: Log error
@@ -69,9 +65,7 @@ export const getClientMedicalInformation = createServerFn({ method: 'GET' })
 export const getClientBenefits = createServerFn({ method: 'GET' })
   .inputValidator(zodValidator(ClientIdSchema))
   .handler(async ({ data: clientId }) => {
-    const { data: result, error } = await tryPromise(
-      service.getBenefits(clientId),
-    )
+    const [error,result] = await until(() => service.getBenefits(clientId))
 
     if (error) {
       // TODO: Log error
@@ -89,9 +83,7 @@ export const getClientBenefits = createServerFn({ method: 'GET' })
 export const getClientHeaderInfo = createServerFn({ method: 'GET' })
   .inputValidator(zodValidator(ClientIdSchema))
   .handler(async ({ data: clientId }) => {
-    const { data: client, error } = await tryPromise(
-      service.getHeaderInfo(clientId),
-    )
+    const [error,client] = await until(() =>service.getHeaderInfo(clientId))
 
     if (error) {
       // TODO: Log error

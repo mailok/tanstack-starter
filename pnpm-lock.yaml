@@ -164,6 +164,9 @@ importers:
       universal-cookie:
         specifier: ^8.0.1
         version: 8.0.1
+      until-async:
+        specifier: ^3.0.2
+        version: 3.0.2
       vaul:
         specifier: ^1.1.2
         version: 1.1.2(@types/react-dom@19.2.3(@types/react@19.2.7))(@types/react@19.2.7)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
