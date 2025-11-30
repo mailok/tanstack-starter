@@ -63,10 +63,10 @@ export function PersonalInfoForm({ id }: { id?: string }) {
         e.stopPropagation()
         form.handleSubmit()
       }}
-      className="flex flex-col lg:flex-row gap-8 w-full"
+      className="flex flex-col lg:flex-row gap-4 md:gap-8 w-full"
     >
       {/* Avatar Section - Sidebar on Desktop, Top on Mobile */}
-      <div className="w-full lg:w-40 flex-shrink-0 flex flex-col items-center space-y-4">
+      <div className="w-full lg:w-40 flex-shrink-0 flex flex-col items-center space-y-2 md:space-y-4">
         <div className="relative">
           <AvatarUpload
             onFileChange={(file) => {
@@ -78,7 +78,7 @@ export function PersonalInfoForm({ id }: { id?: string }) {
       </div>
 
       {/* Fields Section - Main Content */}
-      <div className="flex-1 space-y-6">
+      <div className="flex-1 space-y-4 md:space-y-6">
         <form.Field
           name="name"
           validators={{
@@ -105,7 +105,7 @@ export function PersonalInfoForm({ id }: { id?: string }) {
           )}
         />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
           <form.Field
             name="email"
             validators={{
@@ -161,7 +161,7 @@ export function PersonalInfoForm({ id }: { id?: string }) {
           />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
           <form.Field
             name="birthDate"
             validators={{
