@@ -1,4 +1,8 @@
-import { createFileRoute, stripSearchParams } from '@tanstack/react-router'
+import {
+  createFileRoute,
+  Link,
+  stripSearchParams,
+} from '@tanstack/react-router'
 import {
   SearchFilter,
   StatusFilter,
@@ -10,6 +14,8 @@ import { clientQueries } from './queries'
 import { Insights, InsightsSkeleton } from './components/insights'
 import { ClientsPagination } from './components/client-pagination'
 import { minutes } from '@/lib/time'
+import { Button } from '@/components/ui/button'
+import { Plus } from 'lucide-react'
 
 export const Route = createFileRoute('/backoffice/clients/')({
   component: RouteComponent,
@@ -44,6 +50,7 @@ function RouteComponent() {
         <div className="flex items-center gap-4">
           <StatusFilter />
           <SearchFilter />
+          <NewClientButton />
         </div>
         <ViewModeToggle />
       </div>
@@ -58,5 +65,20 @@ function PendingRoute() {
     <div className="flex size-full flex-col gap-6 p-6">
       <InsightsSkeleton />
     </div>
+  )
+}
+
+function NewClientButton() {
+  return (
+    <Button asChild>
+      <Link
+        to="/backoffice/clients/new-client"
+        search={(prev) => ({ ...defaultClientSearch, ...prev })}
+        preload={false}
+      >
+        <Plus />
+        New Client
+      </Link>
+    </Button>
   )
 }
