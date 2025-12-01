@@ -3,21 +3,11 @@ import { Step, Stepper, StepperTitle } from '@/components/stepper'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
-import { sleep } from '@/lib/sleep'
 import { BreadcrumbItem, BreadcrumbLink } from '@/components/ui/breadcrumb'
+import { useOnboardingProgress } from './hooks/use-onboarding-progress'
 
 export const Route = createFileRoute('/backoffice/clients/new-client')({
   component: RouteComponent,
-  beforeLoad: async () => {
-    await sleep({ delay: 2000 })
-    return {}
-  },
-  loader: async () => {
-    return {
-      activeStep: 2,
-      completedSteps: [1],
-    }
-  },
   pendingMs: 10,
   pendingComponent: RoutePendingComponent,
   staticData: {
@@ -26,7 +16,8 @@ export const Route = createFileRoute('/backoffice/clients/new-client')({
 })
 
 function RouteComponent() {
-  const { activeStep, completedSteps } = Route.useLoaderData()
+  const { activeStep, completedSteps, isPending } = useOnboardingProgress()
+
   return (
     <div className="flex flex-col gap-4 md:gap-8 w-full max-w-[95%] mx-auto py-4 md:py-10 h-full">
       <Card className="w-full h-full">
@@ -39,6 +30,7 @@ function RouteComponent() {
                 active={activeStep}
                 completed={completedSteps}
                 orientation="horizontal"
+                pending={isPending}
               >
                 <Step step={1}>
                   <StepperTitle>Personal Information</StepperTitle>
@@ -52,6 +44,7 @@ function RouteComponent() {
                 active={activeStep}
                 completed={completedSteps}
                 orientation="horizontal"
+                pending={isPending}
               >
                 <Step step={1}>
                   <StepperTitle>Personal Information</StepperTitle>

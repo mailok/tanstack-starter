@@ -27,7 +27,16 @@ function Crumb() {
   return (
     <BreadcrumbItem className="hidden md:block">
       <BreadcrumbLink asChild>
-        <Link to="/backoffice/clients" search={search} preload={false}>
+        <Link
+          to="/backoffice/clients"
+          search={{
+            page: search.page,
+            status: search.status,
+            viewMode: search.viewMode,
+            name: search.name,
+          }}
+          preload={false}
+        >
           Clients
         </Link>
       </BreadcrumbLink>

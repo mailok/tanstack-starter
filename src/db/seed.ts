@@ -68,6 +68,16 @@ const seedData: Array<Client> = [
       birthDate: '1990-07-22',
       gender: 'female',
     },
+    medicalInformation: {
+      bloodType: 'O+',
+      allergies: ['Polen', 'Penicilina'],
+      chronicConditions: ['Hipertensión'],
+      medications: ['Losartán 50mg', 'Aspirina 100mg'],
+      lastCheckup: '2024-01-05',
+      emergencyContactName: 'María Rodríguez',
+      emergencyContactPhone: '+1 (555) 123-4568',
+      emergencyContactRelationship: 'Esposa',
+    },
   },
   {
     status: 'inactive',

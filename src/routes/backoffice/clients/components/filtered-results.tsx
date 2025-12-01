@@ -32,6 +32,7 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from '@/components/ui/empty'
+import { differenceInYears } from 'date-fns'
 
 type Client = GetClientsPageResponse['clients'][number]
 
@@ -64,6 +65,13 @@ function FilteredResultsContent() {
 
   function viewClientDetails(client: Client) {
     // const modifiedId = client.id.slice(0, -1) + '2'
+
+    if (client.status === 'pending') {
+      navigate({
+        to: `/backoffice/clients/new-client/${client.id}`,
+      })
+      return
+    }
 
     queryClient.setQueryData(clientKeys.header(client.id), {
       id: client.id,
@@ -217,7 +225,10 @@ function ClientTable({ clients, onClick }: ClientTableProps) {
             >
               <TableCell>
                 <Avatar className="h-8 w-8">
-                  <AvatarImage src={client.photo} alt={client.name} />
+                  <AvatarImage
+                    src={client.photo || undefined}
+                    alt={client.name}
+                  />
                   <AvatarFallback className="bg-primary-muted text-primary text-xs">
                     {getInitials(client.name)}
                   </AvatarFallback>
@@ -234,7 +245,7 @@ function ClientTable({ clients, onClick }: ClientTableProps) {
                 {new Date(client.birthDate).toLocaleDateString('es-ES')}
               </TableCell>
               <TableCell className="text-muted-foreground">
-                {client.age}
+                {differenceInYears(new Date(), new Date(client.birthDate))}{' '}
               </TableCell>
               <TableCell className="text-muted-foreground">
                 {getGenderLabel(client.gender)}
