@@ -20,14 +20,14 @@ export function useOnboardingProgress() {
     const clientId = Route.useParams().clientId
     const { step } = Route.useSearch()
     
-    const { data, isLoading, isFetching } = useQuery(
+    const { data, isLoading } = useQuery(
         clientQueries.onboardingProgress(clientId, step)
     )
 
     return {
         activeStep: data?.currentViewStep || 1,
         completedSteps: data?.completedSteps || [],
-        isPending: isLoading || isFetching,
+        isPending: isLoading,
     }
     
 }
