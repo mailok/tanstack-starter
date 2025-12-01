@@ -11,12 +11,12 @@ export const PersonalInformationTable = pgTable(
       .references(() => ClientTable.id, { onDelete: 'cascade' })
       .notNull(),
 
-    photo: text().notNull(),
+    photo: text(),
     name: text().notNull(),
     email: text().notNull(),
     phone: text().notNull(),
     birthDate: date().notNull(),
-    gender: GenderEnum().notNull(),
+    gender: GenderEnum(),
   },
 )
 

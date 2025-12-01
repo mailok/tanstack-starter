@@ -14,7 +14,8 @@ export const clientKeys = {
   medicalInformation: (id: string) =>
     [...clientKeys.detail(id), 'medical-information'] as const,
   benefits: (id: string) => [...clientKeys.detail(id), 'benefits'] as const,
-  header: (id: string) => [...clientKeys.detail(id), 'header'] as const
+  header: (id: string) => [...clientKeys.detail(id), 'header'] as const,
+  onboardingProgress: (id: string) => ['onboarding-progress', id] as const,
 }
 
 export const clientQueries = {
@@ -58,5 +59,11 @@ export const clientQueries = {
     queryOptions({
       queryKey: clientKeys.benefits(clientId),
       queryFn: () => api.getClientBenefits({ data: clientId }),
+    }),
+
+  onboardingProgress: (clientId: string, step?: number) =>
+    queryOptions({
+      queryKey: clientKeys.onboardingProgress(clientId),
+      queryFn: () => api.getClientOnboardingProgress({ data: { clientId, step } }),
     }),
 }

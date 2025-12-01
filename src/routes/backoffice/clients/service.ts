@@ -124,3 +124,59 @@ export async function getBenefits(clientId: string) {
 
   return result
 }
+
+export async function getClient(clientId: string) {
+  const [client] = await db
+    .select(
+      {
+        id: ClientTable.id,
+        status: ClientTable.status,
+        personalInfo: {
+          name: PersonalInformationTable.name,
+          photo: PersonalInformationTable.photo,
+          birthDate: PersonalInformationTable.birthDate,
+          gender: PersonalInformationTable.gender,
+          phone: PersonalInformationTable.phone,
+          email: PersonalInformationTable.email,
+        },
+        medicalInfo: {
+          bloodType: MedicalInformationTable.bloodType,
+          allergies: MedicalInformationTable.allergies,
+          chronicConditions: MedicalInformationTable.chronicConditions,
+          medications: MedicalInformationTable.medications,
+          lastCheckup: MedicalInformationTable.lastCheckup,
+          emergencyContactName: MedicalInformationTable.emergencyContactName,
+          emergencyContactPhone: MedicalInformationTable.emergencyContactPhone,
+          emergencyContactRelationship: MedicalInformationTable.emergencyContactRelationship,
+        },
+        benefits: {
+          insuranceProvider: BenefitsTable.insuranceProvider,
+          policyNumber: BenefitsTable.policyNumber,
+          coverageType: BenefitsTable.coverageType,
+          deductible: BenefitsTable.deductible,
+          copay: BenefitsTable.copay,
+          annualLimit: BenefitsTable.annualLimit,
+          dentalCoverage: BenefitsTable.dentalCoverage,
+          visionCoverage: BenefitsTable.visionCoverage,
+          mentalHealthCoverage: BenefitsTable.mentalHealthCoverage,
+        }
+        
+      }
+    )
+    .from(ClientTable)
+    .where(eq(ClientTable.id, clientId))
+    .leftJoin(
+      PersonalInformationTable,
+      eq(PersonalInformationTable.clientId, ClientTable.id),
+    )
+    .leftJoin(
+      MedicalInformationTable,
+      eq(MedicalInformationTable.clientId, ClientTable.id),
+    )
+    .leftJoin(
+      BenefitsTable,
+      eq(BenefitsTable.clientId, ClientTable.id),
+    )
+    
+  return client
+}

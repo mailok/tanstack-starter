@@ -18,6 +18,7 @@ import { Route as BackofficeClientsNewClientLayoutRouteImport } from './routes/b
 import { Route as BackofficeClientsClientIdLayoutRouteImport } from './routes/backoffice/clients/$clientId/layout'
 import { Route as BackofficeClientsNewClientPageRouteImport } from './routes/backoffice/clients/new-client/page'
 import { Route as BackofficeClientsClientIdPageRouteImport } from './routes/backoffice/clients/$clientId/page'
+import { Route as BackofficeClientsNewClientClientIdPageRouteImport } from './routes/backoffice/clients/new-client/$clientId/page'
 import { Route as BackofficeClientsClientIdPersonalInfoPageRouteImport } from './routes/backoffice/clients/$clientId/personal-info.page'
 import { Route as BackofficeClientsClientIdMedicalInfoPageRouteImport } from './routes/backoffice/clients/$clientId/medical-info.page'
 import { Route as BackofficeClientsClientIdBenefitsPageRouteImport } from './routes/backoffice/clients/$clientId/benefits.page'
@@ -71,6 +72,12 @@ const BackofficeClientsClientIdPageRoute =
     path: '/',
     getParentRoute: () => BackofficeClientsClientIdLayoutRoute,
   } as any)
+const BackofficeClientsNewClientClientIdPageRoute =
+  BackofficeClientsNewClientClientIdPageRouteImport.update({
+    id: '/$clientId/',
+    path: '/$clientId/',
+    getParentRoute: () => BackofficeClientsNewClientLayoutRoute,
+  } as any)
 const BackofficeClientsClientIdPersonalInfoPageRoute =
   BackofficeClientsClientIdPersonalInfoPageRouteImport.update({
     id: '/personal-info/',
@@ -103,6 +110,7 @@ export interface FileRoutesByFullPath {
   '/backoffice/clients/$clientId/benefits': typeof BackofficeClientsClientIdBenefitsPageRoute
   '/backoffice/clients/$clientId/medical-info': typeof BackofficeClientsClientIdMedicalInfoPageRoute
   '/backoffice/clients/$clientId/personal-info': typeof BackofficeClientsClientIdPersonalInfoPageRoute
+  '/backoffice/clients/new-client/$clientId': typeof BackofficeClientsNewClientClientIdPageRoute
 }
 export interface FileRoutesByTo {
   '/': typeof PageRoute
@@ -113,6 +121,7 @@ export interface FileRoutesByTo {
   '/backoffice/clients/$clientId/benefits': typeof BackofficeClientsClientIdBenefitsPageRoute
   '/backoffice/clients/$clientId/medical-info': typeof BackofficeClientsClientIdMedicalInfoPageRoute
   '/backoffice/clients/$clientId/personal-info': typeof BackofficeClientsClientIdPersonalInfoPageRoute
+  '/backoffice/clients/new-client/$clientId': typeof BackofficeClientsNewClientClientIdPageRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -128,6 +137,7 @@ export interface FileRoutesById {
   '/backoffice/clients/$clientId/benefits/': typeof BackofficeClientsClientIdBenefitsPageRoute
   '/backoffice/clients/$clientId/medical-info/': typeof BackofficeClientsClientIdMedicalInfoPageRoute
   '/backoffice/clients/$clientId/personal-info/': typeof BackofficeClientsClientIdPersonalInfoPageRoute
+  '/backoffice/clients/new-client/$clientId/': typeof BackofficeClientsNewClientClientIdPageRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -144,6 +154,7 @@ export interface FileRouteTypes {
     | '/backoffice/clients/$clientId/benefits'
     | '/backoffice/clients/$clientId/medical-info'
     | '/backoffice/clients/$clientId/personal-info'
+    | '/backoffice/clients/new-client/$clientId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -154,6 +165,7 @@ export interface FileRouteTypes {
     | '/backoffice/clients/$clientId/benefits'
     | '/backoffice/clients/$clientId/medical-info'
     | '/backoffice/clients/$clientId/personal-info'
+    | '/backoffice/clients/new-client/$clientId'
   id:
     | '__root__'
     | '/'
@@ -168,6 +180,7 @@ export interface FileRouteTypes {
     | '/backoffice/clients/$clientId/benefits/'
     | '/backoffice/clients/$clientId/medical-info/'
     | '/backoffice/clients/$clientId/personal-info/'
+    | '/backoffice/clients/new-client/$clientId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -240,6 +253,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BackofficeClientsClientIdPageRouteImport
       parentRoute: typeof BackofficeClientsClientIdLayoutRoute
     }
+    '/backoffice/clients/new-client/$clientId/': {
+      id: '/backoffice/clients/new-client/$clientId/'
+      path: '/$clientId'
+      fullPath: '/backoffice/clients/new-client/$clientId'
+      preLoaderRoute: typeof BackofficeClientsNewClientClientIdPageRouteImport
+      parentRoute: typeof BackofficeClientsNewClientLayoutRoute
+    }
     '/backoffice/clients/$clientId/personal-info/': {
       id: '/backoffice/clients/$clientId/personal-info/'
       path: '/personal-info'
@@ -289,11 +309,14 @@ const BackofficeClientsClientIdLayoutRouteWithChildren =
 
 interface BackofficeClientsNewClientLayoutRouteChildren {
   BackofficeClientsNewClientPageRoute: typeof BackofficeClientsNewClientPageRoute
+  BackofficeClientsNewClientClientIdPageRoute: typeof BackofficeClientsNewClientClientIdPageRoute
 }
 
 const BackofficeClientsNewClientLayoutRouteChildren: BackofficeClientsNewClientLayoutRouteChildren =
   {
     BackofficeClientsNewClientPageRoute: BackofficeClientsNewClientPageRoute,
+    BackofficeClientsNewClientClientIdPageRoute:
+      BackofficeClientsNewClientClientIdPageRoute,
   }
 
 const BackofficeClientsNewClientLayoutRouteWithChildren =
