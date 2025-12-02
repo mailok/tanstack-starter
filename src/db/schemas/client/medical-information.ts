@@ -1,4 +1,4 @@
-import { pgTable, text, uuid } from 'drizzle-orm/pg-core'
+import { date, pgTable, text, uuid } from 'drizzle-orm/pg-core'
 import { ClientTable } from '.'
 
 export const MedicalInformationTable = pgTable('client_medical_informations', {
@@ -11,7 +11,7 @@ export const MedicalInformationTable = pgTable('client_medical_informations', {
   allergies: text().array(),
   chronicConditions: text().array(),
   medications: text().array(),
-  lastCheckup: text(),
+  lastCheckup: date(),
   emergencyContactName: text(),
   emergencyContactPhone: text(),
   emergencyContactRelationship: text(),

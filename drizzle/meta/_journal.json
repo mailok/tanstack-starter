@@ -22,6 +22,13 @@
       "when": 1764256846572,
       "tag": "0002_square_polaris",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1764648604362,
+      "tag": "0003_past_captain_cross",
+      "breakpoints": true
     }
   ]
 }
