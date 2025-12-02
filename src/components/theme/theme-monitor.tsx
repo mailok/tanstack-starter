@@ -34,6 +34,7 @@ export function ThemeMonitor() {
                 if (themeData.detected !== themeDetected) {
                   themeData.detected = themeDetected;
                   document.cookie = 'theme=' + JSON.stringify(themeData) + ';path=/';
+                  window.location.reload();
                 }
               } catch (e) {
                 console.error('Error parsing theme cookie:', e);
