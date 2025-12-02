@@ -16,8 +16,8 @@ function RouteComponent() {
   const { activeStep, completedSteps, isPending } = useOnboardingProgress()
 
   return (
-    <div className="flex flex-col gap-4 md:gap-8 w-full max-w-[95%] mx-auto py-4 md:py-10 h-full">
-      <Card className="w-full h-full">
+    <div className="flex flex-col gap-4 md:gap-8 w-full max-w-[95%] mx-auto py-4 md:py-10">
+      <Card className="w-full">
         <CardContent className="pt-6 md:pt-10 px-4 md:px-8">
           {/* Mobile: Show only active step, centered */}
           <div className="flex justify-center w-full mb-14 md:mb-40 md:px-20">

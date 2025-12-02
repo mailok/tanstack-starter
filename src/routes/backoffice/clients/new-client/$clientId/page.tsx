@@ -2,6 +2,7 @@ import { createFileRoute, Navigate, defer, Await } from '@tanstack/react-router'
 import { Suspense } from 'react'
 import { PersonalInfoForm } from '../../components/personal-info-form'
 import { MedicalInfoForm } from '../../components/medical-info-form'
+import { BenefitsForm } from '../../components/benefits-form'
 import { clientQueries } from '../../queries'
 import { defaultClientSearch } from '../../schemas'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -71,7 +72,7 @@ function RouteComponent() {
           }
 
           if (currentViewStep === 3) {
-            return <>Benefits Form</>
+            return <BenefitsForm id="benefits-form" />
           }
 
           return (

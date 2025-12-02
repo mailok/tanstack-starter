@@ -47,7 +47,7 @@ function RouteComponent() {
             </div>
           </div>
         </header>
-        <div className="size-full">
+        <div className="flex-1 min-h-0 overflow-auto">
           <Outlet />
         </div>
       </SidebarInset>
