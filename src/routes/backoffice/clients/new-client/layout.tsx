@@ -32,8 +32,16 @@ function RouteComponent() {
                 orientation="horizontal"
                 pending={isPending}
               >
-                <Step step={1}>
-                  <StepperTitle>Personal Information</StepperTitle>
+                <Step step={activeStep}>
+                  <StepperTitle>
+                    {
+                      [
+                        { step: 1, title: 'Personal Information' },
+                        { step: 2, title: 'Medical Information' },
+                        { step: 3, title: 'Benefits' },
+                      ].find((s) => s.step === activeStep)?.title
+                    }
+                  </StepperTitle>
                 </Step>
               </Stepper>
             </div>

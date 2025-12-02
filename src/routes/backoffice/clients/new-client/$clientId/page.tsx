@@ -50,7 +50,6 @@ export const Route = createFileRoute(
 
 function RouteComponent() {
   const { progress } = Route.useLoaderData()
-  console.log({ progress })
 
   const { isCompleted, currentViewStep } = progress
 
