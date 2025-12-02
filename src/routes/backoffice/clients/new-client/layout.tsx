@@ -60,7 +60,12 @@ function Crumb() {
       <BreadcrumbLink asChild>
         <Link
           to="/backoffice/clients/new-client"
-          search={search}
+          search={{
+            page: search.page,
+            name: search.name,
+            status: search.status,
+            viewMode: search.viewMode,
+          }}
           preload={false}
         >
           New Client
