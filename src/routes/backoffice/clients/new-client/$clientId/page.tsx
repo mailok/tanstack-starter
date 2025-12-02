@@ -1,4 +1,5 @@
-import { createFileRoute, Navigate, redirect } from '@tanstack/react-router'
+import { createFileRoute, Navigate, defer, Await } from '@tanstack/react-router'
+import { Suspense } from 'react'
 import { PersonalInfoForm } from '../../components/personal-info-form'
 import { clientQueries } from '../../queries'
 import { defaultClientSearch } from '../../schemas'
@@ -15,62 +16,70 @@ export const Route = createFileRoute(
   component: RouteComponent,
   validateSearch: onboardingSearchSchema,
   loaderDeps: ({ search: { step } }) => ({ step }),
-  beforeLoad: async ({
-    params: { clientId },
+  loader: async ({
     context: { queryClient },
-    search: { step },
+    params: { clientId },
+    deps: { step },
   }) => {
-    const progress = await queryClient.fetchQuery(
+    const progressPromise = queryClient.fetchQuery(
       clientQueries.onboardingProgress(clientId, step),
     )
 
-    // If currentViewStep differs from step, redirect with correct step
-    if (
-      progress.currentViewStep !== null &&
-      step !== progress.currentViewStep
-    ) {
-      throw redirect({
-        to: '/backoffice/clients/new-client/$clientId',
-        params: { clientId },
-        search: { step: progress.currentViewStep } as any,
-        replace: true,
-      })
-    }
-
-    return { progress }
-  },
-  loader: async ({ context: { progress } }) => {
     return {
-      progress,
+      progress: defer(progressPromise),
     }
   },
-  pendingComponent: RoutePendingComponent,
-  pendingMs: 10,
 })
 
 function RouteComponent() {
   const { progress } = Route.useLoaderData()
+  const { step } = Route.useSearch()
+  const { clientId } = Route.useParams()
 
-  const { isCompleted, currentViewStep } = progress
+  return (
+    <Suspense fallback={<RoutePendingComponent />}>
+      <Await promise={progress}>
+        {(progress) => {
+          const { isCompleted, currentViewStep } = progress
 
-  // Redirect to clients list if onboarding is completed
-  if (isCompleted) {
-    return <Navigate to="/backoffice/clients" search={defaultClientSearch} />
-  }
+          // Redirect to clients list if onboarding is completed
+          if (isCompleted) {
+            return (
+              <Navigate to="/backoffice/clients" search={defaultClientSearch} />
+            )
+          }
 
-  if (currentViewStep === 1) {
-    return <PersonalInfoForm id="personal-info-form" />
-  }
+          // If currentViewStep differs from step, redirect with correct step
+          if (currentViewStep !== null && step !== currentViewStep) {
+            return (
+              <Navigate
+                to="/backoffice/clients/new-client/$clientId"
+                params={{ clientId }}
+                search={(prev: any) => ({ ...prev, step: currentViewStep })}
+                replace
+              />
+            )
+          }
 
-  if (currentViewStep === 2) {
-    return <>Medical Info Form</>
-  }
+          if (currentViewStep === 1) {
+            return <PersonalInfoForm id="personal-info-form" />
+          }
 
-  if (currentViewStep === 3) {
-    return <>Benefits Form</>
-  }
+          if (currentViewStep === 2) {
+            return <>Medical Info Form</>
+          }
 
-  return <Navigate to="/backoffice/clients" search={defaultClientSearch} />
+          if (currentViewStep === 3) {
+            return <>Benefits Form</>
+          }
+
+          return (
+            <Navigate to="/backoffice/clients" search={defaultClientSearch} />
+          )
+        }}
+      </Await>
+    </Suspense>
+  )
 }
 
 function RoutePendingComponent() {

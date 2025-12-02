@@ -32,8 +32,10 @@ function Stepper({
       <div
         ref={stepperRef}
         className={cn(
-          'flex size-full justify-between',
-          orientation === 'vertical' ? 'flex-col' : 'flex-row items-start',
+          'flex size-full',
+          orientation === 'vertical'
+            ? 'flex-col justify-between'
+            : 'flex-row items-start justify-center md:justify-between',
           className,
         )}
         {...props}
@@ -84,13 +86,16 @@ type StepProps = {
 
 function Step({ step, className, index, isLast, ...props }: StepProps) {
   const { orientation, active } = useStepper()
+  const { isActive } = useStepStatus(step)
   const isVertical = orientation === 'vertical'
 
   return (
     <div
       className={cn(
-        'flex items-center gap-4',
-        isVertical ? 'flex-row w-full flex-1' : 'flex-col relative w-max',
+        'items-center gap-4',
+        isVertical
+          ? 'flex flex-row w-full flex-1'
+          : cn(isActive ? 'flex' : 'hidden md:flex', 'flex-col relative w-max'),
         className,
       )}
       {...props}
@@ -209,7 +214,7 @@ function StepperConnector({
       className={cn(
         'bg-border relative transition-colors duration-300',
         isHorizontal
-          ? 'flex-1 h-[2px] mt-5 min-w-[2rem]'
+          ? 'hidden md:block flex-1 h-[2px] mt-5 min-w-[2rem]'
           : 'w-[2px] flex-1 min-h-[2rem]',
       )}
     >
