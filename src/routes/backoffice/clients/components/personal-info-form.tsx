@@ -77,7 +77,7 @@ export function PersonalInfoForm({
       className="flex flex-col lg:flex-row gap-4 md:gap-8 w-full"
     >
       {/* Avatar Section - Sidebar on Desktop, Top on Mobile */}
-      <div className="w-full lg:w-40 flex-shrink-0 flex flex-col items-center space-y-2 md:space-y-4">
+      <div className="w-full lg:w-40 shrink-0 flex flex-col items-center space-y-2 md:space-y-4">
         <div className="relative">
           <AvatarUpload
             onFileChange={(file) => {

@@ -240,7 +240,7 @@ export function BenefitsForm({
                         field.handleChange(checked === true)
                       }
                     />
-                    <FieldLabel htmlFor="dentalCoverage" className="!mb-0">
+                    <FieldLabel htmlFor="dentalCoverage" className="mb-0!">
                       Dental Coverage
                     </FieldLabel>
                   </div>
@@ -261,7 +261,7 @@ export function BenefitsForm({
                         field.handleChange(checked === true)
                       }
                     />
-                    <FieldLabel htmlFor="visionCoverage" className="!mb-0">
+                    <FieldLabel htmlFor="visionCoverage" className="mb-0!">
                       Vision Coverage
                     </FieldLabel>
                   </div>
@@ -284,7 +284,7 @@ export function BenefitsForm({
                     />
                     <FieldLabel
                       htmlFor="mentalHealthCoverage"
-                      className="!mb-0"
+                      className="mb-0!"
                     >
                       Mental Health Coverage
                     </FieldLabel>
