@@ -59,15 +59,6 @@ export function BenefitsForm({
       ...defaultValues,
       ...initialValues,
     },
-    validators: {
-      onChange: ({ value }) => {
-        const result = benefitsSchema.safeParse(value)
-        if (!result.success) {
-          return undefined
-        }
-        return undefined
-      },
-    },
     onSubmit: async ({ value }) => {
       if (onSubmitProp) {
         await onSubmitProp(value as BenefitsFormValues)
@@ -92,15 +83,6 @@ export function BenefitsForm({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
           <form.Field
             name="insuranceProvider"
-            validators={{
-              onChange: ({ value }) => {
-                const result =
-                  benefitsSchema.shape.insuranceProvider.safeParse(value)
-                return result.success
-                  ? undefined
-                  : { message: result.error.issues[0].message }
-              },
-            }}
             children={(field) => (
               <Field>
                 <FieldLabel>Insurance Provider</FieldLabel>
@@ -119,15 +101,6 @@ export function BenefitsForm({
 
           <form.Field
             name="coverageType"
-            validators={{
-              onChange: ({ value }) => {
-                const result =
-                  benefitsSchema.shape.coverageType.safeParse(value)
-                return result.success
-                  ? undefined
-                  : { message: result.error.issues[0].message }
-              },
-            }}
             children={(field) => (
               <Field>
                 <FieldLabel>Coverage Type</FieldLabel>
@@ -157,15 +130,6 @@ export function BenefitsForm({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
           <form.Field
             name="policyNumber"
-            validators={{
-              onChange: ({ value }) => {
-                const result =
-                  benefitsSchema.shape.policyNumber.safeParse(value)
-                return result.success
-                  ? undefined
-                  : { message: result.error.issues[0].message }
-              },
-            }}
             children={(field) => (
               <Field>
                 <FieldLabel>Policy Number</FieldLabel>
@@ -184,16 +148,6 @@ export function BenefitsForm({
 
           <form.Field
             name="deductible"
-            validators={{
-              onChange: ({ value }) => {
-                const result = benefitsSchema.shape.deductible.safeParse(
-                  value ? Number(value) : undefined,
-                )
-                return result.success
-                  ? undefined
-                  : { message: result.error.issues[0].message }
-              },
-            }}
             children={(field) => (
               <Field>
                 <FieldLabel>Deductible</FieldLabel>
@@ -221,16 +175,6 @@ export function BenefitsForm({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
           <form.Field
             name="copay"
-            validators={{
-              onChange: ({ value }) => {
-                const result = benefitsSchema.shape.copay.safeParse(
-                  value ? Number(value) : undefined,
-                )
-                return result.success
-                  ? undefined
-                  : { message: result.error.issues[0].message }
-              },
-            }}
             children={(field) => (
               <Field>
                 <FieldLabel>Copay</FieldLabel>
@@ -256,16 +200,6 @@ export function BenefitsForm({
 
           <form.Field
             name="annualLimit"
-            validators={{
-              onChange: ({ value }) => {
-                const result = benefitsSchema.shape.annualLimit.safeParse(
-                  value ? Number(value) : undefined,
-                )
-                return result.success
-                  ? undefined
-                  : { message: result.error.issues[0].message }
-              },
-            }}
             children={(field) => (
               <Field>
                 <FieldLabel>Annual Limit</FieldLabel>
@@ -296,15 +230,6 @@ export function BenefitsForm({
           <div className="space-y-4">
             <form.Field
               name="dentalCoverage"
-              validators={{
-                onChange: ({ value }) => {
-                  const result =
-                    benefitsSchema.shape.dentalCoverage.safeParse(value)
-                  return result.success
-                    ? undefined
-                    : { message: result.error.issues[0].message }
-                },
-              }}
               children={(field) => (
                 <Field>
                   <div className="flex items-center space-x-2">
@@ -326,15 +251,6 @@ export function BenefitsForm({
 
             <form.Field
               name="visionCoverage"
-              validators={{
-                onChange: ({ value }) => {
-                  const result =
-                    benefitsSchema.shape.visionCoverage.safeParse(value)
-                  return result.success
-                    ? undefined
-                    : { message: result.error.issues[0].message }
-                },
-              }}
               children={(field) => (
                 <Field>
                   <div className="flex items-center space-x-2">
@@ -356,15 +272,6 @@ export function BenefitsForm({
 
             <form.Field
               name="mentalHealthCoverage"
-              validators={{
-                onChange: ({ value }) => {
-                  const result =
-                    benefitsSchema.shape.mentalHealthCoverage.safeParse(value)
-                  return result.success
-                    ? undefined
-                    : { message: result.error.issues[0].message }
-                },
-              }}
               children={(field) => (
                 <Field>
                   <div className="flex items-center space-x-2">

@@ -16,13 +16,14 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 
+
 const medicalInfoSchema = z.object({
   bloodType: z
     .enum(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'])
     .optional(),
-  allergies: z.string().optional(),
-  chronicConditions: z.string().optional(),
-  medications: z.string().optional(),
+  allergies: z.array(z.string()).optional(),
+  chronicConditions: z.array(z.string()).optional(),
+  medications: z.array(z.string()).optional(),
   lastCheckup: z.string().optional(),
   emergencyContactName: z.string().min(1, 'Emergency contact name is required'),
   emergencyContactPhone: z
@@ -32,6 +33,18 @@ const medicalInfoSchema = z.object({
 })
 
 type MedicalInfoFormValues = z.infer<typeof medicalInfoSchema>
+
+// Helper functions to convert between arrays and comma-separated strings
+const arrayToString = (arr?: string[]): string => {
+  return arr?.filter(Boolean).join(', ') || ''
+}
+
+const stringToArray = (str: string): string[] => {
+  return str
+    .split(',')
+    .map((item) => item.trim())
+    .filter(Boolean)
+}
 
 interface MedicalInfoFormProps {
   id?: string
@@ -45,37 +58,22 @@ export function MedicalInfoForm({
   onSubmit: onSubmitProp,
 }: MedicalInfoFormProps) {
   const defaultValues = {
-    bloodType: undefined as unknown as
-      | 'A+'
-      | 'A-'
-      | 'B+'
-      | 'B-'
-      | 'AB+'
-      | 'AB-'
-      | 'O+'
-      | 'O-',
-    allergies: '',
-    chronicConditions: '',
-    medications: '',
-    lastCheckup: '',
     emergencyContactName: '',
     emergencyContactPhone: '',
     emergencyContactRelationship: '',
   }
 
+  // Keep array values as arrays for form state
+  const formInitialValues = {
+    ...defaultValues,
+    ...initialValues,
+  }
+
   const form = useForm({
-    defaultValues: {
-      ...defaultValues,
-      ...initialValues,
-    },
+    defaultValues: formInitialValues,
     validators: {
-      onChange: ({ value }) => {
-        const result = medicalInfoSchema.safeParse(value)
-        if (!result.success) {
-          return undefined
-        }
-        return undefined
-      },
+      onSubmit: medicalInfoSchema,
+      onChange: medicalInfoSchema,
     },
     onSubmit: async ({ value }) => {
       if (onSubmitProp) {
@@ -101,15 +99,6 @@ export function MedicalInfoForm({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
           <form.Field
             name="lastCheckup"
-            validators={{
-              onChange: ({ value }) => {
-                const result =
-                  medicalInfoSchema.shape.lastCheckup.safeParse(value)
-                return result.success
-                  ? undefined
-                  : { message: result.error.issues[0].message }
-              },
-            }}
             children={(field) => (
               <Field>
                 <FieldLabel>Last Checkup</FieldLabel>
@@ -129,15 +118,6 @@ export function MedicalInfoForm({
 
           <form.Field
             name="bloodType"
-            validators={{
-              onChange: ({ value }) => {
-                const result =
-                  medicalInfoSchema.shape.bloodType.safeParse(value)
-                return result.success
-                  ? undefined
-                  : { message: result.error.issues[0].message }
-              },
-            }}
             children={(field) => (
               <Field>
                 <FieldLabel>Blood Type</FieldLabel>
@@ -169,15 +149,6 @@ export function MedicalInfoForm({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
           <form.Field
             name="allergies"
-            validators={{
-              onChange: ({ value }) => {
-                const result =
-                  medicalInfoSchema.shape.allergies.safeParse(value)
-                return result.success
-                  ? undefined
-                  : { message: result.error.issues[0].message }
-              },
-            }}
             children={(field) => (
               <Field>
                 <FieldLabel>Allergies</FieldLabel>
@@ -185,9 +156,11 @@ export function MedicalInfoForm({
                   <Input
                     placeholder="Peanuts, Penicillin, etc. (comma separated)"
                     name={field.name}
-                    value={field.state.value}
+                    value={arrayToString(field.state.value)}
                     onBlur={field.handleBlur}
-                    onChange={(e) => field.handleChange(e.target.value)}
+                    onChange={(e) =>
+                      field.handleChange(stringToArray(e.target.value))
+                    }
                   />
                 </FieldContent>
                 <FieldError errors={field.state.meta.errors} />
@@ -197,15 +170,6 @@ export function MedicalInfoForm({
 
           <form.Field
             name="chronicConditions"
-            validators={{
-              onChange: ({ value }) => {
-                const result =
-                  medicalInfoSchema.shape.chronicConditions.safeParse(value)
-                return result.success
-                  ? undefined
-                  : { message: result.error.issues[0].message }
-              },
-            }}
             children={(field) => (
               <Field>
                 <FieldLabel>Chronic Conditions</FieldLabel>
@@ -213,9 +177,11 @@ export function MedicalInfoForm({
                   <Input
                     placeholder="Diabetes, Hypertension, etc. (comma separated)"
                     name={field.name}
-                    value={field.state.value}
+                    value={arrayToString(field.state.value)}
                     onBlur={field.handleBlur}
-                    onChange={(e) => field.handleChange(e.target.value)}
+                    onChange={(e) =>
+                      field.handleChange(stringToArray(e.target.value))
+                    }
                   />
                 </FieldContent>
                 <FieldError errors={field.state.meta.errors} />
@@ -225,15 +191,6 @@ export function MedicalInfoForm({
 
           <form.Field
             name="medications"
-            validators={{
-              onChange: ({ value }) => {
-                const result =
-                  medicalInfoSchema.shape.medications.safeParse(value)
-                return result.success
-                  ? undefined
-                  : { message: result.error.issues[0].message }
-              },
-            }}
             children={(field) => (
               <Field>
                 <FieldLabel>Medications</FieldLabel>
@@ -241,9 +198,11 @@ export function MedicalInfoForm({
                   <Input
                     placeholder="Ibuprofen, Aspirin, etc. (comma separated)"
                     name={field.name}
-                    value={field.state.value}
+                    value={arrayToString(field.state.value)}
                     onBlur={field.handleBlur}
-                    onChange={(e) => field.handleChange(e.target.value)}
+                    onChange={(e) =>
+                      field.handleChange(stringToArray(e.target.value))
+                    }
                   />
                 </FieldContent>
                 <FieldError errors={field.state.meta.errors} />
@@ -258,17 +217,6 @@ export function MedicalInfoForm({
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
             <form.Field
               name="emergencyContactName"
-              validators={{
-                onChange: ({ value }) => {
-                  const result =
-                    medicalInfoSchema.shape.emergencyContactName.safeParse(
-                      value,
-                    )
-                  return result.success
-                    ? undefined
-                    : { message: result.error.issues[0].message }
-                },
-              }}
               children={(field) => (
                 <Field>
                   <FieldLabel>Name</FieldLabel>
@@ -287,17 +235,6 @@ export function MedicalInfoForm({
 
             <form.Field
               name="emergencyContactRelationship"
-              validators={{
-                onChange: ({ value }) => {
-                  const result =
-                    medicalInfoSchema.shape.emergencyContactRelationship.safeParse(
-                      value,
-                    )
-                  return result.success
-                    ? undefined
-                    : { message: result.error.issues[0].message }
-                },
-              }}
               children={(field) => (
                 <Field>
                   <FieldLabel>Relationship</FieldLabel>
@@ -316,17 +253,6 @@ export function MedicalInfoForm({
 
             <form.Field
               name="emergencyContactPhone"
-              validators={{
-                onChange: ({ value }) => {
-                  const result =
-                    medicalInfoSchema.shape.emergencyContactPhone.safeParse(
-                      value,
-                    )
-                  return result.success
-                    ? undefined
-                    : { message: result.error.issues[0].message }
-                },
-              }}
               children={(field) => (
                 <Field>
                   <FieldLabel>Phone</FieldLabel>
