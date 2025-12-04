@@ -29,18 +29,35 @@ const benefitsSchema = z.object({
   mentalHealthCoverage: z.boolean().optional(),
 })
 
-export function BenefitsForm({ id }: { id?: string }) {
+type BenefitsFormValues = z.infer<typeof benefitsSchema>
+
+interface BenefitsFormProps {
+  id?: string
+  initialValues?: Partial<BenefitsFormValues>
+  onSubmit?: (values: BenefitsFormValues) => void | Promise<void>
+}
+
+export function BenefitsForm({
+  id,
+  initialValues,
+  onSubmit: onSubmitProp,
+}: BenefitsFormProps) {
+  const defaultValues = {
+    insuranceProvider: '',
+    policyNumber: '',
+    coverageType: undefined as unknown as 'Basic' | 'Standard' | 'Premium',
+    deductible: undefined as unknown as number,
+    copay: undefined as unknown as number,
+    annualLimit: undefined as unknown as number,
+    dentalCoverage: false,
+    visionCoverage: false,
+    mentalHealthCoverage: false,
+  }
+
   const form = useForm({
     defaultValues: {
-      insuranceProvider: '',
-      policyNumber: '',
-      coverageType: undefined as unknown as 'Basic' | 'Standard' | 'Premium',
-      deductible: undefined as unknown as number,
-      copay: undefined as unknown as number,
-      annualLimit: undefined as unknown as number,
-      dentalCoverage: false,
-      visionCoverage: false,
-      mentalHealthCoverage: false,
+      ...defaultValues,
+      ...initialValues,
     },
     validators: {
       onChange: ({ value }) => {
@@ -52,7 +69,11 @@ export function BenefitsForm({ id }: { id?: string }) {
       },
     },
     onSubmit: async ({ value }) => {
-      console.log(value)
+      if (onSubmitProp) {
+        await onSubmitProp(value as BenefitsFormValues)
+      } else {
+        console.log(value)
+      }
     },
   })
 

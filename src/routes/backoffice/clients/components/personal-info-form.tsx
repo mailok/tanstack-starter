@@ -26,15 +26,32 @@ const personalInfoSchema = z.object({
   gender: z.enum(['male', 'female']),
 })
 
-export function PersonalInfoForm({ id }: { id?: string }) {
+type PersonalInfoFormValues = z.infer<typeof personalInfoSchema>
+
+interface PersonalInfoFormProps {
+  id?: string
+  initialValues?: Partial<PersonalInfoFormValues>
+  onSubmit?: (values: PersonalInfoFormValues) => void | Promise<void>
+}
+
+export function PersonalInfoForm({
+  id,
+  initialValues,
+  onSubmit: onSubmitProp,
+}: PersonalInfoFormProps) {
+  const defaultValues = {
+    name: '',
+    photo: '',
+    email: '',
+    phone: '',
+    birthDate: '',
+    gender: undefined as unknown as 'male' | 'female',
+  }
+
   const form = useForm({
     defaultValues: {
-      name: '',
-      photo: '',
-      email: '',
-      phone: '',
-      birthDate: '',
-      gender: undefined as unknown as 'male' | 'female',
+      ...defaultValues,
+      ...initialValues,
     },
     validators: {
       onChange: ({ value }) => {
@@ -51,7 +68,11 @@ export function PersonalInfoForm({ id }: { id?: string }) {
       },
     },
     onSubmit: async ({ value }) => {
-      console.log(value)
+      if (onSubmitProp) {
+        await onSubmitProp(value as PersonalInfoFormValues)
+      } else {
+        console.log(value)
+      }
     },
   })
 

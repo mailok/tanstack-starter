@@ -43,7 +43,7 @@ function RouteComponent() {
     <Suspense fallback={<RoutePendingComponent />}>
       <Await promise={progress}>
         {(progress) => {
-          const { isCompleted, currentViewStep } = progress
+          const { isCompleted, currentViewStep, initialValues } = progress
 
           // Redirect to clients list if onboarding is completed
           if (isCompleted) {
@@ -65,15 +65,30 @@ function RouteComponent() {
           }
 
           if (currentViewStep === 1) {
-            return <PersonalInfoForm id={ONBOARDING_FORM_IDS.PERSONAL_INFO} />
+            return (
+              <PersonalInfoForm
+                id={ONBOARDING_FORM_IDS.PERSONAL_INFO}
+                initialValues={initialValues ?? undefined}
+              />
+            )
           }
 
           if (currentViewStep === 2) {
-            return <MedicalInfoForm id={ONBOARDING_FORM_IDS.MEDICAL_INFO} />
+            return (
+              <MedicalInfoForm
+                id={ONBOARDING_FORM_IDS.MEDICAL_INFO}
+                initialValues={initialValues ?? undefined}
+              />
+            )
           }
 
           if (currentViewStep === 3) {
-            return <BenefitsForm id={ONBOARDING_FORM_IDS.BENEFITS} />
+            return (
+              <BenefitsForm
+                id={ONBOARDING_FORM_IDS.BENEFITS}
+                initialValues={initialValues ?? undefined}
+              />
+            )
           }
 
           return (

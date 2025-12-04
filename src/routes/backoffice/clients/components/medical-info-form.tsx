@@ -31,25 +31,42 @@ const medicalInfoSchema = z.object({
   emergencyContactRelationship: z.string().min(1, 'Relationship is required'),
 })
 
-export function MedicalInfoForm({ id }: { id?: string }) {
+type MedicalInfoFormValues = z.infer<typeof medicalInfoSchema>
+
+interface MedicalInfoFormProps {
+  id?: string
+  initialValues?: Partial<MedicalInfoFormValues>
+  onSubmit?: (values: MedicalInfoFormValues) => void | Promise<void>
+}
+
+export function MedicalInfoForm({
+  id,
+  initialValues,
+  onSubmit: onSubmitProp,
+}: MedicalInfoFormProps) {
+  const defaultValues = {
+    bloodType: undefined as unknown as
+      | 'A+'
+      | 'A-'
+      | 'B+'
+      | 'B-'
+      | 'AB+'
+      | 'AB-'
+      | 'O+'
+      | 'O-',
+    allergies: '',
+    chronicConditions: '',
+    medications: '',
+    lastCheckup: '',
+    emergencyContactName: '',
+    emergencyContactPhone: '',
+    emergencyContactRelationship: '',
+  }
+
   const form = useForm({
     defaultValues: {
-      bloodType: undefined as unknown as
-        | 'A+'
-        | 'A-'
-        | 'B+'
-        | 'B-'
-        | 'AB+'
-        | 'AB-'
-        | 'O+'
-        | 'O-',
-      allergies: '',
-      chronicConditions: '',
-      medications: '',
-      lastCheckup: '',
-      emergencyContactName: '',
-      emergencyContactPhone: '',
-      emergencyContactRelationship: '',
+      ...defaultValues,
+      ...initialValues,
     },
     validators: {
       onChange: ({ value }) => {
@@ -61,7 +78,11 @@ export function MedicalInfoForm({ id }: { id?: string }) {
       },
     },
     onSubmit: async ({ value }) => {
-      console.log(value)
+      if (onSubmitProp) {
+        await onSubmitProp(value as MedicalInfoFormValues)
+      } else {
+        console.log(value)
+      }
     },
   })
 
