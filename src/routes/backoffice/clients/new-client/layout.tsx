@@ -5,6 +5,8 @@ import { Card, CardContent, CardFooter } from '@/components/ui/card'
 import { BreadcrumbItem, BreadcrumbLink } from '@/components/ui/breadcrumb'
 import { useOnboardingProgress } from './hooks/use-onboarding-progress'
 
+import { ONBOARDING_FORM_IDS } from './constants'
+
 export const Route = createFileRoute('/backoffice/clients/new-client')({
   component: RouteComponent,
   staticData: {
@@ -14,6 +16,12 @@ export const Route = createFileRoute('/backoffice/clients/new-client')({
 
 function RouteComponent() {
   const { activeStep, completedSteps, isPending } = useOnboardingProgress()
+
+  const currentFormId = {
+    1: ONBOARDING_FORM_IDS.PERSONAL_INFO,
+    2: ONBOARDING_FORM_IDS.MEDICAL_INFO,
+    3: ONBOARDING_FORM_IDS.BENEFITS,
+  }[activeStep]
 
   return (
     <div className="flex flex-col gap-4 md:gap-8 w-full max-w-[95%] mx-auto py-4 md:py-10">
@@ -44,7 +52,7 @@ function RouteComponent() {
           <Outlet />
         </CardContent>
         <CardFooter className="flex justify-end px-4 md:px-8 lg:px-24 pb-4 md:pb-8">
-          <Button form="personal-info-form" type="submit" size="lg">
+          <Button form={currentFormId} type="submit" size="lg">
             Next
           </Button>
         </CardFooter>

@@ -7,6 +7,7 @@ import { clientQueries } from '../../queries'
 import { defaultClientSearch } from '../../schemas'
 import { Skeleton } from '@/components/ui/skeleton'
 import * as z from 'zod'
+import { ONBOARDING_FORM_IDS } from '../constants'
 
 const onboardingSearchSchema = z.object({
   step: z.number().int().min(1).max(3).optional().catch(undefined),
@@ -64,15 +65,15 @@ function RouteComponent() {
           }
 
           if (currentViewStep === 1) {
-            return <PersonalInfoForm id="personal-info-form" />
+            return <PersonalInfoForm id={ONBOARDING_FORM_IDS.PERSONAL_INFO} />
           }
 
           if (currentViewStep === 2) {
-            return <MedicalInfoForm id="medical-info-form" />
+            return <MedicalInfoForm id={ONBOARDING_FORM_IDS.MEDICAL_INFO} />
           }
 
           if (currentViewStep === 3) {
-            return <BenefitsForm id="benefits-form" />
+            return <BenefitsForm id={ONBOARDING_FORM_IDS.BENEFITS} />
           }
 
           return (
