@@ -1,5 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { PersonalInfoForm } from '../components/personal-info-form'
+import { StepToFormId } from './constants'
 
 export const Route = createFileRoute('/backoffice/clients/new-client/')({
   component: RouteComponent,
@@ -8,7 +9,7 @@ export const Route = createFileRoute('/backoffice/clients/new-client/')({
 function RouteComponent() {
   return (
     <>
-      <PersonalInfoForm id="personal-info-form" />
+      <PersonalInfoForm id={StepToFormId[1]} />
     </>
   )
 }

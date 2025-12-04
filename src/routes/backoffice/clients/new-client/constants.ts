@@ -1,5 +1,5 @@
-export const ONBOARDING_FORM_IDS = {
-  PERSONAL_INFO: 'personal-info-form',
-  MEDICAL_INFO: 'medical-info-form',
-  BENEFITS: 'benefits-form',
+export const StepToFormId = {
+  1: 'personal-info-form',
+  2: 'medical-info-form',
+  3: 'benefits-form',
 } as const

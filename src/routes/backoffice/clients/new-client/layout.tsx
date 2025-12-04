@@ -10,7 +10,7 @@ import { Card, CardContent, CardFooter } from '@/components/ui/card'
 import { BreadcrumbItem, BreadcrumbLink } from '@/components/ui/breadcrumb'
 import { useOnboardingProgress } from './hooks/use-onboarding-progress'
 
-import { ONBOARDING_FORM_IDS } from './constants'
+import { StepToFormId } from './constants'
 
 export const Route = createFileRoute('/backoffice/clients/new-client')({
   component: RouteComponent,
@@ -25,11 +25,7 @@ function RouteComponent() {
   })
   const { activeStep, completedSteps, isPending } = useOnboardingProgress()
 
-  const currentFormId = {
-    1: ONBOARDING_FORM_IDS.PERSONAL_INFO,
-    2: ONBOARDING_FORM_IDS.MEDICAL_INFO,
-    3: ONBOARDING_FORM_IDS.BENEFITS,
-  }[activeStep]
+  const currentFormId = StepToFormId[activeStep as keyof typeof StepToFormId]
 
   return (
     <div className="flex flex-col gap-4 md:gap-8 w-full max-w-[95%] mx-auto py-4 md:py-10">
