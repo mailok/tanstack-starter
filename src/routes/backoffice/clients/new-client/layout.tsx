@@ -34,7 +34,7 @@ function RouteComponent() {
   return (
     <div className="flex flex-col gap-4 md:gap-8 w-full max-w-[95%] mx-auto py-4 md:py-10">
       <Card className="w-full">
-        <CardContent className="pt-6 md:pt-10 px-4 md:px-8">
+        <CardContent className="pt-6 md:pt-10 px-4 md:px-8 pb-10 md:pb-16">
           {/* Mobile: Show only active step, centered */}
           <div className="flex justify-center w-full mb-14 md:mb-40 md:px-20">
             <div className="w-full">
