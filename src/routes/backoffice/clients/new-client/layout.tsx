@@ -1,4 +1,9 @@
-import { createFileRoute, Link, Outlet } from '@tanstack/react-router'
+import {
+  createFileRoute,
+  Link,
+  Outlet,
+  useNavigate,
+} from '@tanstack/react-router'
 import { Step, Stepper, StepperTitle } from '@/components/stepper'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter } from '@/components/ui/card'
@@ -15,6 +20,9 @@ export const Route = createFileRoute('/backoffice/clients/new-client')({
 })
 
 function RouteComponent() {
+  const navigate = useNavigate({
+    from: '/backoffice/clients/new-client/$clientId',
+  })
   const { activeStep, completedSteps, isPending } = useOnboardingProgress()
 
   const currentFormId = {
@@ -51,7 +59,23 @@ function RouteComponent() {
 
           <Outlet />
         </CardContent>
-        <CardFooter className="flex justify-end px-4 md:px-8 lg:px-24 pb-4 md:pb-8">
+        <CardFooter className="flex justify-between px-4 md:px-8 lg:px-24 pb-4 md:pb-8">
+          {activeStep > 1 ? (
+            <Button
+              type="button"
+              variant="outline"
+              size="lg"
+              onClick={() =>
+                navigate({
+                  search: (prev) => ({ ...prev, step: activeStep - 1 }),
+                })
+              }
+            >
+              Back
+            </Button>
+          ) : (
+            <div />
+          )}
           <Button form={currentFormId} type="submit" size="lg">
             Next
           </Button>
