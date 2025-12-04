@@ -204,3 +204,11 @@ code {
 [data-slot='badge'][data-status='pending'] {
   @apply border-yellow-200 bg-yellow-100 text-yellow-800 dark:border-yellow-800/30 dark:bg-yellow-900/20 dark:text-yellow-400;
 }
+
+/* Fix for Radix UI Select scroll locking causing layout shifts */
+html body[data-scroll-locked]:has([data-slot='select-content']),
+html body:has([data-radix-popper-content-wrapper] [data-slot='select-content']) {
+  overflow: visible !important;
+  padding-right: 0 !important;
+  margin-right: 0 !important;
+}
