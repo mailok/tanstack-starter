@@ -3,6 +3,8 @@ import { Check } from 'lucide-react'
 import { Spinner } from '@/components/ui/spinner'
 import { cn } from '@/lib/utils'
 
+//------------------TYPES---------------------
+
 type StepperProps = {
   className?: string
   children: React.ReactNode
@@ -10,7 +12,69 @@ type StepperProps = {
   active: number
   completed?: boolean | number[]
   pending?: boolean | number
+  onNavigate?: (index: number) => void
 } & React.HTMLAttributes<HTMLDivElement>
+
+type StepperListProps = {
+  children: React.ReactNode
+  className?: string
+}
+
+type StepProps = {
+  step: number
+  children?: React.ReactNode
+  className?: string
+  index?: number // Injected by StepperList
+  isLast?: boolean // Injected by StepperList
+}
+
+type StepperContentProps = {
+  step: number
+  children: React.ReactNode
+  className?: string
+}
+
+//------------------CONTEXTS---------------------
+
+export type StepperOptions = {
+  orientation: 'horizontal' | 'vertical'
+  active: number
+  completed: boolean | number[]
+  pending: boolean | number
+  stepperRef: React.RefObject<HTMLDivElement | null>
+  onNavigate?: (index: number) => void
+}
+
+const StepperContext = React.createContext<StepperOptions | null>(null)
+
+export const useStepper = (): StepperOptions => {
+  const context = React.useContext(StepperContext)
+  if (!context) {
+    throw new Error('useStepper must be used within a StepperProvider.')
+  }
+  return context
+}
+
+type StepperNavigationOptions = {
+  nextStep: () => void
+  prevStep: () => void
+  goToStep: (step: number) => void
+}
+
+const StepperNavigationContext =
+  React.createContext<StepperNavigationOptions | null>(null)
+
+export const useStepperNavigation = () => {
+  const context = React.useContext(StepperNavigationContext)
+  if (!context) {
+    throw new Error(
+      'useStepperNavigation must be used within a StepperContent.',
+    )
+  }
+  return context
+}
+
+//------------------COMPONENTS---------------------
 
 function Stepper({
   className,
@@ -19,73 +83,82 @@ function Stepper({
   active,
   completed = false,
   pending = false,
+  onNavigate,
   ...props
 }: StepperProps) {
   const stepperRef = React.useRef<HTMLDivElement>(null)
-  const childrenArray = React.Children.toArray(children)
-  const stepsCount = childrenArray.length
 
   return (
     <StepperContext.Provider
-      value={{ orientation, active, completed, pending, stepperRef }}
+      value={{
+        orientation,
+        active,
+        completed,
+        pending,
+        stepperRef,
+        onNavigate,
+      }}
     >
       <div
         ref={stepperRef}
-        className={cn(
-          'flex size-full',
-          orientation === 'vertical'
-            ? 'flex-col justify-between'
-            : 'flex-row items-start justify-center md:justify-between',
-          className,
-        )}
+        className={cn('size-full flex flex-col gap-20', className)}
         {...props}
       >
-        {childrenArray.map((child, index) => {
-          if (!React.isValidElement(child)) return null
-          const isLast = index === stepsCount - 1
-
-          // Inject props into Step
-          const stepElement = React.cloneElement(
-            child as React.ReactElement<any>,
-            {
-              index,
-              isLast,
-            },
-          )
-
-          if (orientation === 'horizontal') {
-            return (
-              <React.Fragment key={index}>
-                {stepElement}
-                {!isLast && (
-                  <StepperConnector
-                    index={index}
-                    active={active}
-                    orientation="horizontal"
-                  />
-                )}
-              </React.Fragment>
-            )
-          }
-
-          // Vertical: Step renders its own connector internally
-          return <React.Fragment key={index}>{stepElement}</React.Fragment>
-        })}
+        {children}
       </div>
     </StepperContext.Provider>
   )
 }
 
-type StepProps = {
-  step: number
-  children?: React.ReactNode
-  className?: string
-  index?: number
-  isLast?: boolean
+function StepperList({ children, className }: StepperListProps) {
+  const { orientation } = useStepper()
+  const childrenArray = React.Children.toArray(children)
+  const stepsCount = childrenArray.length
+
+  return (
+    <div
+      className={cn(
+        'flex w-full pb-10', // Added pb-10 to reserve space for absolute titles
+        orientation === 'vertical'
+          ? 'flex-col'
+          : 'flex-row items-start justify-center md:justify-between',
+        className,
+      )}
+    >
+      {childrenArray.map((child, index) => {
+        if (!React.isValidElement(child)) return null
+        const isLast = index === stepsCount - 1
+
+        // Inject props
+        const stepElement = React.cloneElement(
+          child as React.ReactElement<any>,
+          {
+            index,
+            isLast,
+          },
+        )
+
+        if (orientation === 'horizontal') {
+          return (
+            <React.Fragment key={index}>
+              {stepElement}
+              {!isLast && (
+                <StepperConnector index={index} orientation="horizontal" />
+              )}
+            </React.Fragment>
+          )
+        }
+
+        // Vertical
+        return <React.Fragment key={index}>{stepElement}</React.Fragment>
+      })}
+    </div>
+  )
 }
 
+// Essentially the "Trigger"
 function Step({ step, className, index, isLast, ...props }: StepProps) {
-  const { orientation, active } = useStepper()
+  const { orientation } = useStepper()
   const { isActive } = useStepStatus(step)
   const isVertical = orientation === 'vertical'
 
@@ -95,7 +168,10 @@ function Step({ step, className, index, isLast, ...props }: StepProps) {
         'items-center gap-4',
         isVertical
           ? 'flex flex-row w-full flex-1'
-          : cn(isActive ? 'flex' : 'hidden md:flex', 'flex-col relative w-max'),
+          : cn(
+              'flex flex-col relative shrink-0',
+              !isActive && 'hidden md:flex',
+            ), // Added shrink-0, removed complex conditionals, keep relative for absolute child
         className,
       )}
       {...props}
@@ -108,11 +184,7 @@ function Step({ step, className, index, isLast, ...props }: StepProps) {
       >
         <StepperIcon step={step} />
         {isVertical && !isLast && (
-          <StepperConnector
-            index={index!}
-            active={active}
-            orientation="vertical"
-          />
+          <StepperConnector index={index!} orientation="vertical" />
         )}
       </div>
 
@@ -120,7 +192,7 @@ function Step({ step, className, index, isLast, ...props }: StepProps) {
         className={cn(
           'flex flex-col items-center text-center transition-colors duration-300',
           !isVertical &&
-            'absolute top-full mt-2 w-max left-1/2 -translate-x-1/2',
+            'absolute top-full mt-2 w-max left-1/2 -translate-x-1/2', // Restored absolute positioning
         )}
       >
         {props.children}
@@ -128,6 +200,24 @@ function Step({ step, className, index, isLast, ...props }: StepProps) {
     </div>
   )
 }
+
+function StepperContent({ step, children, className }: StepperContentProps) {
+  const { isActive } = useStepStatus(step)
+  const { onNavigate } = useStepper()
+
+  if (!isActive) return null
+
+  const nextStep = () => onNavigate?.(step + 1)
+  const prevStep = () => onNavigate?.(step - 1)
+  const goToStep = (s: number) => onNavigate?.(s)
+
+  return (
+    <StepperNavigationContext.Provider value={{ nextStep, prevStep, goToStep }}>
+      <div className={cn('w-full', className)}>{children}</div>
+    </StepperNavigationContext.Provider>
+  )
+}
+StepperContent.displayName = 'StepperContent'
 
 function StepperIcon({ step }: { step: number }) {
   const { isActive, isCompleted, isPending } = useStepStatus(step)
@@ -171,7 +261,9 @@ function StepperTitle({
   className?: string
 }) {
   return (
-    <div className={cn('text-lg font-semibold', className)}>{children}</div>
+    <div className={cn('text-lg font-semibold whitespace-nowrap', className)}>
+      {children}
+    </div>
   )
 }
 
@@ -196,17 +288,13 @@ function StepperDescription({
 
 function StepperConnector({
   index,
-  active,
   orientation,
 }: {
   index: number
-  active: number
   orientation: 'horizontal' | 'vertical'
 }) {
+  const { active } = useStepper()
   const isHorizontal = orientation === 'horizontal'
-  // Line is active if the *next* step (index + 2) is active or completed.
-  // Actually, if active step is 2, line 1-2 (index 0) should be active.
-  // So if active > index + 1.
   const isHighlight = active > index + 1
 
   return (
@@ -235,7 +323,15 @@ function StepperConnector({
   )
 }
 
-export { Stepper, Step, StepperIcon, StepperTitle, StepperDescription }
+export {
+  Stepper,
+  StepperList,
+  Step,
+  StepperIcon,
+  StepperTitle,
+  StepperDescription,
+  StepperContent,
+}
 
 //------------------CUSTOM HOOKS---------------------
 
@@ -260,25 +356,3 @@ export function useStepStatus(step: number) {
 
   return { isActive, isCompleted, isPending }
 }
-
-//------------------CONTEXTS---------------------
-
-export type StepperOptions = {
-  orientation: 'horizontal' | 'vertical'
-  active: number
-  completed: boolean | number[]
-  pending: boolean | number
-  stepperRef: React.RefObject<HTMLDivElement | null>
-}
-
-const StepperContext = React.createContext<StepperOptions | null>(null)
-
-export const useStepper = (): StepperOptions => {
-  const context = React.useContext(StepperContext)
-  if (!context) {
-    throw new Error('useStepper must be used within a StepperProvider.')
-  }
-  return context
-}
-
-//---------------------------------------------
