@@ -1,6 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { PersonalInfoForm } from '../components/personal-info-form'
-import { StepToFormId } from './constants'
 import { z } from 'zod'
 
 const searchSchema = z.object({
@@ -15,7 +14,7 @@ export const Route = createFileRoute('/backoffice/clients/new-client/')({
 function RouteComponent() {
   return (
     <>
-      <PersonalInfoForm id={StepToFormId[1]} />
+      <PersonalInfoForm />
     </>
   )
 }
