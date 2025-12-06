@@ -120,7 +120,7 @@ function RouteComponent() {
   return (
     <div className="flex flex-col gap-4 md:gap-8 w-full max-w-[95%] mx-auto py-4 md:py-10">
       <Card className="w-full">
-        <CardContent className="pt-6 md:pt-10 px-4 md:px-8 pb-10 md:pb-16">
+        <CardContent className="pt-6 md:pt-10 px-4 md:px-8 pb-4 md:pb-6">
           {/* Mobile: Show only active step, centered */}
           <div className="flex justify-center w-full md:px-20 min-h-[40vh]">
             <div className="w-full">
@@ -187,7 +187,7 @@ function RoutePendingComponent() {
   return (
     <div className="flex flex-col gap-4 md:gap-8 w-full max-w-[95%] mx-auto py-4 md:py-10">
       <Card className="w-full">
-        <CardContent className="pt-6 md:pt-10 px-4 md:px-8 pb-10 md:pb-16">
+        <CardContent className="pt-6 md:pt-10 px-4 md:px-8 pb-4 md:pb-6">
           <div className="flex justify-center w-full md:px-20 min-h-[40vh]">
             <div className="w-full">
               <Stepper

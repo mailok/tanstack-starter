@@ -57,7 +57,7 @@ export function MedicalInfoStep({ clientId, step }: Props) {
   }
 
   return (
-    <div className="flex flex-col justify-between h-[40vh]">
+    <div className="flex flex-col justify-between min-h-[60vh] gap-8">
       <MedicalInfoForm
         id={FORM_ID}
         initialValues={initialValues ?? undefined}

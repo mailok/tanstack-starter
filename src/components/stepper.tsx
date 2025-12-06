@@ -101,7 +101,7 @@ function Stepper({
     >
       <div
         ref={stepperRef}
-        className={cn('size-full flex flex-col gap-20', className)}
+        className={cn('w-full flex flex-col gap-20', className)}
         {...props}
       >
         {children}
