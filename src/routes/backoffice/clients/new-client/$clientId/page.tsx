@@ -99,7 +99,7 @@ function RouteComponent() {
                 </StepperList>
 
                 <StepperContent step={1}>
-                  {<PersonalInfoStep clientId={clientId} step={1} />}
+                  <PersonalInfoStep clientId={clientId} step={1} />
                 </StepperContent>
 
                 <StepperContent step={2}>

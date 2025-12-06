@@ -114,7 +114,7 @@ function hasData(data: Record<string, any> | null) {
 export const getClientOnboardingProgress = createServerFn({ method: 'GET' })
   .inputValidator(zodValidator(OnboardingProgressSchema))
   .handler(async ({ data: { clientId, step } }) => {
-    await sleep({delay: 4000})
+    await sleep()
     const [error, client] = await until(() => service.getClient(clientId))
 
     if (error) {
