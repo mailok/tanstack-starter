@@ -34,7 +34,10 @@ type BenefitsFormValues = z.infer<typeof benefitsSchema>
 interface BenefitsFormProps {
   id?: string
   initialValues?: Partial<BenefitsFormValues>
-  onSubmit?: (values: BenefitsFormValues) => void | Promise<void>
+  onSubmit?: (
+    values: BenefitsFormValues,
+    isDirty: boolean,
+  ) => void | Promise<void>
 }
 
 export function BenefitsForm({
@@ -59,9 +62,9 @@ export function BenefitsForm({
       ...defaultValues,
       ...initialValues,
     },
-    onSubmit: async ({ value }) => {
+    onSubmit: async ({ value, formApi }) => {
       if (onSubmitProp) {
-        await onSubmitProp(value as BenefitsFormValues)
+        await onSubmitProp(value as BenefitsFormValues, formApi.state.isDirty)
       } else {
         console.log(value)
       }

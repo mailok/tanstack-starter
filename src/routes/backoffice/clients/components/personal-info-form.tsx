@@ -19,7 +19,9 @@ import AvatarUpload from '@/components/file-upload/avatar-upload'
 
 const personalInfoSchema = z.object({
   name: z.string().min(1, 'Name is required'),
-  photo: z.url('Must be a valid URL'),
+  photo: z
+    .union([z.string().url('Must be a valid URL'), z.literal('')])
+    .optional(),
   email: z.email('Invalid email address'),
   phone: z.string().min(1, 'Phone is required'),
   birthDate: z.string().min(1, 'Birth date is required'),
@@ -31,7 +33,10 @@ type PersonalInfoFormValues = z.infer<typeof personalInfoSchema>
 interface PersonalInfoFormProps {
   id?: string
   initialValues?: Partial<PersonalInfoFormValues>
-  onSubmit?: (values: PersonalInfoFormValues) => void | Promise<void>
+  onSubmit?: (
+    values: PersonalInfoFormValues,
+    isDirty: boolean,
+  ) => void | Promise<void>
 }
 
 export function PersonalInfoForm({
@@ -41,7 +46,6 @@ export function PersonalInfoForm({
 }: PersonalInfoFormProps) {
   const defaultValues = {
     name: '',
-    photo: '',
     email: '',
     phone: '',
     birthDate: '',
@@ -57,9 +61,10 @@ export function PersonalInfoForm({
       onSubmit: personalInfoSchema,
       onChange: personalInfoSchema,
     },
-    onSubmit: async ({ value }) => {
+    onSubmit: async ({ value, formApi }) => {
       if (onSubmitProp) {
-        await onSubmitProp(value as PersonalInfoFormValues)
+        value.photo = undefined
+        await onSubmitProp(value, formApi.state.isDirty)
       } else {
         console.log(value)
       }

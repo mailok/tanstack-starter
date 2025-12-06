@@ -1,7 +1,7 @@
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { clientMutationKeys } from '../../mutations'
 import { clientQueries } from '../../queries'
 import { updateClientMedicalInformation } from '../../api'
-import { StepToFormId } from '../constants'
 import { MedicalInfoForm } from '../../components/medical-info-form'
 import { Button } from '@/components/ui/button'
 import { useStepperNavigation } from '@/components/stepper'
@@ -12,27 +12,45 @@ type Props = {
   step: number
 }
 
+const FORM_ID = 'medical-info-form'
+
 export function MedicalInfoStep({ clientId, step }: Props) {
   const { prevStep, nextStep } = useStepperNavigation()
+  const queryClient = useQueryClient()
 
   const { data, isLoading } = useQuery(
     clientQueries.onboardingProgress(clientId, step),
   )
 
   const updateMedicalMutation = useMutation({
+    mutationKey: clientMutationKeys.onboarding.updateMedical(clientId),
     mutationFn: updateClientMedicalInformation,
-    onSuccess: nextStep,
+    onSuccess: async (_, variables) => {
+      queryClient.setQueryData(
+        clientQueries.onboardingProgress(clientId, step).queryKey,
+        (oldData) =>
+          oldData
+            ? {
+                ...oldData,
+                initialValues: (variables as any).data.data,
+              }
+            : oldData,
+      )
+      nextStep()
+    },
   })
 
   const initialValues = data?.initialValues || undefined
 
-  function saveAndNavigate(values: any) {
+  function saveAndNavigate(values: any, isDirty: boolean) {
+    if (!isDirty) {
+      nextStep()
+      return
+    }
     if (clientId) {
       updateMedicalMutation.mutate({ data: { clientId, data: values } })
     }
   }
-
-  const currentFormId = StepToFormId[step as keyof typeof StepToFormId]
 
   if (isLoading) {
     return <PendingFormComponent />
@@ -41,7 +59,7 @@ export function MedicalInfoStep({ clientId, step }: Props) {
   return (
     <div className="flex flex-col justify-between h-[40vh]">
       <MedicalInfoForm
-        id={currentFormId}
+        id={FORM_ID}
         initialValues={initialValues ?? undefined}
         onSubmit={saveAndNavigate}
       />
@@ -51,7 +69,7 @@ export function MedicalInfoStep({ clientId, step }: Props) {
           Back
         </Button>
         <Button
-          form={currentFormId}
+          form={FORM_ID}
           type="submit"
           size="lg"
           disabled={updateMedicalMutation.isPending}

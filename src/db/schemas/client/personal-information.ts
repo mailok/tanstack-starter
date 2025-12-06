@@ -9,7 +9,8 @@ export const PersonalInformationTable = pgTable(
     id: uuid().primaryKey().defaultRandom().notNull(),
     clientId: uuid()
       .references(() => ClientTable.id, { onDelete: 'cascade' })
-      .notNull(),
+      .notNull()
+      .unique(),
 
     photo: text(),
     name: text().notNull(),

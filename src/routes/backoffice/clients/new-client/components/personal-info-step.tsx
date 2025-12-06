@@ -1,6 +1,6 @@
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { clientMutationKeys } from '../../mutations'
 import { PersonalInfoForm } from '../../components/personal-info-form'
-import { StepToFormId } from '../constants'
 import { clientQueries } from '../../queries'
 import { createClient, updateClientPersonalInfo } from '../../api'
 import { Button } from '@/components/ui/button'
@@ -12,34 +12,59 @@ type Props = {
   step: number
 }
 
+const FORM_ID = 'personal-info-form'
+
 export function PersonalInfoStep({ clientId, step }: Props) {
   const { nextStep } = useStepperNavigation()
+  const queryClient = useQueryClient()
 
   const { data, isLoading } = useQuery(
     clientQueries.onboardingProgress(clientId, step),
   )
 
   const createClientMutation = useMutation({
+    mutationKey: clientMutationKeys.onboarding.create(),
     mutationFn: createClient,
-    onSuccess: nextStep,
+    onSuccess: async () => {
+      queryClient.removeQueries({
+        queryKey: clientQueries.onboardingProgress(clientId, step).queryKey,
+      })
+      nextStep()
+    },
   })
 
   const updatePersonalMutation = useMutation({
+    mutationKey: clientMutationKeys.onboarding.updatePersonal(clientId),
     mutationFn: updateClientPersonalInfo,
-    onSuccess: nextStep,
+    onSuccess: async (_, variables) => {
+      queryClient.setQueryData(
+        clientQueries.onboardingProgress(clientId, step).queryKey,
+        (oldData) =>
+          oldData
+            ? {
+                ...oldData,
+                initialValues: (variables as any).data.data,
+              }
+            : oldData,
+      )
+      nextStep()
+    },
   })
 
   const initialValues = data?.initialValues || undefined
 
-  function saveAndNavigate(values: any) {
+  function saveAndNavigate(values: any, isDirty: boolean) {
+    if (!isDirty) {
+      nextStep()
+      return
+    }
+
     if (clientId) {
       updatePersonalMutation.mutate({ data: { clientId, data: values } })
     } else {
       createClientMutation.mutate({ data: values })
     }
   }
-
-  const currentFormId = StepToFormId[step as keyof typeof StepToFormId]
 
   if (isLoading) {
     return <PendingFormComponent />
@@ -48,14 +73,14 @@ export function PersonalInfoStep({ clientId, step }: Props) {
   return (
     <div className="flex flex-col justify-between h-[40vh]">
       <PersonalInfoForm
-        id={currentFormId}
+        id={FORM_ID}
         initialValues={initialValues}
         onSubmit={saveAndNavigate}
       />
 
       <div className="flex justify-end">
         <Button
-          form={currentFormId}
+          form={FORM_ID}
           type="submit"
           size="lg"
           disabled={

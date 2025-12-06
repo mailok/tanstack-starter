@@ -16,7 +16,6 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 
-
 const medicalInfoSchema = z.object({
   bloodType: z
     .enum(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'])
@@ -49,7 +48,10 @@ const stringToArray = (str: string): string[] => {
 interface MedicalInfoFormProps {
   id?: string
   initialValues?: Partial<MedicalInfoFormValues>
-  onSubmit?: (values: MedicalInfoFormValues) => void | Promise<void>
+  onSubmit?: (
+    values: MedicalInfoFormValues,
+    isDirty: boolean,
+  ) => void | Promise<void>
 }
 
 export function MedicalInfoForm({
@@ -75,9 +77,12 @@ export function MedicalInfoForm({
       onSubmit: medicalInfoSchema,
       onChange: medicalInfoSchema,
     },
-    onSubmit: async ({ value }) => {
+    onSubmit: async ({ value, formApi }) => {
       if (onSubmitProp) {
-        await onSubmitProp(value as MedicalInfoFormValues)
+        await onSubmitProp(
+          value as MedicalInfoFormValues,
+          formApi.state.isDirty,
+        )
       } else {
         console.log(value)
       }

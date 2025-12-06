@@ -1,4 +1,5 @@
 import { createFileRoute, Link, redirect } from '@tanstack/react-router'
+import { clientMutationKeys } from '../../mutations'
 import { defaultClientSearch } from '../../schemas'
 import { clientQueries } from '../../queries'
 import { Card, CardContent, CardFooter } from '@/components/ui/card'
@@ -16,7 +17,12 @@ import {
 import { PersonalInfoStep } from '../components/personal-info-step'
 import { MedicalInfoStep } from '../components/medical-info-step'
 import { BenefitsStep } from '../components/benefits-step'
-import { useSuspenseQuery } from '@tanstack/react-query'
+import {
+  useQuery,
+  useIsMutating,
+  keepPreviousData,
+} from '@tanstack/react-query'
+
 import { Skeleton } from '@/components/ui/skeleton'
 
 const onboardingSearchSchema = z.object({
@@ -54,13 +60,52 @@ function RouteComponent() {
   const { step } = Route.useSearch()
   const navigate = Route.useNavigate()
 
-  const { data } = useSuspenseQuery(
-    clientQueries.onboardingProgress(clientId, step),
-  )
+  const { data, isLoading, isPlaceholderData } = useQuery({
+    ...clientQueries.onboardingProgress(clientId, step),
+    placeholderData: keepPreviousData,
+  })
+
+  const isStep1Updating =
+    useIsMutating({
+      mutationKey: clientMutationKeys.onboarding.updatePersonal(clientId),
+    }) > 0
+
+  const isStep1Creating =
+    useIsMutating({
+      mutationKey: clientMutationKeys.onboarding.create(),
+    }) > 0
+
+  const isStep1Pending = isStep1Updating || isStep1Creating
+
+  const isStep2Pending =
+    useIsMutating({
+      mutationKey: clientMutationKeys.onboarding.updateMedical(clientId),
+    }) > 0
+
+  const isStep3Pending =
+    useIsMutating({
+      mutationKey: clientMutationKeys.onboarding.updateBenefits(clientId),
+    }) > 0
+
+  // Handle initial loading state matching the PendingComponent behavior
+  if (isLoading && !data) {
+    return <RoutePendingComponent />
+  }
+
+  // Ensure data exists for valid type narrowing below (since we check isLoading && !data above)
+  if (!data) return null
+
+  const currentStep = step || data.currentViewStep || 1
+
+  let pendingStep: number | boolean | undefined
+  if (isStep1Pending) pendingStep = 1
+  else if (isStep2Pending) pendingStep = 2
+  else if (isStep3Pending) pendingStep = 3
+  else if (isPlaceholderData) pendingStep = currentStep
 
   const { completedSteps, currentViewStep } = data
 
-  function onNavigate(step: number) {
+  function onNavigate(targetStep: number) {
     if (currentViewStep === 1 && !clientId) {
       // Cannot navigate freely if client not created yet, unless pure internal state logic (which we don't have)
       return
@@ -68,7 +113,7 @@ function RouteComponent() {
     navigate({
       to: '/backoffice/clients/new-client/$clientId',
       params: { clientId },
-      search: (prev) => ({ ...prev, step }),
+      search: (prev) => ({ ...prev, step: targetStep }),
     })
   }
 
@@ -80,10 +125,11 @@ function RouteComponent() {
           <div className="flex justify-center w-full md:px-20 min-h-[40vh]">
             <div className="w-full">
               <Stepper
-                active={currentViewStep || 1}
+                active={currentStep}
                 completed={completedSteps}
                 orientation="horizontal"
                 onNavigate={onNavigate}
+                pending={pendingStep}
                 className="flex flex-col justify-between"
               >
                 <StepperList>

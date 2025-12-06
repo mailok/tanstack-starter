@@ -5,7 +5,8 @@ export const MedicalInformationTable = pgTable('client_medical_informations', {
   id: uuid().primaryKey().defaultRandom().notNull(),
   clientId: uuid()
     .references(() => ClientTable.id, { onDelete: 'cascade' })
-    .notNull(),
+    .notNull()
+    .unique(),
 
   bloodType: text(),
   allergies: text().array(),

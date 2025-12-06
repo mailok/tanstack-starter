@@ -18,7 +18,8 @@ export const BenefitsTable = pgTable('client_benefits', {
   id: uuid().primaryKey().defaultRandom().notNull(),
   clientId: uuid()
     .references(() => ClientTable.id, { onDelete: 'cascade' })
-    .notNull(),
+    .notNull()
+    .unique(),
 
   insuranceProvider: text(),
   policyNumber: text(),

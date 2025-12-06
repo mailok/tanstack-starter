@@ -114,7 +114,7 @@ function hasData(data: Record<string, any> | null) {
 export const getClientOnboardingProgress = createServerFn({ method: 'GET' })
   .inputValidator(zodValidator(OnboardingProgressSchema))
   .handler(async ({ data: { clientId, step } }) => {
-    await sleep()
+    await sleep({delay: 3000})
     const [error, client] = await until(() => service.getClient(clientId))
 
     if (error) {
@@ -268,6 +268,7 @@ export const updateClientMedicalInformation = createServerFn({
 
     if (error) {
       // TODO: Log error
+      console.error(error)
       throw new Error(
         'Cannot update medical information. Please try again later.',
       )
