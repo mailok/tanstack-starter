@@ -77,6 +77,9 @@ function RouteComponent() {
 
   const currentStep = step || data.currentViewStep || 1
 
+  // Determines which step (if any) should display a loading/pending indicator.
+  // - `mutatingStep`: Shows pending state on the step where data is being saved (write operation).
+  // - `isPlaceholderData`: Shows pending state on the step where data is being loaded (read operation).
   const pendingStep =
     mutatingStep ?? (isPlaceholderData ? currentStep : undefined)
 
