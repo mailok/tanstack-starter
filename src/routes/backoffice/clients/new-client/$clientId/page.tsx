@@ -65,27 +65,7 @@ function RouteComponent() {
     placeholderData: keepPreviousData,
   })
 
-  const isStep1Updating =
-    useIsMutating({
-      mutationKey: clientMutationKeys.onboarding.updatePersonal(clientId),
-    }) > 0
-
-  const isStep1Creating =
-    useIsMutating({
-      mutationKey: clientMutationKeys.onboarding.create(),
-    }) > 0
-
-  const isStep1Pending = isStep1Updating || isStep1Creating
-
-  const isStep2Pending =
-    useIsMutating({
-      mutationKey: clientMutationKeys.onboarding.updateMedical(clientId),
-    }) > 0
-
-  const isStep3Pending =
-    useIsMutating({
-      mutationKey: clientMutationKeys.onboarding.updateBenefits(clientId),
-    }) > 0
+  const mutatingStep = useMutatingStep()
 
   // Handle initial loading state matching the PendingComponent behavior
   if (isLoading && !data) {
@@ -97,11 +77,8 @@ function RouteComponent() {
 
   const currentStep = step || data.currentViewStep || 1
 
-  let pendingStep: number | boolean | undefined
-  if (isStep1Pending) pendingStep = 1
-  else if (isStep2Pending) pendingStep = 2
-  else if (isStep3Pending) pendingStep = 3
-  else if (isPlaceholderData) pendingStep = currentStep
+  const pendingStep =
+    mutatingStep ?? (isPlaceholderData ? currentStep : undefined)
 
   const { completedSteps, currentViewStep } = data
 
@@ -181,6 +158,37 @@ function Crumb() {
       </BreadcrumbLink>
     </BreadcrumbItem>
   )
+}
+
+function useMutatingStep() {
+  const { clientId } = Route.useParams()
+
+  const isStep1Updating =
+    useIsMutating({
+      mutationKey: clientMutationKeys.onboarding.updatePersonal(clientId),
+    }) > 0
+
+  const isStep1Creating =
+    useIsMutating({
+      mutationKey: clientMutationKeys.onboarding.create(),
+    }) > 0
+
+  const isStep1Pending = isStep1Updating || isStep1Creating
+
+  const isStep2Pending =
+    useIsMutating({
+      mutationKey: clientMutationKeys.onboarding.updateMedical(clientId),
+    }) > 0
+
+  const isStep3Pending =
+    useIsMutating({
+      mutationKey: clientMutationKeys.onboarding.updateBenefits(clientId),
+    }) > 0
+
+  if (isStep1Pending) return 1
+  if (isStep2Pending) return 2
+  if (isStep3Pending) return 3
+  return undefined
 }
 
 function RoutePendingComponent() {
