@@ -125,15 +125,15 @@ function RouteComponent() {
                 </StepperList>
 
                 <StepperContent step={1}>
-                  <PersonalInfoStep clientId={clientId} step={1} />
+                  <PersonalInfoStep clientId={clientId} />
                 </StepperContent>
 
                 <StepperContent step={2}>
-                  <MedicalInfoStep clientId={clientId} step={2} />
+                  <MedicalInfoStep clientId={clientId} />
                 </StepperContent>
 
                 <StepperContent step={3}>
-                  <BenefitsStep clientId={clientId} step={3} />
+                  <BenefitsStep clientId={clientId} />
                 </StepperContent>
               </Stepper>
             </div>

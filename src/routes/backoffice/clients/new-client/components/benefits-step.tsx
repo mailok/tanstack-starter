@@ -9,13 +9,12 @@ import { PendingFormComponent } from './pending-form'
 
 type Props = {
   clientId: string
-  step: number
 }
 
 const FORM_ID = 'benefits-form'
 
-export function BenefitsStep({ clientId, step }: Props) {
-  const { prevStep } = useStepperNavigation()
+export function BenefitsStep({ clientId }: Props) {
+  const { step, prevStep } = useStepperNavigation()
   const queryClient = useQueryClient()
 
   const { data, isLoading } = useQuery(

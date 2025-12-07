@@ -56,6 +56,7 @@ export const useStepper = (): StepperOptions => {
 }
 
 type StepperNavigationOptions = {
+  step: number
   nextStep: () => void
   prevStep: () => void
   goToStep: (step: number) => void
@@ -212,7 +213,9 @@ function StepperContent({ step, children, className }: StepperContentProps) {
   const goToStep = (s: number) => onNavigate?.(s)
 
   return (
-    <StepperNavigationContext.Provider value={{ nextStep, prevStep, goToStep }}>
+    <StepperNavigationContext.Provider
+      value={{ step, nextStep, prevStep, goToStep }}
+    >
       <div className={cn('w-full', className)}>{children}</div>
     </StepperNavigationContext.Provider>
   )
