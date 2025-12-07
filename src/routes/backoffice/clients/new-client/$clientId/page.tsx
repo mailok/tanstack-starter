@@ -77,11 +77,21 @@ function RouteComponent() {
 
   const currentStep = step || data.currentViewStep || 1
 
-  // Determines which step (if any) should display a loading/pending indicator.
-  // - `mutatingStep`: Shows pending state on the step where data is being saved (write operation).
-  // - `isPlaceholderData`: Shows pending state on the step where data is being loaded (read operation).
-  const pendingStep =
-    mutatingStep ?? (isPlaceholderData ? currentStep : undefined)
+  // When the user is on the step that needs to be completed next,
+  // there's no data to load, so we skip the loading state.
+  const isNextStepToComplete = currentStep === data.nextOnboardingStep
+
+  // Pending state for write operations (saving form data)
+  const isSaving = mutatingStep !== undefined
+
+  // Pending state for read operations (loading previous step data)
+  const isLoadingPreviousStep = isPlaceholderData && !isNextStepToComplete
+
+  const pendingStep = isSaving
+    ? mutatingStep
+    : isLoadingPreviousStep
+      ? currentStep
+      : undefined
 
   const { completedSteps, currentViewStep } = data
 
@@ -125,15 +135,24 @@ function RouteComponent() {
                 </StepperList>
 
                 <StepperContent step={1}>
-                  <PersonalInfoStep clientId={clientId} />
+                  <PersonalInfoStep
+                    clientId={clientId}
+                    skipLoading={isNextStepToComplete}
+                  />
                 </StepperContent>
 
                 <StepperContent step={2}>
-                  <MedicalInfoStep clientId={clientId} />
+                  <MedicalInfoStep
+                    clientId={clientId}
+                    skipLoading={isNextStepToComplete}
+                  />
                 </StepperContent>
 
                 <StepperContent step={3}>
-                  <BenefitsStep clientId={clientId} />
+                  <BenefitsStep
+                    clientId={clientId}
+                    skipLoading={isNextStepToComplete}
+                  />
                 </StepperContent>
               </Stepper>
             </div>

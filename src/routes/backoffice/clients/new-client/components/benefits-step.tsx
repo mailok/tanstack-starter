@@ -9,17 +9,22 @@ import { PendingFormComponent } from './pending-form'
 
 type Props = {
   clientId: string
+  skipLoading?: boolean
 }
 
 const FORM_ID = 'benefits-form'
 
-export function BenefitsStep({ clientId }: Props) {
+export function BenefitsStep({ clientId, skipLoading }: Props) {
   const { step, prevStep } = useStepperNavigation()
   const queryClient = useQueryClient()
 
   const { data, isLoading } = useQuery(
     clientQueries.onboardingProgress(clientId, step),
   )
+
+  // Skip showing loading state if we're on the next step to complete
+  // (there's no data to load for a step that hasn't been filled yet)
+  const showLoading = isLoading && !skipLoading
 
   const completeOnboardingMutation = useMutation({
     mutationKey: clientMutationKeys.onboarding.updateBenefits(clientId),
@@ -55,7 +60,7 @@ export function BenefitsStep({ clientId }: Props) {
     completeOnboardingMutation.mutate({ data: { clientId, benefits: values } })
   }
 
-  if (isLoading) {
+  if (showLoading) {
     return <PendingFormComponent />
   }
 
