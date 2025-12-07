@@ -73,7 +73,7 @@ function NewClientButton() {
     <Button asChild>
       <Link
         to="/backoffice/clients/new-client"
-        search={(prev) => ({ ...defaultClientSearch, ...prev })}
+        search={{ ...defaultClientSearch }}
         preload={false}
       >
         <Plus />

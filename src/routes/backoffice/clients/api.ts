@@ -5,7 +5,6 @@ import { BaseClientSearchSchema } from './schemas'
 import * as service from './service'
 import { zodValidator } from '@/lib/zod-validator'
 import { until } from 'until-async'
-import { sleep } from '@/lib/sleep'
 
 
 export const getClientInsights = createServerFn({ method: 'GET' }).handler(() =>
@@ -114,7 +113,6 @@ function hasData(data: Record<string, any> | null) {
 export const getClientOnboardingProgress = createServerFn({ method: 'GET' })
   .inputValidator(zodValidator(OnboardingProgressSchema))
   .handler(async ({ data: { clientId, step } }) => {
-    await sleep({delay: 700})
     const [error, client] = await until(() => service.getClient(clientId))
 
     if (error) {

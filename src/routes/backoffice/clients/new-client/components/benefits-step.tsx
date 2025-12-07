@@ -1,4 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useNavigate } from '@tanstack/react-router'
+import { defaultClientSearch } from '../../schemas'
 import { clientMutationKeys } from '../../mutations'
 import { clientQueries } from '../../queries'
 import { completeClientOnboarding } from '../../api'
@@ -17,6 +19,7 @@ const FORM_ID = 'benefits-form'
 export function BenefitsStep({ clientId, skipLoading }: Props) {
   const { step, prevStep } = useStepperNavigation()
   const queryClient = useQueryClient()
+  const navigate = useNavigate()
 
   const { data, isLoading } = useQuery(
     clientQueries.onboardingProgress(clientId, step),
@@ -40,7 +43,11 @@ export function BenefitsStep({ clientId, skipLoading }: Props) {
               }
             : oldData,
       )
-      // navigate({ to: '/backoffice/clients/$clientId', params: { clientId } })
+      navigate({
+        to: '/backoffice/clients/$clientId',
+        params: { clientId },
+        search: defaultClientSearch,
+      })
     },
   })
 

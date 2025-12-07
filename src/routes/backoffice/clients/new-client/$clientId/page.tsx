@@ -164,17 +164,12 @@ function RouteComponent() {
 }
 
 function Crumb() {
+  const search = Route.useSearch()
+  const { step, ...rest } = search
   return (
     <BreadcrumbItem className="hidden md:block">
       <BreadcrumbLink asChild>
-        <Link
-          to="/backoffice/clients/new-client"
-          search={{
-            ...defaultClientSearch,
-            step: 1,
-          }}
-          preload={false}
-        >
+        <Link to="/backoffice/clients/new-client" search={rest} preload={false}>
           New Client
         </Link>
       </BreadcrumbLink>

@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { clientMutationKeys } from '../../mutations'
 import { PersonalInfoForm } from '../../components/personal-info-form'
 import { clientQueries } from '../../queries'
-import { createClient, updateClientPersonalInfo } from '../../api'
+import { updateClientPersonalInfo } from '../../api'
 import { Button } from '@/components/ui/button'
 import { useStepperNavigation } from '@/components/stepper'
 import { PendingFormComponent } from './pending-form'
@@ -25,17 +25,6 @@ export function PersonalInfoStep({ clientId, skipLoading }: Props) {
   // Skip showing loading state if we're on the next step to complete
   // (there's no data to load for a step that hasn't been filled yet)
   const showLoading = isLoading && !skipLoading
-
-  const createClientMutation = useMutation({
-    mutationKey: clientMutationKeys.onboarding.create(),
-    mutationFn: createClient,
-    onSuccess: async () => {
-      queryClient.removeQueries({
-        queryKey: clientQueries.onboardingProgress(clientId, step).queryKey,
-      })
-      nextStep()
-    },
-  })
 
   const updatePersonalMutation = useMutation({
     mutationKey: clientMutationKeys.onboarding.updatePersonal(clientId),
@@ -63,11 +52,7 @@ export function PersonalInfoStep({ clientId, skipLoading }: Props) {
       return
     }
 
-    if (clientId) {
-      updatePersonalMutation.mutate({ data: { clientId, data: values } })
-    } else {
-      createClientMutation.mutate({ data: values })
-    }
+    updatePersonalMutation.mutate({ data: { clientId, data: values } })
   }
 
   if (showLoading) {
@@ -87,9 +72,7 @@ export function PersonalInfoStep({ clientId, skipLoading }: Props) {
           form={FORM_ID}
           type="submit"
           size="lg"
-          disabled={
-            createClientMutation.isPending || updatePersonalMutation.isPending
-          }
+          disabled={updatePersonalMutation.isPending}
         >
           Next
         </Button>
