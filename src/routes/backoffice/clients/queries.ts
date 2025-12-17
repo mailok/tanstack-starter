@@ -15,8 +15,10 @@ export const clientKeys = {
     [...clientKeys.detail(id), 'medical-information'] as const,
   benefits: (id: string) => [...clientKeys.detail(id), 'benefits'] as const,
   header: (id: string) => [...clientKeys.detail(id), 'header'] as const,
-  onboardingProgress: (id: string, step?: number) => 
-    ['onboarding-progress', id, step] as const,
+  onboardingValues: (id: string, step: number) =>
+    ['onboarding-values', id, step] as const,
+  onboardingProgress: (id: string | undefined) =>
+    ['onboarding-progress', ...(id ? [id] : [])] as const,
 }
 
 export const clientQueries = {
@@ -62,9 +64,26 @@ export const clientQueries = {
       queryFn: () => api.getClientBenefits({ data: clientId }),
     }),
 
-  onboardingProgress: (clientId: string, step?: number) =>
+  onboardingValues: (clientId: string, step: number) =>
     queryOptions({
-      queryKey: clientKeys.onboardingProgress(clientId, step),
-      queryFn: () => api.getClientOnboardingProgress({ data: { clientId, step } })
+      queryKey: clientKeys.onboardingValues(clientId, step),
+      queryFn: () => api.getOnboardingValues({ data: { clientId, step } }),
+    }),
+
+  onboardingProgress: (clientId: string | undefined, step: number | undefined) =>
+    queryOptions({
+      queryKey: clientKeys.onboardingProgress(clientId),
+      queryFn: () => {
+        if (!clientId) {
+          return {
+            isCompleted: false,
+            nextOnboardingStep: 1,
+            activeStep: 1,
+            completedSteps: [],
+            redirectMessage: null,
+          }
+        }
+        return api.getOnboardingProgress({ data: { clientId, step } })
+      },
     }),
 }

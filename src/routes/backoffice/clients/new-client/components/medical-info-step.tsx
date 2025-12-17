@@ -4,59 +4,76 @@ import { clientQueries } from '../../queries'
 import { updateClientMedicalInformation } from '../../api'
 import { MedicalInfoForm } from '../../components/medical-info-form'
 import { Button } from '@/components/ui/button'
-import { useStepperNavigation } from '@/components/stepper'
 import { PendingFormComponent } from './pending-form'
+import { useCurrentStep } from '@/components/stepper'
+import { useOnboarding } from '../use-onboarding'
+import { useEffect } from 'react'
+import { until } from 'until-async'
 
 type Props = {
   clientId: string
-  skipLoading?: boolean
 }
 
 const FORM_ID = 'medical-info-form'
 
-export function MedicalInfoStep({ clientId, skipLoading }: Props) {
-  const { step, prevStep, nextStep } = useStepperNavigation()
+export function MedicalInfoStep({ clientId }: Props) {
   const queryClient = useQueryClient()
-
+  const { step } = useCurrentStep()
   const { data, isLoading } = useQuery(
-    clientQueries.onboardingProgress(clientId, step),
+    clientQueries.onboardingValues(clientId, step),
   )
 
-  // Skip showing loading state if we're on the next step to complete
-  // (there's no data to load for a step that hasn't been filled yet)
-  const showLoading = isLoading && !skipLoading
+  const [_, dispatch] = useOnboarding()
+  const NEXT_STEP = step + 1
+  const PREV_STEP = step - 1
 
   const updateMedicalMutation = useMutation({
     mutationKey: clientMutationKeys.onboarding.updateMedical(clientId),
     mutationFn: updateClientMedicalInformation,
-    onSuccess: async (_, variables) => {
-      queryClient.setQueryData(
-        clientQueries.onboardingProgress(clientId, step).queryKey,
-        (oldData) =>
-          oldData
-            ? {
-                ...oldData,
-                initialValues: (variables as any).data.data,
-              }
-            : oldData,
-      )
-      nextStep()
+    onSuccess: async () => {
+      dispatch({ type: 'NAVIGATE_TO_STEP', payload: NEXT_STEP })
     },
   })
 
-  const initialValues = data?.initialValues || undefined
+  const initialValues = data?.values || undefined
 
   function saveAndNavigate(values: any, isDirty: boolean) {
     if (!isDirty) {
-      nextStep()
+      dispatch({ type: 'NAVIGATE_TO_STEP', payload: NEXT_STEP })
       return
     }
-    if (clientId) {
-      updateMedicalMutation.mutate({ data: { clientId, data: values } })
-    }
+
+    updateMedicalMutation.mutate({ data: { clientId, data: values } })
   }
 
-  if (showLoading) {
+  async function navigateToPreviousStep() {
+    const [error] = await until(async () => {
+      dispatch({ type: 'SET_PENDING_STEP', payload: PREV_STEP })
+      await queryClient.ensureQueryData({
+        ...clientQueries.onboardingValues(clientId, PREV_STEP),
+        revalidateIfStale: true,
+      })
+      dispatch({ type: 'SET_PENDING_STEP', payload: undefined })
+    })
+
+    if (error) {
+      // TODO: Handler error appropriately
+      console.error(error)
+      return
+    }
+
+    dispatch({ type: 'NAVIGATE_TO_STEP', payload: PREV_STEP })
+  }
+
+  useEffect(() => {
+    if (updateMedicalMutation.isPending) {
+      dispatch({ type: 'SET_PENDING_STEP', payload: step })
+    } else {
+      dispatch({ type: 'SET_PENDING_STEP', payload: undefined })
+    }
+  }, [step, updateMedicalMutation.isPending])
+
+  if (isLoading) {
     return <PendingFormComponent />
   }
 
@@ -69,7 +86,12 @@ export function MedicalInfoStep({ clientId, skipLoading }: Props) {
       />
 
       <div className="flex justify-between items-center">
-        <Button type="button" variant="outline" size="lg" onClick={prevStep}>
+        <Button
+          type="button"
+          variant="outline"
+          size="lg"
+          onClick={navigateToPreviousStep}
+        >
           Back
         </Button>
         <Button

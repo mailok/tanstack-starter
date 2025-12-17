@@ -12,7 +12,7 @@ type StepperProps = {
   active: number
   completed?: boolean | number[]
   pending?: boolean | number
-  onNavigate?: (index: number) => void
+  onStepChange?: (step: number) => void
 } & React.HTMLAttributes<HTMLDivElement>
 
 type StepperListProps = {
@@ -26,7 +26,7 @@ type StepProps = {
   className?: string
   index?: number // Injected by StepperList
   isLast?: boolean // Injected by StepperList
-}
+} & React.HTMLAttributes<HTMLDivElement>
 
 type StepperContentProps = {
   step: number
@@ -42,7 +42,6 @@ export type StepperOptions = {
   completed: boolean | number[]
   pending: boolean | number
   stepperRef: React.RefObject<HTMLDivElement | null>
-  onNavigate?: (index: number) => void
 }
 
 const StepperContext = React.createContext<StepperOptions | null>(null)
@@ -51,26 +50,6 @@ export const useStepper = (): StepperOptions => {
   const context = React.useContext(StepperContext)
   if (!context) {
     throw new Error('useStepper must be used within a StepperProvider.')
-  }
-  return context
-}
-
-type StepperNavigationOptions = {
-  step: number
-  nextStep: () => void
-  prevStep: () => void
-  goToStep: (step: number) => void
-}
-
-const StepperNavigationContext =
-  React.createContext<StepperNavigationOptions | null>(null)
-
-export const useStepperNavigation = () => {
-  const context = React.useContext(StepperNavigationContext)
-  if (!context) {
-    throw new Error(
-      'useStepperNavigation must be used within a StepperContent.',
-    )
   }
   return context
 }
@@ -84,10 +63,14 @@ function Stepper({
   active,
   completed = false,
   pending = false,
-  onNavigate,
+  onStepChange,
   ...props
 }: StepperProps) {
   const stepperRef = React.useRef<HTMLDivElement>(null)
+
+  React.useEffect(() => {
+    onStepChange?.(active)
+  }, [active, onStepChange])
 
   return (
     <StepperContext.Provider
@@ -97,7 +80,6 @@ function Stepper({
         completed,
         pending,
         stepperRef,
-        onNavigate,
       }}
     >
       <div
@@ -166,13 +148,10 @@ function Step({ step, className, index, isLast, ...props }: StepProps) {
   return (
     <div
       className={cn(
-        'items-center gap-4',
+        'relative items-center gap-4',
         isVertical
           ? 'flex flex-row w-full flex-1'
-          : cn(
-              'flex flex-col relative shrink-0',
-              !isActive && 'hidden md:flex',
-            ), // Added shrink-0, removed complex conditionals, keep relative for absolute child
+          : cn(!isActive && 'hidden md:flex'), // Added shrink-0, removed complex conditionals, keep relative for absolute child
         className,
       )}
       {...props}
@@ -202,22 +181,27 @@ function Step({ step, className, index, isLast, ...props }: StepProps) {
   )
 }
 
+//------------------CONTEXTS (New)---------------------
+
+const StepperContentContext = React.createContext<{ step: number } | null>(null)
+
+export const useCurrentStep = () => {
+  const context = React.useContext(StepperContentContext)
+  if (!context) {
+    throw new Error('useCurrentStep must be used within a StepperContent.')
+  }
+  return context
+}
+
 function StepperContent({ step, children, className }: StepperContentProps) {
   const { isActive } = useStepStatus(step)
-  const { onNavigate } = useStepper()
 
   if (!isActive) return null
 
-  const nextStep = () => onNavigate?.(step + 1)
-  const prevStep = () => onNavigate?.(step - 1)
-  const goToStep = (s: number) => onNavigate?.(s)
-
   return (
-    <StepperNavigationContext.Provider
-      value={{ step, nextStep, prevStep, goToStep }}
-    >
+    <StepperContentContext.Provider value={{ step }}>
       <div className={cn('w-full', className)}>{children}</div>
-    </StepperNavigationContext.Provider>
+    </StepperContentContext.Provider>
   )
 }
 StepperContent.displayName = 'StepperContent'

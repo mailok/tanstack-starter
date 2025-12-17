@@ -5,6 +5,7 @@ import { BaseClientSearchSchema } from './schemas'
 import * as service from './service'
 import { zodValidator } from '@/lib/zod-validator'
 import { until } from 'until-async'
+import { sleep } from '@/lib/sleep'
 
 
 export const getClientInsights = createServerFn({ method: 'GET' }).handler(() =>
@@ -100,9 +101,11 @@ export const getClientHeaderInfo = createServerFn({ method: 'GET' })
     return client
   })
 
+const stepSchema = z.number().int().min(1).max(3)
+
 const OnboardingProgressSchema = z.object({
   clientId: ClientIdSchema,
-  step: z.number().optional(),
+  step: stepSchema.optional(),
 })
 
 function hasData(data: Record<string, any> | null) {
@@ -110,9 +113,10 @@ function hasData(data: Record<string, any> | null) {
   return Object.values(data).some((value) => value !== null && value !== '')
 }
 
-export const getClientOnboardingProgress = createServerFn({ method: 'GET' })
+export const getOnboardingProgress = createServerFn({ method: 'GET' })
   .inputValidator(zodValidator(OnboardingProgressSchema))
   .handler(async ({ data: { clientId, step } }) => {
+    await sleep({ delay: 2000 })
     const [error, client] = await until(() => service.getClient(clientId))
 
     if (error) {
@@ -140,9 +144,9 @@ export const getClientOnboardingProgress = createServerFn({ method: 'GET' })
 
     // null means all steps are completed
     const nextOnboardingStep =
-      [1, 2, 3].find((s) => !completedSteps.includes(s)) ?? null
+      [1, 2, 3].find((s) => !completedSteps.includes(s)) ?? 1
 
-    let currentViewStep = nextOnboardingStep
+    let activeStep = nextOnboardingStep
     let redirectMessage: string | null = null
 
     if (step) {
@@ -152,34 +156,64 @@ export const getClientOnboardingProgress = createServerFn({ method: 'GET' })
         const canViewStep =
           nextOnboardingStep === null || step <= nextOnboardingStep
         if (canViewStep) {
-          currentViewStep = step
+          activeStep = step
         } else {
           redirectMessage = `You cannot access step ${step} yet. Please complete the previous steps first.`
         }
       }
     }
 
-    let initialValues: Record<string, any> | null = null
-
-    if (currentViewStep === 1) {
-      initialValues = client.personalInfo
-    }
-
-    if (currentViewStep === 2) {
-      initialValues = client.medicalInfo
-    }
-
-    if (currentViewStep === 3) {
-      initialValues = client.benefits
-    }
-
     return {
       isCompleted,
       nextOnboardingStep,
-      currentViewStep,
+      activeStep,
       completedSteps,
-      initialValues,
       redirectMessage,
+    }
+  })
+
+export const getOnboardingValues = createServerFn({ method: 'GET' })
+  .inputValidator(
+    zodValidator(
+      z.object({
+        clientId: ClientIdSchema,
+        step: stepSchema,
+      }),
+    ),
+  )
+  .handler(async ({ data: { clientId, step } }) => {
+    await sleep({ delay: 2000 })
+    const [error, client] = await until(() => service.getClient(clientId))
+
+    if (error) {
+      // TODO: Log error
+      throw new Error('Cannot get onboarding values. Please try again later.')
+    }
+
+    if (!client) {
+      setResponseStatus(400)
+      throw new Error(DEFAULT_NOT_FOUND_ERROR)
+    }
+
+    let values: Record<string, any> | null = null
+
+    switch (step) {
+      case 1:
+        values = client.personalInfo
+        break
+      case 2:
+        values = client.medicalInfo
+        break
+      case 3:
+        values = client.benefits
+        break
+      default:
+        setResponseStatus(400)
+        throw new Error(`Invalid onboarding step: ${step}`)
+    }
+
+    return {
+      values,
     }
   })
 

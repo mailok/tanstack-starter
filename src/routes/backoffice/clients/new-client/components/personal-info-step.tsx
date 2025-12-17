@@ -1,61 +1,68 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { clientMutationKeys } from '../../mutations'
 import { PersonalInfoForm } from '../../components/personal-info-form'
 import { clientQueries } from '../../queries'
-import { updateClientPersonalInfo } from '../../api'
+import { createClient, updateClientPersonalInfo } from '../../api'
 import { Button } from '@/components/ui/button'
-import { useStepperNavigation } from '@/components/stepper'
 import { PendingFormComponent } from './pending-form'
+import { useCurrentStep } from '@/components/stepper'
+import { useOnboarding } from '../use-onboarding'
+import { useEffect } from 'react'
 
 type Props = {
-  clientId: string
-  skipLoading?: boolean
+  clientId?: string
 }
 
 const FORM_ID = 'personal-info-form'
 
-export function PersonalInfoStep({ clientId, skipLoading }: Props) {
-  const { step, nextStep } = useStepperNavigation()
-  const queryClient = useQueryClient()
+export function PersonalInfoStep({ clientId }: Props) {
+  const { step } = useCurrentStep()
+  const { data, isLoading } = useQuery({
+    ...clientQueries.onboardingValues(clientId!, step),
+    enabled: Boolean(clientId),
+  })
+  const [_, dispatch] = useOnboarding()
+  const NEXT_STEP = step + 1
 
-  const { data, isLoading } = useQuery(
-    clientQueries.onboardingProgress(clientId, step),
-  )
-
-  // Skip showing loading state if we're on the next step to complete
-  // (there's no data to load for a step that hasn't been filled yet)
-  const showLoading = isLoading && !skipLoading
+  const createClientMutation = useMutation({
+    mutationKey: clientMutationKeys.onboarding.create(),
+    mutationFn: createClient,
+  })
 
   const updatePersonalMutation = useMutation({
-    mutationKey: clientMutationKeys.onboarding.updatePersonal(clientId),
+    mutationKey: clientMutationKeys.onboarding.updatePersonal(clientId!),
     mutationFn: updateClientPersonalInfo,
-    onSuccess: async (_, variables) => {
-      queryClient.setQueryData(
-        clientQueries.onboardingProgress(clientId, step).queryKey,
-        (oldData) =>
-          oldData
-            ? {
-                ...oldData,
-                initialValues: (variables as any).data.data,
-              }
-            : oldData,
-      )
-      nextStep()
+    onSuccess: () => {
+      dispatch({ type: 'NAVIGATE_TO_STEP', payload: NEXT_STEP })
     },
   })
 
-  const initialValues = data?.initialValues || undefined
+  const initialValues = data?.values || undefined
+  const isMutationPending =
+    updatePersonalMutation.isPending || createClientMutation.isPending
 
   function saveAndNavigate(values: any, isDirty: boolean) {
     if (!isDirty) {
-      nextStep()
+      dispatch({ type: 'NAVIGATE_TO_STEP', payload: NEXT_STEP })
       return
     }
 
-    updatePersonalMutation.mutate({ data: { clientId, data: values } })
+    if (!clientId) {
+      createClientMutation.mutate({ data: values })
+    } else {
+      updatePersonalMutation.mutate({ data: { clientId, data: values } })
+    }
   }
 
-  if (showLoading) {
+  useEffect(() => {
+    if (isMutationPending) {
+      dispatch({ type: 'SET_PENDING_STEP', payload: step })
+    } else {
+      dispatch({ type: 'SET_PENDING_STEP', payload: undefined })
+    }
+  }, [step, isMutationPending])
+
+  if (isLoading) {
     return <PendingFormComponent />
   }
 
@@ -72,7 +79,7 @@ export function PersonalInfoStep({ clientId, skipLoading }: Props) {
           form={FORM_ID}
           type="submit"
           size="lg"
-          disabled={updatePersonalMutation.isPending}
+          disabled={isMutationPending}
         >
           Next
         </Button>

@@ -6,43 +6,32 @@ import { clientQueries } from '../../queries'
 import { completeClientOnboarding } from '../../api'
 import { BenefitsForm } from '../../components/benefits-form'
 import { Button } from '@/components/ui/button'
-import { useStepperNavigation } from '@/components/stepper'
+import { useCurrentStep } from '@/components/stepper'
 import { PendingFormComponent } from './pending-form'
+import { useOnboarding } from '../use-onboarding'
+import { until } from 'until-async'
 
 type Props = {
   clientId: string
-  skipLoading?: boolean
 }
 
 const FORM_ID = 'benefits-form'
 
-export function BenefitsStep({ clientId, skipLoading }: Props) {
-  const { step, prevStep } = useStepperNavigation()
+export function BenefitsStep({ clientId }: Props) {
   const queryClient = useQueryClient()
+  const { step } = useCurrentStep()
+  const { data, isLoading } = useQuery(
+    clientQueries.onboardingValues(clientId, step),
+  )
   const navigate = useNavigate()
 
-  const { data, isLoading } = useQuery(
-    clientQueries.onboardingProgress(clientId, step),
-  )
-
-  // Skip showing loading state if we're on the next step to complete
-  // (there's no data to load for a step that hasn't been filled yet)
-  const showLoading = isLoading && !skipLoading
+  const [_, dispatch] = useOnboarding()
+  const PREV_STEP = step - 1
 
   const completeOnboardingMutation = useMutation({
     mutationKey: clientMutationKeys.onboarding.updateBenefits(clientId),
     mutationFn: completeClientOnboarding,
-    onSuccess: async (_, variables) => {
-      queryClient.setQueryData(
-        clientQueries.onboardingProgress(clientId, step).queryKey,
-        (oldData) =>
-          oldData
-            ? {
-                ...oldData,
-                initialValues: (variables as any).data.benefits,
-              }
-            : oldData,
-      )
+    onSuccess: async () => {
       navigate({
         to: '/backoffice/clients/$clientId',
         params: { clientId },
@@ -51,23 +40,35 @@ export function BenefitsStep({ clientId, skipLoading }: Props) {
     },
   })
 
-  const initialValues = data?.initialValues || undefined
+  const initialValues = data?.values || undefined
 
   function saveAndNavigate(values: any, isDirty: boolean) {
-    if (!clientId) return
     if (!isDirty) {
-      // Proceed or finish? Since it's last step, maybe navigate to list?
-      // onSuccess of mutation has no navigate.
-      // But button says "Next" (or "Finish"?).
-      // Assuming behavior should mimic onSuccess.
-      // But onSuccess currently does NOTHING (commented out navigate).
-      // If user clicks finish and nothing changed, we probably want to assume success.
       return
     }
     completeOnboardingMutation.mutate({ data: { clientId, benefits: values } })
   }
 
-  if (showLoading) {
+  async function navigateToPreviousStep() {
+    const [error] = await until(async () => {
+      dispatch({ type: 'SET_PENDING_STEP', payload: PREV_STEP })
+      await queryClient.ensureQueryData({
+        ...clientQueries.onboardingValues(clientId, PREV_STEP),
+        revalidateIfStale: true,
+      })
+      dispatch({ type: 'SET_PENDING_STEP', payload: undefined })
+    })
+
+    if (error) {
+      // TODO: Handler error appropriately
+      console.error(error)
+      return
+    }
+
+    dispatch({ type: 'NAVIGATE_TO_STEP', payload: PREV_STEP })
+  }
+
+  if (isLoading) {
     return <PendingFormComponent />
   }
 
@@ -79,7 +80,12 @@ export function BenefitsStep({ clientId, skipLoading }: Props) {
         onSubmit={saveAndNavigate}
       />
       <div className="flex justify-between items-center">
-        <Button type="button" variant="outline" size="lg" onClick={prevStep}>
+        <Button
+          type="button"
+          variant="outline"
+          size="lg"
+          onClick={navigateToPreviousStep}
+        >
           Back
         </Button>
         <Button

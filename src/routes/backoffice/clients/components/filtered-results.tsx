@@ -33,7 +33,7 @@ import {
   EmptyTitle,
 } from '@/components/ui/empty'
 import { differenceInYears } from 'date-fns'
-
+import { defaultClientSearch } from '../schemas'
 type Client = GetClientsPageResponse['clients'][number]
 
 export function FilteredResults() {
@@ -68,7 +68,11 @@ function FilteredResultsContent() {
 
     if (client.status === 'pending') {
       navigate({
-        to: `/backoffice/clients/new-client/${client.id}`,
+        to: `/backoffice/clients/new-client`,
+        search: {
+          ...defaultClientSearch,
+          client: client.id,
+        },
       })
       return
     }
