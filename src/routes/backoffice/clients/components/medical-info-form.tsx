@@ -52,12 +52,14 @@ interface MedicalInfoFormProps {
     values: MedicalInfoFormValues,
     isDirty: boolean,
   ) => void | Promise<void>
+  disabled?: boolean
 }
 
 export function MedicalInfoForm({
   id,
   initialValues,
   onSubmit: onSubmitProp,
+  disabled,
 }: MedicalInfoFormProps) {
   const defaultValues = {
     emergencyContactName: '',
@@ -99,134 +101,18 @@ export function MedicalInfoForm({
       }}
       className="flex flex-col gap-4 md:gap-8 w-full"
     >
-      <div className="flex-1 space-y-4 md:space-y-6">
-        {/* Medical Details Section */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-          <form.Field
-            name="lastCheckup"
-            children={(field) => (
-              <Field>
-                <FieldLabel>Last Checkup</FieldLabel>
-                <FieldContent>
-                  <Input
-                    type="date"
-                    name={field.name}
-                    value={field.state.value}
-                    onBlur={field.handleBlur}
-                    onChange={(e) => field.handleChange(e.target.value)}
-                  />
-                </FieldContent>
-                <FieldError errors={field.state.meta.errors} />
-              </Field>
-            )}
-          />
-
-          <form.Field
-            name="bloodType"
-            children={(field) => (
-              <Field>
-                <FieldLabel>Blood Type</FieldLabel>
-                <FieldContent>
-                  <Select
-                    value={field.state.value}
-                    onValueChange={(val) => field.handleChange(val as any)}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select blood type" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'].map(
-                        (type) => (
-                          <SelectItem key={type} value={type}>
-                            {type}
-                          </SelectItem>
-                        ),
-                      )}
-                    </SelectContent>
-                  </Select>
-                </FieldContent>
-                <FieldError errors={field.state.meta.errors} />
-              </Field>
-            )}
-          />
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-          <form.Field
-            name="allergies"
-            children={(field) => (
-              <Field>
-                <FieldLabel>Allergies</FieldLabel>
-                <FieldContent>
-                  <Input
-                    placeholder="Peanuts, Penicillin, etc. (comma separated)"
-                    name={field.name}
-                    value={arrayToString(field.state.value)}
-                    onBlur={field.handleBlur}
-                    onChange={(e) =>
-                      field.handleChange(stringToArray(e.target.value))
-                    }
-                  />
-                </FieldContent>
-                <FieldError errors={field.state.meta.errors} />
-              </Field>
-            )}
-          />
-
-          <form.Field
-            name="chronicConditions"
-            children={(field) => (
-              <Field>
-                <FieldLabel>Chronic Conditions</FieldLabel>
-                <FieldContent>
-                  <Input
-                    placeholder="Diabetes, Hypertension, etc. (comma separated)"
-                    name={field.name}
-                    value={arrayToString(field.state.value)}
-                    onBlur={field.handleBlur}
-                    onChange={(e) =>
-                      field.handleChange(stringToArray(e.target.value))
-                    }
-                  />
-                </FieldContent>
-                <FieldError errors={field.state.meta.errors} />
-              </Field>
-            )}
-          />
-
-          <form.Field
-            name="medications"
-            children={(field) => (
-              <Field>
-                <FieldLabel>Medications</FieldLabel>
-                <FieldContent>
-                  <Input
-                    placeholder="Ibuprofen, Aspirin, etc. (comma separated)"
-                    name={field.name}
-                    value={arrayToString(field.state.value)}
-                    onBlur={field.handleBlur}
-                    onChange={(e) =>
-                      field.handleChange(stringToArray(e.target.value))
-                    }
-                  />
-                </FieldContent>
-                <FieldError errors={field.state.meta.errors} />
-              </Field>
-            )}
-          />
-        </div>
-
-        {/* Emergency Contact Section */}
-        <div className="pt-4 md:pt-6">
-          <h3 className="text-lg font-medium mb-4">Emergency Contact</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+      <fieldset disabled={disabled} className="contents">
+        <div className="flex-1 space-y-4 md:space-y-6">
+          {/* Medical Details Section */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
             <form.Field
-              name="emergencyContactName"
+              name="lastCheckup"
               children={(field) => (
                 <Field>
-                  <FieldLabel>Name</FieldLabel>
+                  <FieldLabel>Last Checkup</FieldLabel>
                   <FieldContent>
                     <Input
+                      type="date"
                       name={field.name}
                       value={field.state.value}
                       onBlur={field.handleBlur}
@@ -239,16 +125,50 @@ export function MedicalInfoForm({
             />
 
             <form.Field
-              name="emergencyContactRelationship"
+              name="bloodType"
               children={(field) => (
                 <Field>
-                  <FieldLabel>Relationship</FieldLabel>
+                  <FieldLabel>Blood Type</FieldLabel>
+                  <FieldContent>
+                    <Select
+                      value={field.state.value}
+                      onValueChange={(val) => field.handleChange(val as any)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select blood type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'].map(
+                          (type) => (
+                            <SelectItem key={type} value={type}>
+                              {type}
+                            </SelectItem>
+                          ),
+                        )}
+                      </SelectContent>
+                    </Select>
+                  </FieldContent>
+                  <FieldError errors={field.state.meta.errors} />
+                </Field>
+              )}
+            />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+            <form.Field
+              name="allergies"
+              children={(field) => (
+                <Field>
+                  <FieldLabel>Allergies</FieldLabel>
                   <FieldContent>
                     <Input
+                      placeholder="Peanuts, Penicillin, etc. (comma separated)"
                       name={field.name}
-                      value={field.state.value}
+                      value={arrayToString(field.state.value)}
                       onBlur={field.handleBlur}
-                      onChange={(e) => field.handleChange(e.target.value)}
+                      onChange={(e) =>
+                        field.handleChange(stringToArray(e.target.value))
+                      }
                     />
                   </FieldContent>
                   <FieldError errors={field.state.meta.errors} />
@@ -257,17 +177,40 @@ export function MedicalInfoForm({
             />
 
             <form.Field
-              name="emergencyContactPhone"
+              name="chronicConditions"
               children={(field) => (
                 <Field>
-                  <FieldLabel>Phone</FieldLabel>
+                  <FieldLabel>Chronic Conditions</FieldLabel>
                   <FieldContent>
                     <Input
-                      type="tel"
+                      placeholder="Diabetes, Hypertension, etc. (comma separated)"
                       name={field.name}
-                      value={field.state.value}
+                      value={arrayToString(field.state.value)}
                       onBlur={field.handleBlur}
-                      onChange={(e) => field.handleChange(e.target.value)}
+                      onChange={(e) =>
+                        field.handleChange(stringToArray(e.target.value))
+                      }
+                    />
+                  </FieldContent>
+                  <FieldError errors={field.state.meta.errors} />
+                </Field>
+              )}
+            />
+
+            <form.Field
+              name="medications"
+              children={(field) => (
+                <Field>
+                  <FieldLabel>Medications</FieldLabel>
+                  <FieldContent>
+                    <Input
+                      placeholder="Ibuprofen, Aspirin, etc. (comma separated)"
+                      name={field.name}
+                      value={arrayToString(field.state.value)}
+                      onBlur={field.handleBlur}
+                      onChange={(e) =>
+                        field.handleChange(stringToArray(e.target.value))
+                      }
                     />
                   </FieldContent>
                   <FieldError errors={field.state.meta.errors} />
@@ -275,12 +218,73 @@ export function MedicalInfoForm({
               )}
             />
           </div>
+
+          {/* Emergency Contact Section */}
+          <div className="pt-4 md:pt-6">
+            <h3 className="text-lg font-medium mb-4">Emergency Contact</h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+              <form.Field
+                name="emergencyContactName"
+                children={(field) => (
+                  <Field>
+                    <FieldLabel>Name</FieldLabel>
+                    <FieldContent>
+                      <Input
+                        name={field.name}
+                        value={field.state.value}
+                        onBlur={field.handleBlur}
+                        onChange={(e) => field.handleChange(e.target.value)}
+                      />
+                    </FieldContent>
+                    <FieldError errors={field.state.meta.errors} />
+                  </Field>
+                )}
+              />
+
+              <form.Field
+                name="emergencyContactRelationship"
+                children={(field) => (
+                  <Field>
+                    <FieldLabel>Relationship</FieldLabel>
+                    <FieldContent>
+                      <Input
+                        name={field.name}
+                        value={field.state.value}
+                        onBlur={field.handleBlur}
+                        onChange={(e) => field.handleChange(e.target.value)}
+                      />
+                    </FieldContent>
+                    <FieldError errors={field.state.meta.errors} />
+                  </Field>
+                )}
+              />
+
+              <form.Field
+                name="emergencyContactPhone"
+                children={(field) => (
+                  <Field>
+                    <FieldLabel>Phone</FieldLabel>
+                    <FieldContent>
+                      <Input
+                        type="tel"
+                        name={field.name}
+                        value={field.state.value}
+                        onBlur={field.handleBlur}
+                        onChange={(e) => field.handleChange(e.target.value)}
+                      />
+                    </FieldContent>
+                    <FieldError errors={field.state.meta.errors} />
+                  </Field>
+                )}
+              />
+            </div>
+          </div>
         </div>
-      </div>
+      </fieldset>
 
       {!id && (
         <div className="flex justify-end pt-4">
-          <Button type="submit" size="lg">
+          <Button type="submit" size="lg" disabled={disabled}>
             Save Changes
           </Button>
         </div>
