@@ -19,11 +19,13 @@ const FORM_ID = 'medical-info-form'
 export function MedicalInfoStep({ clientId }: Props) {
   const queryClient = useQueryClient()
   const { step } = useCurrentStep()
-  const { data, isLoading } = useQuery(
-    clientQueries.onboardingValues(clientId, step),
-  )
+  const [{ nextStepToComplete }, dispatch] = useOnboarding()
 
-  const [_, dispatch] = useOnboarding()
+  const { data, isLoading } = useQuery({
+    ...clientQueries.onboardingValues(clientId, step),
+    enabled: Boolean(clientId) && step !== nextStepToComplete,
+  })
+
   const NEXT_STEP = step + 1
   const PREV_STEP = step - 1
 
@@ -42,7 +44,6 @@ export function MedicalInfoStep({ clientId }: Props) {
       dispatch({ type: 'NAVIGATE_TO_STEP', payload: NEXT_STEP })
       return
     }
-
     updateMedicalMutation.mutate({ data: { clientId, data: values } })
   }
 

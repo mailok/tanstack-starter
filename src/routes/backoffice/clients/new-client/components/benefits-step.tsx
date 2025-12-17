@@ -20,12 +20,14 @@ const FORM_ID = 'benefits-form'
 export function BenefitsStep({ clientId }: Props) {
   const queryClient = useQueryClient()
   const { step } = useCurrentStep()
-  const { data, isLoading } = useQuery(
-    clientQueries.onboardingValues(clientId, step),
-  )
+  const [{ nextStepToComplete }, dispatch] = useOnboarding()
+
+  const { data, isLoading } = useQuery({
+    ...clientQueries.onboardingValues(clientId, step),
+    enabled: Boolean(clientId) && step !== nextStepToComplete,
+  })
   const navigate = useNavigate()
 
-  const [_, dispatch] = useOnboarding()
   const PREV_STEP = step - 1
 
   const completeOnboardingMutation = useMutation({

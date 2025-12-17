@@ -17,11 +17,13 @@ const FORM_ID = 'personal-info-form'
 
 export function PersonalInfoStep({ clientId }: Props) {
   const { step } = useCurrentStep()
+  const [{ nextStepToComplete }, dispatch] = useOnboarding()
+
   const { data, isLoading } = useQuery({
     ...clientQueries.onboardingValues(clientId!, step),
-    enabled: Boolean(clientId),
+    enabled: Boolean(clientId) && step !== nextStepToComplete,
   })
-  const [_, dispatch] = useOnboarding()
+
   const NEXT_STEP = step + 1
 
   const createClientMutation = useMutation({
