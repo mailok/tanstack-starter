@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { clientMutationKeys } from '../../mutations'
 import { PersonalInfoForm } from '../../components/personal-info-form'
 import { clientQueries } from '../../queries'
@@ -17,6 +17,7 @@ const FORM_ID = 'personal-info-form'
 
 export function PersonalInfoStep({ clientId }: Props) {
   const { step } = useCurrentStep()
+  const queryClient = useQueryClient()
   const [{ nextStepToComplete }, dispatch] = useOnboarding()
 
   const { data, isLoading } = useQuery({
@@ -29,12 +30,25 @@ export function PersonalInfoStep({ clientId }: Props) {
   const createClientMutation = useMutation({
     mutationKey: clientMutationKeys.onboarding.create(),
     mutationFn: createClient,
+    onSuccess: (data, variables: any) => {
+      if (data?.id) {
+        queryClient.setQueryData(
+          clientQueries.onboardingValues(data.id, step).queryKey,
+          { values: variables.data },
+        )
+      }
+      dispatch({ type: 'NAVIGATE_TO_STEP', payload: NEXT_STEP })
+    },
   })
 
   const updatePersonalMutation = useMutation({
     mutationKey: clientMutationKeys.onboarding.updatePersonal(clientId!),
     mutationFn: updateClientPersonalInfo,
-    onSuccess: () => {
+    onSuccess: (_, variables: any) => {
+      queryClient.setQueryData(
+        clientQueries.onboardingValues(clientId!, step).queryKey,
+        { values: variables.data.data },
+      )
       dispatch({ type: 'NAVIGATE_TO_STEP', payload: NEXT_STEP })
     },
   })

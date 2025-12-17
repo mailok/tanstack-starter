@@ -32,7 +32,11 @@ export function MedicalInfoStep({ clientId }: Props) {
   const updateMedicalMutation = useMutation({
     mutationKey: clientMutationKeys.onboarding.updateMedical(clientId),
     mutationFn: updateClientMedicalInformation,
-    onSuccess: async () => {
+    onSuccess: async (_, variables: any) => {
+      queryClient.setQueryData(
+        clientQueries.onboardingValues(clientId, step).queryKey,
+        { values: variables.data.data },
+      )
       dispatch({ type: 'NAVIGATE_TO_STEP', payload: NEXT_STEP })
     },
   })
