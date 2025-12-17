@@ -7,7 +7,6 @@ import { Button } from '@/components/ui/button'
 import { PendingFormComponent } from './pending-form'
 import { useCurrentStep } from '@/components/stepper'
 import { useOnboarding } from '../use-onboarding'
-import { useEffect } from 'react'
 import { until } from 'until-async'
 
 type Props = {
@@ -32,11 +31,18 @@ export function MedicalInfoStep({ clientId }: Props) {
   const updateMedicalMutation = useMutation({
     mutationKey: clientMutationKeys.onboarding.updateMedical(clientId),
     mutationFn: updateClientMedicalInformation,
+    onMutate: () => {
+      dispatch({ type: 'SET_PENDING_STEP', payload: step })
+    },
+    onSettled: () => {
+      dispatch({ type: 'SET_PENDING_STEP', payload: undefined })
+    },
     onSuccess: async (_, variables: any) => {
       queryClient.setQueryData(
         clientQueries.onboardingValues(clientId, step).queryKey,
         { values: variables.data.data },
       )
+      dispatch({ type: 'ADD_COMPLETED_STEP', payload: step })
       dispatch({ type: 'NAVIGATE_TO_STEP', payload: NEXT_STEP })
     },
   })
@@ -69,14 +75,6 @@ export function MedicalInfoStep({ clientId }: Props) {
 
     dispatch({ type: 'NAVIGATE_TO_STEP', payload: PREV_STEP })
   }
-
-  useEffect(() => {
-    if (updateMedicalMutation.isPending) {
-      dispatch({ type: 'SET_PENDING_STEP', payload: step })
-    } else {
-      dispatch({ type: 'SET_PENDING_STEP', payload: undefined })
-    }
-  }, [step, updateMedicalMutation.isPending])
 
   if (isLoading) {
     return <PendingFormComponent />

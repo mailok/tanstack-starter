@@ -33,6 +33,12 @@ export function BenefitsStep({ clientId }: Props) {
   const completeOnboardingMutation = useMutation({
     mutationKey: clientMutationKeys.onboarding.updateBenefits(clientId),
     mutationFn: completeClientOnboarding,
+    onMutate: () => {
+      dispatch({ type: 'SET_PENDING_STEP', payload: step })
+    },
+    onSettled: () => {
+      dispatch({ type: 'SET_PENDING_STEP', payload: undefined })
+    },
     onSuccess: async () => {
       navigate({
         to: '/backoffice/clients/$clientId',

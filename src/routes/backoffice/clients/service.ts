@@ -145,6 +145,7 @@ export async function getClient(clientId: string) {
         email: PersonalInformationTable.email,
       },
       medicalInfo: {
+        id: MedicalInformationTable.id,
         bloodType: MedicalInformationTable.bloodType,
         allergies: MedicalInformationTable.allergies,
         chronicConditions: MedicalInformationTable.chronicConditions,
@@ -156,6 +157,7 @@ export async function getClient(clientId: string) {
           MedicalInformationTable.emergencyContactRelationship,
       },
       benefits: {
+        id: BenefitsTable.id,
         insuranceProvider: BenefitsTable.insuranceProvider,
         policyNumber: BenefitsTable.policyNumber,
         coverageType: BenefitsTable.coverageType,

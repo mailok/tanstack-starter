@@ -36,7 +36,7 @@ function RouteComponent() {
       to: '/backoffice/clients/new-client',
       search: {
         ...defaultClientSearch,
-        client,
+        client: state.clientId || client,
         step,
       },
     })
@@ -44,6 +44,7 @@ function RouteComponent() {
 
   const initialState: OnboardingState = {
     step: progress.activeStep,
+    clientId: client,
     nextStepToComplete: progress.nextOnboardingStep,
     completedSteps: progress.completedSteps,
     pendingStep: undefined,

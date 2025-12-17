@@ -7,7 +7,6 @@ import { Button } from '@/components/ui/button'
 import { PendingFormComponent } from './pending-form'
 import { useCurrentStep } from '@/components/stepper'
 import { useOnboarding } from '../use-onboarding'
-import { useEffect } from 'react'
 
 type Props = {
   clientId?: string
@@ -30,20 +29,45 @@ export function PersonalInfoStep({ clientId }: Props) {
   const createClientMutation = useMutation({
     mutationKey: clientMutationKeys.onboarding.create(),
     mutationFn: createClient,
+    onMutate: () => {
+      dispatch({ type: 'SET_PENDING_STEP', payload: step })
+    },
+    onSettled: () => {
+      dispatch({ type: 'SET_PENDING_STEP', payload: undefined })
+    },
     onSuccess: (data, variables: any) => {
       if (data?.id) {
         queryClient.setQueryData(
           clientQueries.onboardingValues(data.id, step).queryKey,
           { values: variables.data },
         )
+        queryClient.setQueryData(
+          clientQueries.onboardingProgress(data.id, step).queryKey,
+          {
+            isCompleted: false,
+            nextOnboardingStep: NEXT_STEP,
+            activeStep: NEXT_STEP,
+            completedSteps: [step],
+            redirectMessage: null,
+          },
+        )
       }
-      dispatch({ type: 'NAVIGATE_TO_STEP', payload: NEXT_STEP })
+      dispatch({
+        type: 'START_ONBOARDING',
+        payload: { clientId: data?.id },
+      })
     },
   })
 
   const updatePersonalMutation = useMutation({
     mutationKey: clientMutationKeys.onboarding.updatePersonal(clientId!),
     mutationFn: updateClientPersonalInfo,
+    onMutate: () => {
+      dispatch({ type: 'SET_PENDING_STEP', payload: step })
+    },
+    onSettled: () => {
+      dispatch({ type: 'SET_PENDING_STEP', payload: undefined })
+    },
     onSuccess: (_, variables: any) => {
       queryClient.setQueryData(
         clientQueries.onboardingValues(clientId!, step).queryKey,
@@ -69,14 +93,6 @@ export function PersonalInfoStep({ clientId }: Props) {
       updatePersonalMutation.mutate({ data: { clientId, data: values } })
     }
   }
-
-  useEffect(() => {
-    if (isMutationPending) {
-      dispatch({ type: 'SET_PENDING_STEP', payload: step })
-    } else {
-      dispatch({ type: 'SET_PENDING_STEP', payload: undefined })
-    }
-  }, [step, isMutationPending])
 
   if (isLoading) {
     return <PendingFormComponent />
