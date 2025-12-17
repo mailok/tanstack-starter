@@ -20,7 +20,7 @@ const FORM_ID = 'benefits-form'
 export function BenefitsStep({ clientId }: Props) {
   const queryClient = useQueryClient()
   const { step } = useCurrentStep()
-  const [{ nextStepToComplete }, dispatch] = useOnboarding()
+  const [{ nextStepToComplete, pendingStep }, dispatch] = useOnboarding()
 
   const { data, isLoading } = useQuery({
     ...clientQueries.onboardingValues(clientId, step),
@@ -80,6 +80,7 @@ export function BenefitsStep({ clientId }: Props) {
         id={FORM_ID}
         initialValues={initialValues}
         onSubmit={saveAndNavigate}
+        disabled={pendingStep === PREV_STEP}
       />
       <div className="flex justify-between items-center">
         <Button
@@ -87,6 +88,7 @@ export function BenefitsStep({ clientId }: Props) {
           variant="outline"
           size="lg"
           onClick={navigateToPreviousStep}
+          disabled={pendingStep === PREV_STEP}
         >
           Back
         </Button>
@@ -94,7 +96,9 @@ export function BenefitsStep({ clientId }: Props) {
           form={FORM_ID}
           type="submit"
           size="lg"
-          disabled={completeOnboardingMutation.isPending}
+          disabled={
+            completeOnboardingMutation.isPending || pendingStep === PREV_STEP
+          }
         >
           Next
         </Button>

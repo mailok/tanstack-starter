@@ -19,7 +19,7 @@ const FORM_ID = 'medical-info-form'
 export function MedicalInfoStep({ clientId }: Props) {
   const queryClient = useQueryClient()
   const { step } = useCurrentStep()
-  const [{ nextStepToComplete }, dispatch] = useOnboarding()
+  const [{ nextStepToComplete, pendingStep }, dispatch] = useOnboarding()
 
   const { data, isLoading } = useQuery({
     ...clientQueries.onboardingValues(clientId, step),
@@ -84,6 +84,7 @@ export function MedicalInfoStep({ clientId }: Props) {
         id={FORM_ID}
         initialValues={initialValues ?? undefined}
         onSubmit={saveAndNavigate}
+        disabled={pendingStep === PREV_STEP}
       />
 
       <div className="flex justify-between items-center">
@@ -92,6 +93,7 @@ export function MedicalInfoStep({ clientId }: Props) {
           variant="outline"
           size="lg"
           onClick={navigateToPreviousStep}
+          disabled={pendingStep === PREV_STEP}
         >
           Back
         </Button>
@@ -99,7 +101,9 @@ export function MedicalInfoStep({ clientId }: Props) {
           form={FORM_ID}
           type="submit"
           size="lg"
-          disabled={updateMedicalMutation.isPending}
+          disabled={
+            updateMedicalMutation.isPending || pendingStep === PREV_STEP
+          }
         >
           Next
         </Button>
