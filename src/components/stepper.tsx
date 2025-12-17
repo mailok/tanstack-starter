@@ -226,9 +226,9 @@ function StepperIcon({ step }: { step: number }) {
     <div
       id="step"
       className={cn(
-        'relative z-20 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 text-sm font-semibold transition-colors',
+        'relative z-20 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 text-sm font-semibold transition-all duration-300',
         isActive &&
-          'border-primary bg-primary text-primary-foreground ring-2 ring-primary ring-offset-2 ring-offset-background',
+          'scale-110 border-primary bg-primary text-primary-foreground ring-2 ring-primary ring-offset-2 ring-offset-background',
         isCompleted && 'border-primary bg-primary text-primary-foreground',
         !isActive &&
           !isCompleted &&
