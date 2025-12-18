@@ -289,8 +289,8 @@ function StepperConnector({
       className={cn(
         'bg-border relative transition-colors duration-300',
         isHorizontal
-          ? 'hidden md:block flex-1 h-[2px] mt-5 min-w-[2rem]'
-          : 'w-[2px] flex-1 min-h-[2rem]',
+          ? 'hidden md:block flex-1 h-[2px] mt-5 min-w-8'
+          : 'w-[2px] flex-1 min-h-8',
       )}
     >
       <div
