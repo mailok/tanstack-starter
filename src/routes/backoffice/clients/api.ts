@@ -229,6 +229,7 @@ const PersonalInfoSchema = z.object({
 export const createClient = createServerFn({ method: 'POST' })
   .inputValidator(zodValidator(PersonalInfoSchema))
   .handler(async ({ data }) => {
+    await sleep({ delay: 2000 })
     const [error, result] = await until(() => service.createClient(data))
 
     if (error) {
@@ -249,6 +250,7 @@ export const updateClientPersonalInfo = createServerFn({
 })
   .inputValidator(zodValidator(UpdatePersonalInfoSchema))
   .handler(async ({ data: { clientId, data } }) => {
+    await sleep({ delay: 2000 })
     const [error, result] = await until(() =>
       service.updatePersonalInfo({ clientId, data }),
     )
@@ -293,6 +295,7 @@ export const updateClientMedicalInformation = createServerFn({
 })
   .inputValidator(zodValidator(UpdateMedicalInfoSchema))
   .handler(async ({ data: { clientId, data } }) => {
+    await sleep({ delay: 2000 })
     const [error, result] = await until(() =>
       service.updateMedicalInfo({ clientId, data }),
     )
@@ -328,6 +331,7 @@ const CompleteOnboardingSchema = z.object({
 export const completeClientOnboarding = createServerFn({ method: 'POST' })
   .inputValidator(zodValidator(CompleteOnboardingSchema))
   .handler(async ({ data: { clientId, benefits } }) => {
+    await sleep({ delay: 2000 })
     const [error, result] = await until(() =>
       service.completeOnboarding({ clientId, benefits }),
     )

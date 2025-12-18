@@ -78,7 +78,7 @@ export function PersonalInfoStep({ clientId }: Props) {
   })
 
   const initialValues = data?.values || undefined
-  const isMutationPending =
+  const isStepPending =
     updatePersonalMutation.isPending || createClientMutation.isPending
 
   function saveAndNavigate(values: any, isDirty: boolean) {
@@ -104,15 +104,11 @@ export function PersonalInfoStep({ clientId }: Props) {
         id={FORM_ID}
         initialValues={initialValues}
         onSubmit={saveAndNavigate}
+        disabled={isStepPending}
       />
 
       <div className="flex justify-end">
-        <Button
-          form={FORM_ID}
-          type="submit"
-          size="lg"
-          disabled={isMutationPending}
-        >
+        <Button form={FORM_ID} type="submit" size="lg" disabled={isStepPending}>
           Next
         </Button>
       </div>

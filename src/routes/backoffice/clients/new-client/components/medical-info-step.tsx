@@ -48,6 +48,8 @@ export function MedicalInfoStep({ clientId }: Props) {
   })
 
   const initialValues = data?.values || undefined
+  const isStepPending =
+    updateMedicalMutation.isPending || pendingStep === PREV_STEP
 
   function saveAndNavigate(values: any, isDirty: boolean) {
     if (!isDirty) {
@@ -86,7 +88,7 @@ export function MedicalInfoStep({ clientId }: Props) {
         id={FORM_ID}
         initialValues={initialValues ?? undefined}
         onSubmit={saveAndNavigate}
-        disabled={pendingStep === PREV_STEP}
+        disabled={isStepPending}
       />
 
       <div className="flex justify-between items-center">
@@ -95,18 +97,11 @@ export function MedicalInfoStep({ clientId }: Props) {
           variant="outline"
           size="lg"
           onClick={navigateToPreviousStep}
-          disabled={pendingStep === PREV_STEP}
+          disabled={isStepPending}
         >
           Back
         </Button>
-        <Button
-          form={FORM_ID}
-          type="submit"
-          size="lg"
-          disabled={
-            updateMedicalMutation.isPending || pendingStep === PREV_STEP
-          }
-        >
+        <Button form={FORM_ID} type="submit" size="lg" disabled={isStepPending}>
           Next
         </Button>
       </div>
