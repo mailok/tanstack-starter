@@ -1,4 +1,4 @@
-import { createContext, useContext } from "react"
+import { createContext, useContext } from 'react'
 
 export type OnboardingState = {
   step: number
@@ -9,44 +9,60 @@ export type OnboardingState = {
 }
 
 export type OnboardingAction =
-  | { type: 'NAVIGATE_TO_STEP'; payload: number }
-  | { type: 'ADD_COMPLETED_STEP'; payload: number }
-  | { type: 'SET_PENDING_STEP'; payload: number | undefined }
+  // Simple navigation (no side effects)
+  | { type: 'GO_TO_STEP'; payload: number }
+  // Complete current step and advance to the next one
+  | { type: 'COMPLETE_STEP'; payload: { step: number; nextStep: number } }
+  // When client is created for the first time
   | {
-      type: 'START_ONBOARDING'
-      payload: { clientId: string; }
+      type: 'CLIENT_CREATED'
+      payload: { clientId: string; currentStep: number }
     }
+  // Step states
+  | { type: 'STEP_PENDING'; payload: number }
+  | { type: 'STEP_IDLE' }
 
-// Reducer function
 export function onboardingReducer(
   state: OnboardingState,
   action: OnboardingAction,
 ): OnboardingState {
   switch (action.type) {
-    case 'START_ONBOARDING':
+    case 'CLIENT_CREATED': {
+      const { clientId, currentStep } = action.payload
+      const nextStep = currentStep + 1
       return {
         ...state,
-        step: 2,
-        clientId: action.payload.clientId,
-        nextStepToComplete: 2,
-        completedSteps: [1],
+        clientId,
+        step: nextStep,
+        completedSteps: [...state.completedSteps, currentStep],
+        nextStepToComplete: nextStep,
         pendingStep: undefined,
       }
-    case 'NAVIGATE_TO_STEP':
-      return {
-          ...state,
-          step: action.payload,
-        }
-    case 'ADD_COMPLETED_STEP':
-      if (state.completedSteps.includes(action.payload)) {
-        return state
-      }
+    }
+
+    case 'COMPLETE_STEP': {
+      const { step, nextStep } = action.payload
+      const completedSteps = state.completedSteps.includes(step)
+        ? state.completedSteps
+        : [...state.completedSteps, step]
+
       return {
         ...state,
-        completedSteps: [...state.completedSteps, action.payload],
+        step: nextStep,
+        completedSteps,
+        nextStepToComplete: Math.max(state.nextStepToComplete, nextStep),
       }
-    case 'SET_PENDING_STEP':
+    }
+
+    case 'GO_TO_STEP':
+      return { ...state, step: action.payload }
+
+    case 'STEP_PENDING':
       return { ...state, pendingStep: action.payload }
+
+    case 'STEP_IDLE':
+      return { ...state, pendingStep: undefined }
+
     default:
       return state
   }

@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { clientMutationKeys } from '../../mutations'
 import { clientQueries } from '../../queries'
 import { updateClientMedicalInformation } from '../../api'
@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { PendingFormComponent } from './pending-form'
 import { useCurrentStep } from '@/components/stepper'
 import { useOnboarding } from '../use-onboarding'
+import { useOnboardingMutation } from '../use-onboarding-mutation'
 import { until } from 'until-async'
 
 type Props = {
@@ -28,22 +29,18 @@ export function MedicalInfoStep({ clientId }: Props) {
   const NEXT_STEP = step + 1
   const PREV_STEP = step - 1
 
-  const updateMedicalMutation = useMutation({
+  const updateMedicalMutation = useOnboardingMutation({
     mutationKey: clientMutationKeys.onboarding.updateMedical(clientId),
     mutationFn: updateClientMedicalInformation,
-    onMutate: () => {
-      dispatch({ type: 'SET_PENDING_STEP', payload: step })
-    },
-    onSettled: () => {
-      dispatch({ type: 'SET_PENDING_STEP', payload: undefined })
-    },
-    onSuccess: async (_, variables: any) => {
+    onSuccess: (_, variables: any) => {
       queryClient.setQueryData(
         clientQueries.onboardingValues(clientId, step).queryKey,
         { values: variables.data.data },
       )
-      dispatch({ type: 'ADD_COMPLETED_STEP', payload: step })
-      dispatch({ type: 'NAVIGATE_TO_STEP', payload: NEXT_STEP })
+      dispatch({
+        type: 'COMPLETE_STEP',
+        payload: { step, nextStep: NEXT_STEP },
+      })
     },
   })
 
@@ -53,29 +50,31 @@ export function MedicalInfoStep({ clientId }: Props) {
 
   function saveAndNavigate(values: any, isDirty: boolean) {
     if (!isDirty) {
-      dispatch({ type: 'NAVIGATE_TO_STEP', payload: NEXT_STEP })
+      dispatch({ type: 'GO_TO_STEP', payload: NEXT_STEP })
       return
     }
     updateMedicalMutation.mutate({ data: { clientId, data: values } })
   }
 
   async function navigateToPreviousStep() {
+    dispatch({ type: 'STEP_PENDING', payload: PREV_STEP })
+
     const [error] = await until(async () => {
-      dispatch({ type: 'SET_PENDING_STEP', payload: PREV_STEP })
       await queryClient.ensureQueryData({
         ...clientQueries.onboardingValues(clientId, PREV_STEP),
         revalidateIfStale: true,
       })
-      dispatch({ type: 'SET_PENDING_STEP', payload: undefined })
     })
 
+    dispatch({ type: 'STEP_IDLE' })
+
     if (error) {
-      // TODO: Handler error appropriately
+      // TODO: Handle error appropriately
       console.error(error)
       return
     }
 
-    dispatch({ type: 'NAVIGATE_TO_STEP', payload: PREV_STEP })
+    dispatch({ type: 'GO_TO_STEP', payload: PREV_STEP })
   }
 
   if (isLoading) {

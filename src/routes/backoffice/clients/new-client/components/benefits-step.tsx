@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
 import { defaultClientSearch } from '../../schemas'
 import { clientMutationKeys } from '../../mutations'
@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button'
 import { useCurrentStep } from '@/components/stepper'
 import { PendingFormComponent } from './pending-form'
 import { useOnboarding } from '../use-onboarding'
+import { useOnboardingMutation } from '../use-onboarding-mutation'
 import { until } from 'until-async'
 
 type Props = {
@@ -30,16 +31,10 @@ export function BenefitsStep({ clientId }: Props) {
 
   const PREV_STEP = step - 1
 
-  const completeOnboardingMutation = useMutation({
+  const completeOnboardingMutation = useOnboardingMutation({
     mutationKey: clientMutationKeys.onboarding.updateBenefits(clientId),
     mutationFn: completeClientOnboarding,
-    onMutate: () => {
-      dispatch({ type: 'SET_PENDING_STEP', payload: step })
-    },
-    onSettled: () => {
-      dispatch({ type: 'SET_PENDING_STEP', payload: undefined })
-    },
-    onSuccess: async () => {
+    onSuccess: () => {
       navigate({
         to: '/backoffice/clients/$clientId',
         params: { clientId },
@@ -60,22 +55,24 @@ export function BenefitsStep({ clientId }: Props) {
   }
 
   async function navigateToPreviousStep() {
+    dispatch({ type: 'STEP_PENDING', payload: PREV_STEP })
+
     const [error] = await until(async () => {
-      dispatch({ type: 'SET_PENDING_STEP', payload: PREV_STEP })
       await queryClient.ensureQueryData({
         ...clientQueries.onboardingValues(clientId, PREV_STEP),
         revalidateIfStale: true,
       })
-      dispatch({ type: 'SET_PENDING_STEP', payload: undefined })
     })
 
+    dispatch({ type: 'STEP_IDLE' })
+
     if (error) {
-      // TODO: Handler error appropriately
+      // TODO: Handle error appropriately
       console.error(error)
       return
     }
 
-    dispatch({ type: 'NAVIGATE_TO_STEP', payload: PREV_STEP })
+    dispatch({ type: 'GO_TO_STEP', payload: PREV_STEP })
   }
 
   if (isLoading) {

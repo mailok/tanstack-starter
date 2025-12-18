@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { clientMutationKeys } from '../../mutations'
 import { PersonalInfoForm } from '../../components/personal-info-form'
 import { clientQueries } from '../../queries'
@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { PendingFormComponent } from './pending-form'
 import { useCurrentStep } from '@/components/stepper'
 import { useOnboarding } from '../use-onboarding'
+import { useOnboardingMutation } from '../use-onboarding-mutation'
 
 type Props = {
   clientId?: string
@@ -26,54 +27,35 @@ export function PersonalInfoStep({ clientId }: Props) {
 
   const NEXT_STEP = step + 1
 
-  const createClientMutation = useMutation({
+  const createClientMutation = useOnboardingMutation({
     mutationKey: clientMutationKeys.onboarding.create(),
     mutationFn: createClient,
-    onMutate: () => {
-      dispatch({ type: 'SET_PENDING_STEP', payload: step })
-    },
-    onSettled: () => {
-      dispatch({ type: 'SET_PENDING_STEP', payload: undefined })
-    },
     onSuccess: (data, variables: any) => {
       if (data?.id) {
         queryClient.setQueryData(
           clientQueries.onboardingValues(data.id, step).queryKey,
           { values: variables.data },
         )
-        queryClient.setQueryData(
-          clientQueries.onboardingProgress(data.id, step).queryKey,
-          {
-            isCompleted: false,
-            nextOnboardingStep: NEXT_STEP,
-            activeStep: NEXT_STEP,
-            completedSteps: [step],
-            redirectMessage: null,
-          },
-        )
+        dispatch({
+          type: 'CLIENT_CREATED',
+          payload: { clientId: data.id, currentStep: step },
+        })
       }
-      dispatch({
-        type: 'START_ONBOARDING',
-        payload: { clientId: data?.id },
-      })
     },
   })
 
-  const updatePersonalMutation = useMutation({
+  const updatePersonalMutation = useOnboardingMutation({
     mutationKey: clientMutationKeys.onboarding.updatePersonal(clientId!),
     mutationFn: updateClientPersonalInfo,
-    onMutate: () => {
-      dispatch({ type: 'SET_PENDING_STEP', payload: step })
-    },
-    onSettled: () => {
-      dispatch({ type: 'SET_PENDING_STEP', payload: undefined })
-    },
     onSuccess: (_, variables: any) => {
       queryClient.setQueryData(
         clientQueries.onboardingValues(clientId!, step).queryKey,
         { values: variables.data.data },
       )
-      dispatch({ type: 'NAVIGATE_TO_STEP', payload: NEXT_STEP })
+      dispatch({
+        type: 'COMPLETE_STEP',
+        payload: { step, nextStep: NEXT_STEP },
+      })
     },
   })
 
@@ -83,7 +65,7 @@ export function PersonalInfoStep({ clientId }: Props) {
 
   function saveAndNavigate(values: any, isDirty: boolean) {
     if (!isDirty) {
-      dispatch({ type: 'NAVIGATE_TO_STEP', payload: NEXT_STEP })
+      dispatch({ type: 'GO_TO_STEP', payload: NEXT_STEP })
       return
     }
 
