@@ -1,5 +1,5 @@
 import { useForm } from '@tanstack/react-form'
-import { z } from 'zod'
+import { z } from '@/lib/zod-extensions'
 import { Button } from '@/components/ui/button'
 import {
   Field,
@@ -18,15 +18,18 @@ import {
 import { Checkbox } from '@/components/ui/checkbox'
 
 const benefitsSchema = z.object({
-  insuranceProvider: z.string().optional(),
-  policyNumber: z.string().optional(),
-  coverageType: z.enum(['Basic', 'Standard', 'Premium']).optional(),
-  deductible: z.number().int().optional(),
-  copay: z.number().int().optional(),
-  annualLimit: z.number().int().optional(),
-  dentalCoverage: z.boolean().optional(),
-  visionCoverage: z.boolean().optional(),
-  mentalHealthCoverage: z.boolean().optional(),
+  insuranceProvider: z.string().nullish().nullToUndefined(),
+  policyNumber: z.string().nullish().nullToUndefined(),
+  coverageType: z
+    .enum(['Basic', 'Standard', 'Premium'])
+    .nullish()
+    .nullToUndefined(),
+  deductible: z.number().int().nullish().nullToUndefined(),
+  copay: z.number().int().nullish().nullToUndefined(),
+  annualLimit: z.number().int().nullish().nullToUndefined(),
+  dentalCoverage: z.boolean().nullish().nullToUndefined(),
+  visionCoverage: z.boolean().nullish().nullToUndefined(),
+  mentalHealthCoverage: z.boolean().nullish().nullToUndefined(),
 })
 
 type BenefitsFormValues = z.infer<typeof benefitsSchema>

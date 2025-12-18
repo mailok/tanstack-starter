@@ -1,4 +1,4 @@
-import * as z from "zod"
+import { z } from '@/lib/zod-extensions'
 import { setResponseStatus } from '@tanstack/react-start/server'
 
 export const zodValidator = <T>(schema: z.ZodSchema<T>) => {

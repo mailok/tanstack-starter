@@ -271,12 +271,11 @@ export const updateClientPersonalInfo = createServerFn({
 const MedicalInfoSchema = z.object({
   bloodType: z
     .enum(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'])
-    .optional()
-    .nullable(),
-  allergies: z.array(z.string()).optional().nullable(),
-  chronicConditions: z.array(z.string()).optional().nullable(),
-  medications: z.array(z.string()).optional().nullable(),
-  lastCheckup: z.string().optional().nullable(),
+    .nullish(),
+  allergies: z.array(z.string()).nullish(),
+  chronicConditions: z.array(z.string()).nullish(),
+  medications: z.array(z.string()).nullish(),
+  lastCheckup: z.string().nullish(),
   emergencyContactName: z.string().min(1, 'Emergency contact name is required'),
   emergencyContactPhone: z
     .string()

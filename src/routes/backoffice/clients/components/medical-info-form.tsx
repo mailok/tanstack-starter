@@ -1,5 +1,5 @@
 import { useForm } from '@tanstack/react-form'
-import { z } from 'zod'
+import { z } from '@/lib/zod-extensions'
 import { Button } from '@/components/ui/button'
 import {
   Field,
@@ -19,11 +19,12 @@ import {
 const medicalInfoSchema = z.object({
   bloodType: z
     .enum(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'])
-    .optional(),
-  allergies: z.array(z.string()).optional(),
-  chronicConditions: z.array(z.string()).optional(),
-  medications: z.array(z.string()).optional(),
-  lastCheckup: z.string().optional(),
+    .nullish()
+    .nullToUndefined(),
+  allergies: z.array(z.string()).nullish().nullToUndefined(),
+  chronicConditions: z.array(z.string()).nullish().nullToUndefined(),
+  medications: z.array(z.string()).nullish().nullToUndefined(),
+  lastCheckup: z.string().nullish().nullToUndefined(),
   emergencyContactName: z.string().min(1, 'Emergency contact name is required'),
   emergencyContactPhone: z
     .string()
