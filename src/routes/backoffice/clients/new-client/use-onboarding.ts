@@ -1,4 +1,12 @@
 import { createContext, useContext } from 'react'
+import { useQueryClient } from '@tanstack/react-query'
+import { until } from 'until-async'
+import { useCurrentStep } from '@/components/stepper'
+import { clientQueries } from '../queries'
+
+export const FIRST_STEP = 1
+export const LAST_STEP = 3
+export const TOTAL_STEPS = LAST_STEP
 
 export type OnboardingState = {
   step: number
@@ -84,4 +92,41 @@ export const useOnboarding = (): OnboardingContextType => {
     throw new Error('useOnboarding must be used within an OnboardingProvider')
   }
   return context
+}
+
+/**
+ * Hook to navigate to the previous step with data prefetching
+ */
+export function useGoToPreviousStep(clientId: string) {
+  const queryClient = useQueryClient()
+  const { step } = useCurrentStep()
+  const [, dispatch] = useOnboarding()
+
+  const prevStep = step - 1
+  const hasPrev = step > FIRST_STEP
+
+  async function goToPreviousStep() {
+    if (!hasPrev) return
+
+    dispatch({ type: 'STEP_PENDING', payload: prevStep })
+
+    const [error] = await until(async () => {
+      await queryClient.ensureQueryData({
+        ...clientQueries.onboardingValues(clientId, prevStep),
+        revalidateIfStale: true,
+      })
+    })
+
+    dispatch({ type: 'STEP_IDLE' })
+
+    if (error) {
+      // TODO: Handle error appropriately
+      console.error(error)
+      return
+    }
+
+    dispatch({ type: 'GO_TO_STEP', payload: prevStep })
+  }
+
+  return { goToPreviousStep, prevStep, hasPrev }
 }

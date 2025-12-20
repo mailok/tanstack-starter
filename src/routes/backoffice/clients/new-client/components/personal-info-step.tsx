@@ -1,12 +1,12 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useCurrentStep } from '@/components/stepper'
 import { clientMutationKeys } from '../../mutations'
-import { PersonalInfoForm } from '../../components/personal-info-form'
 import { clientQueries } from '../../queries'
 import { createClient, updateClientPersonalInfo } from '../../api'
-import { Button } from '@/components/ui/button'
+import { PersonalInfoForm } from '../../components/personal-info-form'
 import { PendingFormComponent } from './pending-form'
-import { useCurrentStep } from '@/components/stepper'
-import { useOnboarding } from '../use-onboarding'
+import { StepActions } from './step-actions'
+import { useOnboarding, FIRST_STEP } from '../use-onboarding'
 import { useOnboardingMutation } from '../use-onboarding-mutation'
 
 type Props = {
@@ -20,12 +20,15 @@ export function PersonalInfoStep({ clientId }: Props) {
   const queryClient = useQueryClient()
   const [{ nextStepToComplete }, dispatch] = useOnboarding()
 
+  const shouldFetch = Boolean(clientId) && step !== nextStepToComplete
+
   const { data, isLoading } = useQuery({
     ...clientQueries.onboardingValues(clientId!, step),
-    enabled: Boolean(clientId) && step !== nextStepToComplete,
+    enabled: shouldFetch,
   })
 
   const NEXT_STEP = step + 1
+  const isFirstStep = step === FIRST_STEP
 
   const createClientMutation = useOnboardingMutation({
     mutationKey: clientMutationKeys.onboarding.create(),
@@ -35,6 +38,16 @@ export function PersonalInfoStep({ clientId }: Props) {
         queryClient.setQueryData(
           clientQueries.onboardingValues(data.id, step).queryKey,
           { values: variables.data },
+        )
+        queryClient.setQueryData(
+          clientQueries.onboardingProgress(data.id, step).queryKey,
+          {
+            isCompleted: false,
+            nextOnboardingStep: NEXT_STEP,
+            activeStep: NEXT_STEP,
+            completedSteps: [step],
+            redirectMessage: null,
+          },
         )
         dispatch({
           type: 'CLIENT_CREATED',
@@ -76,7 +89,7 @@ export function PersonalInfoStep({ clientId }: Props) {
     }
   }
 
-  if (isLoading) {
+  if (isLoading && shouldFetch) {
     return <PendingFormComponent />
   }
 
@@ -89,11 +102,11 @@ export function PersonalInfoStep({ clientId }: Props) {
         disabled={isStepPending}
       />
 
-      <div className="flex justify-end">
-        <Button form={FORM_ID} type="submit" size="lg" disabled={isStepPending}>
-          Next
-        </Button>
-      </div>
+      <StepActions
+        formId={FORM_ID}
+        isLoading={isStepPending}
+        onBack={isFirstStep ? undefined : undefined} // First step has no back
+      />
     </div>
   )
 }

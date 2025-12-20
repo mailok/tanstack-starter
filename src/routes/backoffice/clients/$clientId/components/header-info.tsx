@@ -24,14 +24,14 @@ export function HeaderInfo({ clientId }: Props) {
 function HeaderInfoContent({ clientId }: Props) {
   const { data: client } = useSuspenseQuery(clientQueries.header(clientId))
   return (
-    <div className="flex flex-col items-center md:items-start gap-4 text-center md:text-left p-4 md:px-0">
+    <div className="flex flex-col items-center gap-4 text-center p-4 md:px-0">
       <Avatar className="h-20 w-20 ring-4 ring-background shadow-md group-hover:scale-105 transition-transform duration-300">
         <AvatarImage
-          src={client.photo}
+          src={client.photo ?? undefined}
           alt={client.name}
           className="object-cover"
         />
-        <AvatarFallback className="bg-gradient-to-br from-primary/10 to-purple-500/10 text-primary text-xl font-bold">
+        <AvatarFallback className="bg-gradient-to-br from-primary/10 to-purple-500/10 text-primary text-3xl font-bold flex items-center justify-center leading-none pb-1">
           {getInitials(client.name)}
         </AvatarFallback>
       </Avatar>
@@ -39,7 +39,7 @@ function HeaderInfoContent({ clientId }: Props) {
         <h1 className="text-lg font-bold tracking-tight leading-tight whitespace-nowrap">
           {client.name}
         </h1>
-        <div className="flex justify-center md:justify-start">
+        <div className="flex justify-center">
           <Badge
             variant={client.status === 'active' ? 'default' : 'secondary'}
             className="capitalize"
@@ -55,9 +55,9 @@ function HeaderInfoContent({ clientId }: Props) {
 
 export function HeaderInfoSkeleton() {
   return (
-    <div className="flex flex-col items-center md:items-start gap-4 text-center md:text-left p-4 md:px-0">
+    <div className="flex flex-col items-center gap-4 text-center p-4 md:px-0">
       <Skeleton className="h-20 w-20 rounded-full" />
-      <div className="flex flex-col gap-2 items-center md:items-start w-full">
+      <div className="flex flex-col gap-2 items-center w-full">
         <Skeleton className="h-6 w-32" />
         <Skeleton className="h-5 w-16 rounded-full" />
       </div>
@@ -67,9 +67,9 @@ export function HeaderInfoSkeleton() {
 
 function HeaderInfoError() {
   return (
-    <div className="flex flex-col items-center md:items-start gap-4 text-center md:text-left p-4 md:px-0">
+    <div className="flex flex-col items-center gap-4 text-center p-4 md:px-0">
       <Skeleton className="h-20 w-20 rounded-full bg-destructive/[0.08]" />
-      <div className="flex flex-col gap-2 items-center md:items-start w-full">
+      <div className="flex flex-col gap-2 items-center w-full">
         <Skeleton className="h-6 w-32 bg-destructive/[0.08]" />
         <Skeleton className="h-5 w-16 rounded-full bg-destructive/[0.08]" />
       </div>

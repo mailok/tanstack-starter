@@ -1,16 +1,15 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
+import { useCurrentStep } from '@/components/stepper'
 import { defaultClientSearch } from '../../schemas'
 import { clientMutationKeys } from '../../mutations'
 import { clientQueries } from '../../queries'
 import { completeClientOnboarding } from '../../api'
 import { BenefitsForm } from '../../components/benefits-form'
-import { Button } from '@/components/ui/button'
-import { useCurrentStep } from '@/components/stepper'
 import { PendingFormComponent } from './pending-form'
-import { useOnboarding } from '../use-onboarding'
+import { StepActions } from './step-actions'
+import { useOnboarding, useGoToPreviousStep } from '../use-onboarding'
 import { useOnboardingMutation } from '../use-onboarding-mutation'
-import { until } from 'until-async'
 
 type Props = {
   clientId: string
@@ -19,17 +18,17 @@ type Props = {
 const FORM_ID = 'benefits-form'
 
 export function BenefitsStep({ clientId }: Props) {
-  const queryClient = useQueryClient()
   const { step } = useCurrentStep()
-  const [{ nextStepToComplete, pendingStep }, dispatch] = useOnboarding()
+  const navigate = useNavigate()
+  const [{ nextStepToComplete, pendingStep }] = useOnboarding()
+  const { goToPreviousStep, prevStep, hasPrev } = useGoToPreviousStep(clientId)
+
+  const shouldFetch = Boolean(clientId) && step !== nextStepToComplete
 
   const { data, isLoading } = useQuery({
     ...clientQueries.onboardingValues(clientId, step),
-    enabled: Boolean(clientId) && step !== nextStepToComplete,
+    enabled: shouldFetch,
   })
-  const navigate = useNavigate()
-
-  const PREV_STEP = step - 1
 
   const completeOnboardingMutation = useOnboardingMutation({
     mutationKey: clientMutationKeys.onboarding.updateBenefits(clientId),
@@ -45,7 +44,7 @@ export function BenefitsStep({ clientId }: Props) {
 
   const initialValues = data?.values || undefined
   const isStepPending =
-    completeOnboardingMutation.isPending || pendingStep === PREV_STEP
+    completeOnboardingMutation.isPending || pendingStep === prevStep
 
   function saveAndNavigate(values: any, isDirty: boolean) {
     if (!isDirty) {
@@ -54,28 +53,7 @@ export function BenefitsStep({ clientId }: Props) {
     completeOnboardingMutation.mutate({ data: { clientId, benefits: values } })
   }
 
-  async function navigateToPreviousStep() {
-    dispatch({ type: 'STEP_PENDING', payload: PREV_STEP })
-
-    const [error] = await until(async () => {
-      await queryClient.ensureQueryData({
-        ...clientQueries.onboardingValues(clientId, PREV_STEP),
-        revalidateIfStale: true,
-      })
-    })
-
-    dispatch({ type: 'STEP_IDLE' })
-
-    if (error) {
-      // TODO: Handle error appropriately
-      console.error(error)
-      return
-    }
-
-    dispatch({ type: 'GO_TO_STEP', payload: PREV_STEP })
-  }
-
-  if (isLoading) {
+  if (isLoading && shouldFetch) {
     return <PendingFormComponent />
   }
 
@@ -87,20 +65,13 @@ export function BenefitsStep({ clientId }: Props) {
         onSubmit={saveAndNavigate}
         disabled={isStepPending}
       />
-      <div className="flex justify-between items-center">
-        <Button
-          type="button"
-          variant="outline"
-          size="lg"
-          onClick={navigateToPreviousStep}
-          disabled={isStepPending}
-        >
-          Back
-        </Button>
-        <Button form={FORM_ID} type="submit" size="lg" disabled={isStepPending}>
-          Next
-        </Button>
-      </div>
+
+      <StepActions
+        formId={FORM_ID}
+        isLoading={isStepPending}
+        onBack={hasPrev ? goToPreviousStep : undefined}
+        submitLabel="Complete Onboarding"
+      />
     </div>
   )
 }

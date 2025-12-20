@@ -18,7 +18,7 @@ import {
 import { Checkbox } from '@/components/ui/checkbox'
 
 const benefitsSchema = z.object({
-  insuranceProvider: z.string().nullish().nullToUndefined(),
+  insuranceProvider: z.string().min(1, 'Insurance provider is required'),
   policyNumber: z.string().nullish().nullToUndefined(),
   coverageType: z
     .enum(['Basic', 'Standard', 'Premium'])
@@ -52,20 +52,16 @@ export function BenefitsForm({
 }: BenefitsFormProps) {
   const defaultValues = {
     insuranceProvider: '',
-    policyNumber: '',
-    coverageType: undefined as unknown as 'Basic' | 'Standard' | 'Premium',
-    deductible: undefined as unknown as number,
-    copay: undefined as unknown as number,
-    annualLimit: undefined as unknown as number,
-    dentalCoverage: false,
-    visionCoverage: false,
-    mentalHealthCoverage: false,
   }
 
   const form = useForm({
     defaultValues: {
       ...defaultValues,
       ...initialValues,
+    },
+    validators: {
+      onChange: benefitsSchema,
+      onSubmit: benefitsSchema,
     },
     onSubmit: async ({ value, formApi }) => {
       if (onSubmitProp) {

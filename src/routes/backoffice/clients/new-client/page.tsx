@@ -5,6 +5,8 @@ import {
   OnboardingProvider,
   onboardingReducer,
   OnboardingState,
+  FIRST_STEP,
+  LAST_STEP,
 } from './use-onboarding'
 import { useReducer } from 'react'
 import { OnboardingWizard } from './components/onboarding-wizard'
@@ -13,7 +15,13 @@ import { clientQueries } from '../queries'
 import { useSuspenseQuery } from '@tanstack/react-query'
 
 const onboardingSearchSchema = z.object({
-  step: z.number().int().min(1).max(3).optional().catch(undefined),
+  step: z
+    .number()
+    .int()
+    .min(FIRST_STEP)
+    .max(LAST_STEP)
+    .optional()
+    .catch(undefined),
   client: z.uuid().optional().catch(undefined),
 })
 
@@ -31,6 +39,16 @@ function RouteComponent() {
     clientQueries.onboardingProgress(client, step),
   )
 
+  const initialState: OnboardingState = {
+    step: progress.activeStep,
+    clientId: client,
+    nextStepToComplete: progress.nextOnboardingStep,
+    completedSteps: progress.completedSteps,
+    pendingStep: undefined,
+  }
+
+  const [state, dispatch] = useReducer(onboardingReducer, initialState)
+
   function navigateToStep(step: number) {
     navigate({
       to: '/backoffice/clients/new-client',
@@ -41,16 +59,6 @@ function RouteComponent() {
       },
     })
   }
-
-  const initialState: OnboardingState = {
-    step: progress.activeStep,
-    clientId: client,
-    nextStepToComplete: progress.nextOnboardingStep,
-    completedSteps: progress.completedSteps,
-    pendingStep: undefined,
-  }
-
-  const [state, dispatch] = useReducer(onboardingReducer, initialState)
 
   return (
     <OnboardingProvider value={[state, dispatch]}>

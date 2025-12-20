@@ -1,14 +1,13 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useCurrentStep } from '@/components/stepper'
 import { clientMutationKeys } from '../../mutations'
 import { clientQueries } from '../../queries'
 import { updateClientMedicalInformation } from '../../api'
 import { MedicalInfoForm } from '../../components/medical-info-form'
-import { Button } from '@/components/ui/button'
 import { PendingFormComponent } from './pending-form'
-import { useCurrentStep } from '@/components/stepper'
-import { useOnboarding } from '../use-onboarding'
+import { StepActions } from './step-actions'
+import { useOnboarding, useGoToPreviousStep } from '../use-onboarding'
 import { useOnboardingMutation } from '../use-onboarding-mutation'
-import { until } from 'until-async'
 
 type Props = {
   clientId: string
@@ -20,14 +19,16 @@ export function MedicalInfoStep({ clientId }: Props) {
   const queryClient = useQueryClient()
   const { step } = useCurrentStep()
   const [{ nextStepToComplete, pendingStep }, dispatch] = useOnboarding()
+  const { goToPreviousStep, prevStep, hasPrev } = useGoToPreviousStep(clientId)
+
+  const shouldFetch = Boolean(clientId) && step !== nextStepToComplete
 
   const { data, isLoading } = useQuery({
     ...clientQueries.onboardingValues(clientId, step),
-    enabled: Boolean(clientId) && step !== nextStepToComplete,
+    enabled: shouldFetch,
   })
 
   const NEXT_STEP = step + 1
-  const PREV_STEP = step - 1
 
   const updateMedicalMutation = useOnboardingMutation({
     mutationKey: clientMutationKeys.onboarding.updateMedical(clientId),
@@ -46,7 +47,7 @@ export function MedicalInfoStep({ clientId }: Props) {
 
   const initialValues = data?.values || undefined
   const isStepPending =
-    updateMedicalMutation.isPending || pendingStep === PREV_STEP
+    updateMedicalMutation.isPending || pendingStep === prevStep
 
   function saveAndNavigate(values: any, isDirty: boolean) {
     if (!isDirty) {
@@ -56,28 +57,7 @@ export function MedicalInfoStep({ clientId }: Props) {
     updateMedicalMutation.mutate({ data: { clientId, data: values } })
   }
 
-  async function navigateToPreviousStep() {
-    dispatch({ type: 'STEP_PENDING', payload: PREV_STEP })
-
-    const [error] = await until(async () => {
-      await queryClient.ensureQueryData({
-        ...clientQueries.onboardingValues(clientId, PREV_STEP),
-        revalidateIfStale: true,
-      })
-    })
-
-    dispatch({ type: 'STEP_IDLE' })
-
-    if (error) {
-      // TODO: Handle error appropriately
-      console.error(error)
-      return
-    }
-
-    dispatch({ type: 'GO_TO_STEP', payload: PREV_STEP })
-  }
-
-  if (isLoading) {
+  if (isLoading && shouldFetch) {
     return <PendingFormComponent />
   }
 
@@ -90,20 +70,11 @@ export function MedicalInfoStep({ clientId }: Props) {
         disabled={isStepPending}
       />
 
-      <div className="flex justify-between items-center">
-        <Button
-          type="button"
-          variant="outline"
-          size="lg"
-          onClick={navigateToPreviousStep}
-          disabled={isStepPending}
-        >
-          Back
-        </Button>
-        <Button form={FORM_ID} type="submit" size="lg" disabled={isStepPending}>
-          Next
-        </Button>
-      </div>
+      <StepActions
+        formId={FORM_ID}
+        isLoading={isStepPending}
+        onBack={hasPrev ? goToPreviousStep : undefined}
+      />
     </div>
   )
 }
