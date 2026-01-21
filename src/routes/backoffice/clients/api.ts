@@ -5,7 +5,7 @@ import { BaseClientSearchSchema } from './schemas'
 import * as service from './service'
 import { zodValidator } from '@/lib/zod-validator'
 import { until } from 'until-async'
-import { sleep } from '@/lib/sleep'
+// import { sleep } from '@/lib/sleep'
 
 
 export const getClientInsights = createServerFn({ method: 'GET' }).handler(() =>
@@ -116,7 +116,7 @@ function hasData(data: Record<string, any> | null) {
 export const getOnboardingProgress = createServerFn({ method: 'GET' })
   .inputValidator(zodValidator(OnboardingProgressSchema))
   .handler(async ({ data: { clientId, step } }) => {
-    await sleep({ delay: 2000 })
+    
     const [error, client] = await until(() => service.getClient(clientId))
 
     if (error) {
@@ -182,7 +182,7 @@ export const getOnboardingValues = createServerFn({ method: 'GET' })
     ),
   )
   .handler(async ({ data: { clientId, step } }) => {
-    await sleep({ delay: 2000 })
+    
     const [error, client] = await until(() => service.getClient(clientId))
 
     if (error) {
@@ -229,7 +229,7 @@ const PersonalInfoSchema = z.object({
 export const createClient = createServerFn({ method: 'POST' })
   .inputValidator(zodValidator(PersonalInfoSchema))
   .handler(async ({ data }) => {
-    await sleep({ delay: 2000 })
+    
     const [error, result] = await until(() => service.createClient(data))
 
     if (error) {
@@ -250,7 +250,7 @@ export const updateClientPersonalInfo = createServerFn({
 })
   .inputValidator(zodValidator(UpdatePersonalInfoSchema))
   .handler(async ({ data: { clientId, data } }) => {
-    await sleep({ delay: 2000 })
+    
     const [error, result] = await until(() =>
       service.updatePersonalInfo({ clientId, data }),
     )
@@ -295,7 +295,7 @@ export const updateClientMedicalInformation = createServerFn({
 })
   .inputValidator(zodValidator(UpdateMedicalInfoSchema))
   .handler(async ({ data: { clientId, data } }) => {
-    await sleep({ delay: 2000 })
+    
     const [error, result] = await until(() =>
       service.updateMedicalInfo({ clientId, data }),
     )
@@ -331,7 +331,6 @@ const CompleteOnboardingSchema = z.object({
 export const completeClientOnboarding = createServerFn({ method: 'POST' })
   .inputValidator(zodValidator(CompleteOnboardingSchema))
   .handler(async ({ data: { clientId, benefits } }) => {
-    await sleep({ delay: 2000 })
     const [error, result] = await until(() =>
       service.completeOnboarding({ clientId, benefits }),
     )
