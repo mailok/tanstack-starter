@@ -33,8 +33,8 @@ export function BenefitsStep({ clientId }: Props) {
   const completeOnboardingMutation = useOnboardingMutation({
     mutationKey: clientMutationKeys.onboarding.updateBenefits(clientId),
     mutationFn: completeClientOnboarding,
-    onSuccess: () => {
-      navigate({
+    onSuccess: async () => {
+      await navigate({
         to: '/backoffice/clients/$clientId',
         params: { clientId },
         search: defaultClientSearch,
@@ -50,6 +50,7 @@ export function BenefitsStep({ clientId }: Props) {
     if (!isDirty) {
       return
     }
+
     completeOnboardingMutation.mutate({ data: { clientId, benefits: values } })
   }
 
