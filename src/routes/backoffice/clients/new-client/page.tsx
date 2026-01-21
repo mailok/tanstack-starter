@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { createFileRoute, Navigate, useNavigate } from '@tanstack/react-router'
 import { defaultClientSearch } from '../schemas'
 import * as z from 'zod'
 import {
@@ -13,6 +13,7 @@ import { OnboardingWizard } from './components/onboarding-wizard'
 import { PendingWizard } from './components/pending-wizard'
 import { clientQueries } from '../queries'
 import { useSuspenseQuery } from '@tanstack/react-query'
+import { NewClientError } from './components/new-client-error'
 
 const onboardingSearchSchema = z.object({
   step: z
@@ -28,6 +29,7 @@ const onboardingSearchSchema = z.object({
 export const Route = createFileRoute('/backoffice/clients/new-client/')({
   component: RouteComponent,
   pendingComponent: PendingWizard,
+  errorComponent: NewClientError,
   validateSearch: onboardingSearchSchema,
 })
 
@@ -38,6 +40,16 @@ function RouteComponent() {
   const { data: progress } = useSuspenseQuery(
     clientQueries.onboardingProgress(client, step),
   )
+
+  if (progress.isCompleted && client) {
+    return (
+      <Navigate
+        to="/backoffice/clients/$clientId/personal-info"
+        params={{ clientId: client }}
+        search={defaultClientSearch}
+      />
+    )
+  }
 
   const initialState: OnboardingState = {
     step: progress.activeStep,
