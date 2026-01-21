@@ -15,10 +15,11 @@ export const clientKeys = {
     [...clientKeys.detail(id), 'medical-information'] as const,
   benefits: (id: string) => [...clientKeys.detail(id), 'benefits'] as const,
   header: (id: string) => [...clientKeys.detail(id), 'header'] as const,
+  onboarding: () => ['onboarding'] as const,
   onboardingValues: (id: string, step: number) =>
-    ['onboarding-values', id, step] as const,
+    [...clientKeys.onboarding(), id, step] as const,
   onboardingProgress: (id: string | undefined) =>
-    ['onboarding-progress', ...(id ? [id] : [])] as const,
+    [...clientKeys.onboarding(), ...(id ? [id] : [])] as const,
 }
 
 export const clientQueries = {

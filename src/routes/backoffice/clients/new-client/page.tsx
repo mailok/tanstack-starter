@@ -11,7 +11,7 @@ import {
 import { useReducer } from 'react'
 import { OnboardingWizard } from './components/onboarding-wizard'
 import { PendingWizard } from './components/pending-wizard'
-import { clientQueries } from '../queries'
+import { clientQueries, clientKeys } from '../queries'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { NewClientError } from './components/new-client-error'
 
@@ -31,6 +31,11 @@ export const Route = createFileRoute('/backoffice/clients/new-client/')({
   pendingComponent: PendingWizard,
   errorComponent: NewClientError,
   validateSearch: onboardingSearchSchema,
+  onLeave: ({ context }) => {
+    context.queryClient.removeQueries({
+      queryKey: clientKeys.onboarding(),
+    })
+  },
 })
 
 function RouteComponent() {
