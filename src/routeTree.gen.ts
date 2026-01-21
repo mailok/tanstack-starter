@@ -91,10 +91,10 @@ export interface FileRoutesByFullPath {
   '/backoffice/clients/$clientId': typeof BackofficeClientsClientIdLayoutRouteWithChildren
   '/backoffice/clients/': typeof BackofficeClientsPageRoute
   '/backoffice/clients/$clientId/': typeof BackofficeClientsClientIdPageRoute
-  '/backoffice/clients/new-client': typeof BackofficeClientsNewClientPageRoute
-  '/backoffice/clients/$clientId/benefits': typeof BackofficeClientsClientIdBenefitsPageRoute
-  '/backoffice/clients/$clientId/medical-info': typeof BackofficeClientsClientIdMedicalInfoPageRoute
-  '/backoffice/clients/$clientId/personal-info': typeof BackofficeClientsClientIdPersonalInfoPageRoute
+  '/backoffice/clients/new-client/': typeof BackofficeClientsNewClientPageRoute
+  '/backoffice/clients/$clientId/benefits/': typeof BackofficeClientsClientIdBenefitsPageRoute
+  '/backoffice/clients/$clientId/medical-info/': typeof BackofficeClientsClientIdMedicalInfoPageRoute
+  '/backoffice/clients/$clientId/personal-info/': typeof BackofficeClientsClientIdPersonalInfoPageRoute
 }
 export interface FileRoutesByTo {
   '/': typeof PageRoute
@@ -130,10 +130,10 @@ export interface FileRouteTypes {
     | '/backoffice/clients/$clientId'
     | '/backoffice/clients/'
     | '/backoffice/clients/$clientId/'
-    | '/backoffice/clients/new-client'
-    | '/backoffice/clients/$clientId/benefits'
-    | '/backoffice/clients/$clientId/medical-info'
-    | '/backoffice/clients/$clientId/personal-info'
+    | '/backoffice/clients/new-client/'
+    | '/backoffice/clients/$clientId/benefits/'
+    | '/backoffice/clients/$clientId/medical-info/'
+    | '/backoffice/clients/$clientId/personal-info/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -211,7 +211,7 @@ declare module '@tanstack/react-router' {
     '/backoffice/clients/new-client/': {
       id: '/backoffice/clients/new-client/'
       path: '/new-client'
-      fullPath: '/backoffice/clients/new-client'
+      fullPath: '/backoffice/clients/new-client/'
       preLoaderRoute: typeof BackofficeClientsNewClientPageRouteImport
       parentRoute: typeof BackofficeClientsLayoutRoute
     }
@@ -225,21 +225,21 @@ declare module '@tanstack/react-router' {
     '/backoffice/clients/$clientId/personal-info/': {
       id: '/backoffice/clients/$clientId/personal-info/'
       path: '/personal-info'
-      fullPath: '/backoffice/clients/$clientId/personal-info'
+      fullPath: '/backoffice/clients/$clientId/personal-info/'
       preLoaderRoute: typeof BackofficeClientsClientIdPersonalInfoPageRouteImport
       parentRoute: typeof BackofficeClientsClientIdLayoutRoute
     }
     '/backoffice/clients/$clientId/medical-info/': {
       id: '/backoffice/clients/$clientId/medical-info/'
       path: '/medical-info'
-      fullPath: '/backoffice/clients/$clientId/medical-info'
+      fullPath: '/backoffice/clients/$clientId/medical-info/'
       preLoaderRoute: typeof BackofficeClientsClientIdMedicalInfoPageRouteImport
       parentRoute: typeof BackofficeClientsClientIdLayoutRoute
     }
     '/backoffice/clients/$clientId/benefits/': {
       id: '/backoffice/clients/$clientId/benefits/'
       path: '/benefits'
-      fullPath: '/backoffice/clients/$clientId/benefits'
+      fullPath: '/backoffice/clients/$clientId/benefits/'
       preLoaderRoute: typeof BackofficeClientsClientIdBenefitsPageRouteImport
       parentRoute: typeof BackofficeClientsClientIdLayoutRoute
     }
