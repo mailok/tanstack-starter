@@ -23,7 +23,7 @@ const onboardingSearchSchema = z.object({
     .max(LAST_STEP)
     .optional()
     .catch(undefined),
-  client: z.uuid().optional().catch(undefined),
+  client: z.string().optional(),
 })
 
 export const Route = createFileRoute('/backoffice/clients/new-client/')({

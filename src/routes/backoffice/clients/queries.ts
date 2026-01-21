@@ -85,5 +85,6 @@ export const clientQueries = {
         }
         return api.getOnboardingProgress({ data: { clientId, step } })
       },
+      throwOnError: true
     }),
 }
