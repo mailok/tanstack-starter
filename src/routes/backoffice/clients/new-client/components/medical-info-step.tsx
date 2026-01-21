@@ -33,6 +33,10 @@ export function MedicalInfoStep({ clientId }: Props) {
   const updateMedicalMutation = useOnboardingMutation({
     mutationKey: clientMutationKeys.onboarding.updateMedical(clientId),
     mutationFn: updateClientMedicalInformation,
+    meta: {
+      errorMessage:
+        'We were unable to update the medical information. Please try again later or contact support.',
+    },
     onSuccess: (_, variables: any) => {
       queryClient.setQueryData(
         clientQueries.onboardingValues(clientId, step).queryKey,

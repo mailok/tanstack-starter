@@ -33,6 +33,10 @@ export function BenefitsStep({ clientId }: Props) {
   const completeOnboardingMutation = useOnboardingMutation({
     mutationKey: clientMutationKeys.onboarding.updateBenefits(clientId),
     mutationFn: completeClientOnboarding,
+    meta: {
+      errorMessage:
+        'We were unable to complete the onboarding process. Please try again later or contact support.',
+    },
     onSuccess: async () => {
       await navigate({
         to: '/backoffice/clients/$clientId',

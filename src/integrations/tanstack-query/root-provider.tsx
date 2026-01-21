@@ -4,6 +4,7 @@ import {
   QueryClientProvider,
   QueryKey,
 } from '@tanstack/react-query'
+import { toast } from 'sonner'
 
 declare module '@tanstack/react-query' {
   interface Register {
@@ -26,12 +27,19 @@ export function getContext() {
     mutationCache: new MutationCache({
       onSuccess: (_data, _variables, _context, mutation) => {
         if (mutation.meta?.successMessage) {
-          // TODO: notify success message
+          toast.success(mutation.meta.successMessage, {
+            position: 'top-right',
+            duration: 5000,
+          })
         }
       },
-      onError: (_error, _variables, _context, mutation) => {
+      onError: (error, _variables, _context, mutation) => {
         if (mutation.meta?.errorMessage) {
-          // TODO: notify error message
+          console.error(error)
+          toast.error(mutation.meta.errorMessage, {
+            position: 'top-right',
+            duration: 5000,
+          })
         }
       },
       onSettled: (_data, _error, _variables, _context, mutation) => {

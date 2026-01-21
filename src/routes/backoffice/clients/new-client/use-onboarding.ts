@@ -1,5 +1,6 @@
 import { createContext, useContext } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
+import { toast } from 'sonner'
 import { until } from 'until-async'
 import { useCurrentStep } from '@/components/stepper'
 import { clientQueries } from '../queries'
@@ -120,7 +121,12 @@ export function useGoToPreviousStep(clientId: string) {
     dispatch({ type: 'STEP_IDLE' })
 
     if (error) {
-      // TODO: Handle error appropriately
+      toast.error(
+        'We were unable to load the previous step. Please try again later or contact support.',
+        {
+          position: 'top-right',
+        },
+      )
       console.error(error)
       return
     }

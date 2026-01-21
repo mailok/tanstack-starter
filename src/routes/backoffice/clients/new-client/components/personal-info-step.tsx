@@ -33,6 +33,10 @@ export function PersonalInfoStep({ clientId }: Props) {
   const createClientMutation = useOnboardingMutation({
     mutationKey: clientMutationKeys.onboarding.create(),
     mutationFn: createClient,
+    meta: {
+      errorMessage:
+        'We were unable to create the client. Please try again later or contact support.',
+    },
     onSuccess: (data, variables: any) => {
       if (data?.id) {
         queryClient.setQueryData(
@@ -60,6 +64,10 @@ export function PersonalInfoStep({ clientId }: Props) {
   const updatePersonalMutation = useOnboardingMutation({
     mutationKey: clientMutationKeys.onboarding.updatePersonal(clientId!),
     mutationFn: updateClientPersonalInfo,
+    meta: {
+      errorMessage:
+        'We were unable to update the personal information. Please try again later or contact support.',
+    },
     onSuccess: (_, variables: any) => {
       queryClient.setQueryData(
         clientQueries.onboardingValues(clientId!, step).queryKey,
