@@ -1,7 +1,5 @@
-import { useQuery } from '@tanstack/react-query'
-import { useNavigate } from '@tanstack/react-router'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useCurrentStep } from '@/components/stepper'
-import { defaultClientSearch } from '../../schemas'
 import { clientMutationKeys } from '../../mutations'
 import { clientQueries } from '../../queries'
 import { completeClientOnboarding } from '../../api'
@@ -19,7 +17,7 @@ const FORM_ID = 'benefits-form'
 
 export function BenefitsStep({ clientId }: Props) {
   const { step } = useCurrentStep()
-  const navigate = useNavigate()
+  const queryClient = useQueryClient()
   const [{ nextStepToComplete, pendingStep }] = useOnboarding()
   const { goToPreviousStep, prevStep, hasPrev } = useGoToPreviousStep(clientId)
 
@@ -37,12 +35,14 @@ export function BenefitsStep({ clientId }: Props) {
       errorMessage:
         'We were unable to complete the onboarding process. Please try again later or contact support.',
     },
-    onSuccess: async () => {
-      await navigate({
-        to: '/backoffice/clients/$clientId',
-        params: { clientId },
-        search: defaultClientSearch,
-      })
+    onSuccess: () => {
+      queryClient.setQueryData(
+        clientQueries.onboardingProgress(clientId, step).queryKey,
+        (prev: any) => ({
+          ...prev,
+          isCompleted: true,
+        }),
+      )
     },
   })
 

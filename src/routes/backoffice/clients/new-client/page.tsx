@@ -11,7 +11,7 @@ import {
 import { useReducer } from 'react'
 import { OnboardingWizard } from './components/onboarding-wizard'
 import { PendingWizard } from './components/pending-wizard'
-import { clientQueries, clientKeys } from '../queries'
+import { clientQueries } from '../queries'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { NewClientError } from './components/new-client-error'
 
@@ -31,11 +31,6 @@ export const Route = createFileRoute('/backoffice/clients/new-client/')({
   pendingComponent: PendingWizard,
   errorComponent: NewClientError,
   validateSearch: onboardingSearchSchema,
-  onLeave: ({ context }) => {
-    context.queryClient.removeQueries({
-      queryKey: clientKeys.onboarding(),
-    })
-  },
 })
 
 function RouteComponent() {
@@ -46,16 +41,6 @@ function RouteComponent() {
     clientQueries.onboardingProgress(client, step),
   )
 
-  if (progress.isCompleted && client) {
-    return (
-      <Navigate
-        to="/backoffice/clients/$clientId/personal-info"
-        params={{ clientId: client }}
-        search={defaultClientSearch}
-      />
-    )
-  }
-
   const initialState: OnboardingState = {
     step: progress.activeStep,
     clientId: client,
@@ -65,6 +50,16 @@ function RouteComponent() {
   }
 
   const [state, dispatch] = useReducer(onboardingReducer, initialState)
+
+  if (progress.isCompleted && client) {
+    return (
+      <Navigate
+        to="/backoffice/clients/$clientId/personal-info"
+        params={{ clientId: client }}
+        search={defaultClientSearch}
+      />
+    )
+  }
 
   function navigateToStep(step: number) {
     navigate({

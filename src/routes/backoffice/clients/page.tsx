@@ -10,7 +10,7 @@ import {
 } from './components/filters'
 import { ClientSearchSchema, defaultClientSearch } from './schemas'
 import { FilteredResults } from './components/filtered-results'
-import { clientQueries } from './queries'
+import { clientKeys, clientQueries } from './queries'
 import { Insights, InsightsSkeleton } from './components/insights'
 import { ClientsPagination } from './components/client-pagination'
 import { minutes } from '@/lib/time'
@@ -40,6 +40,11 @@ export const Route = createFileRoute('/backoffice/clients/')({
     ])
   },
   staleTime: minutes.TEN,
+  onEnter(match) {
+    match.context.queryClient.removeQueries({
+      queryKey: clientKeys.onboarding(),
+    })
+  },
 })
 
 function RouteComponent() {
