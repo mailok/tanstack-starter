@@ -1,6 +1,11 @@
+import * as React from 'react'
 import { useForm } from '@tanstack/react-form'
 import { z } from 'zod'
+import { format } from 'date-fns'
+import { CalendarIcon } from 'lucide-react'
+import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
+import { Calendar } from '@/components/ui/calendar'
 import {
   Field,
   FieldContent,
@@ -8,6 +13,11 @@ import {
   FieldLabel,
 } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover'
 import {
   Select,
   SelectContent,
@@ -28,6 +38,16 @@ const personalInfoSchema = z.object({
 
 type PersonalInfoFormValues = z.infer<typeof personalInfoSchema>
 
+/**
+ * Parses a date string (YYYY-MM-DD) into a local Date object.
+ * This prevents timezone offsets that usually shift the date by one day.
+ */
+function parseLocalDate(dateStr: string) {
+  if (!dateStr) return undefined
+  const [year, month, day] = dateStr.split('-').map(Number)
+  return new Date(year, month - 1, day)
+}
+
 interface PersonalInfoFormProps {
   id?: string
   initialValues?: Partial<PersonalInfoFormValues>
@@ -44,6 +64,8 @@ export function PersonalInfoForm({
   onSubmit: onSubmitProp,
   disabled,
 }: PersonalInfoFormProps) {
+  const [isCalendarOpen, setIsCalendarOpen] = React.useState(false)
+
   const defaultValues = {
     name: '',
     email: '',
@@ -161,13 +183,46 @@ export function PersonalInfoForm({
                 <Field>
                   <FieldLabel>Birth Date</FieldLabel>
                   <FieldContent>
-                    <Input
-                      name={field.name}
-                      value={field.state.value}
-                      onBlur={field.handleBlur}
-                      onChange={(e) => field.handleChange(e.target.value)}
-                      type="date"
-                    />
+                    <Popover
+                      open={isCalendarOpen}
+                      onOpenChange={setIsCalendarOpen}
+                    >
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className={cn(
+                            'w-full justify-start text-left font-normal',
+                            !field.state.value && 'text-muted-foreground',
+                          )}
+                        >
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          {field.state.value ? (
+                            format(parseLocalDate(field.state.value)!, 'PPP')
+                          ) : (
+                            <span>Pick a date</span>
+                          )}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          mode="single"
+                          captionLayout="dropdown"
+                          selected={parseLocalDate(field.state.value)}
+                          defaultMonth={parseLocalDate(field.state.value)}
+                          onSelect={(date) => {
+                            field.handleChange(
+                              date ? format(date, 'yyyy-MM-dd') : '',
+                            )
+                            setIsCalendarOpen(false)
+                          }}
+                          startMonth={new Date(1900, 0)}
+                          endMonth={new Date()}
+                          disabled={(date) =>
+                            date > new Date() || date < new Date('1900-01-01')
+                          }
+                        />
+                      </PopoverContent>
+                    </Popover>
                   </FieldContent>
                   <FieldError errors={field.state.meta.errors} />
                 </Field>
